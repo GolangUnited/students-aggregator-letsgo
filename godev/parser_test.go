@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	URL      = "https://go.dev/blog/"
-	filePath = "news.json"
+	URL = "https://go.dev/blog/"
 )
 
 func TestLoadAllNews(t *testing.T) {
