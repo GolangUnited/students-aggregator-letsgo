@@ -14,32 +14,32 @@ const (
 	dateFormat = "2 January 2006"
 )
 
-type newsparser struct {
+type articlesparser struct {
 	url string
 }
 
 /// create an instance of the parser
-func NewParser(URL string) parser.NewsParser {
-	return &newsparser{
+func NewParser(URL string) parser.ArticlesParser {
+	return &articlesparser{
 		url: URL,
 	}
 }
 
 /// parse all avaibale posts on a web page
-func (p *newsparser) ParseAll() (posts []model.Post, err error) {
+func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
 
 	c.OnHTML("p.blogtitle", func(h *colly.HTMLElement) {
 		date, _ := time.Parse(dateFormat, h.ChildText("span.date"))
-		post := model.Post{
-			Title:   h.ChildText("a[href]"),
-			Href:    h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
-			Date:    date,
-			Author:  h.ChildText("span.author"),
-			Summary: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
+		article := model.Article{
+			Title:       h.ChildText("a[href]"),
+			URL:         h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
+			Created:     date,
+			Author:      h.ChildText("span.author"),
+			Description: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
 		}
-		posts = append(posts, post)
+		articles = append(articles, article)
 	})
 
 	c.Visit(p.url)
@@ -48,7 +48,7 @@ func (p *newsparser) ParseAll() (posts []model.Post, err error) {
 }
 
 /// parse posts with a date less than the given one
-func (p *newsparser) ParseBefore(maxDate time.Time) (posts []model.Post, err error) {
+func (p *articlesparser) ParseBefore(maxDate time.Time) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
 
@@ -57,14 +57,14 @@ func (p *newsparser) ParseBefore(maxDate time.Time) (posts []model.Post, err err
 		if !date.Before(maxDate) {
 			return
 		}
-		post := model.Post{
-			Title:   h.ChildText("a[href]"),
-			Href:    h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
-			Date:    date,
-			Author:  h.ChildText("span.author"),
-			Summary: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
+		article := model.Article{
+			Title:       h.ChildText("a[href]"),
+			URL:         h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
+			Created:     date,
+			Author:      h.ChildText("span.author"),
+			Description: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
 		}
-		posts = append(posts, post)
+		articles = append(articles, article)
 	})
 
 	c.Visit(p.url)
@@ -73,23 +73,23 @@ func (p *newsparser) ParseBefore(maxDate time.Time) (posts []model.Post, err err
 }
 
 /// parse n posts with a date less than the given one
-func (p *newsparser) ParseBeforeN(maxDate time.Time, n int) (posts []model.Post, err error) {
+func (p *articlesparser) ParseBeforeN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
 
 	c.OnHTML("p.blogtitle", func(h *colly.HTMLElement) {
 		date, _ := time.Parse(dateFormat, h.ChildText("span.date"))
-		if !(date.Before(maxDate) && len(posts) < n) {
+		if !(date.Before(maxDate) && len(articles) < n) {
 			return
 		}
-		post := model.Post{
-			Title:   h.ChildText("a[href]"),
-			Href:    h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
-			Date:    date,
-			Author:  h.ChildText("span.author"),
-			Summary: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
+		article := model.Article{
+			Title:       h.ChildText("a[href]"),
+			URL:         h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
+			Created:     date,
+			Author:      h.ChildText("span.author"),
+			Description: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
 		}
-		posts = append(posts, post)
+		articles = append(articles, article)
 	})
 
 	c.Visit(p.url)
