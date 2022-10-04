@@ -1,3 +1,3 @@
-module github.com/indikator/aggregator_lets_go
+module aggregator
 
-go 1.18
+go 1.19
