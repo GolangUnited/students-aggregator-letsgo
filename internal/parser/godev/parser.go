@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	filePath   = "posts.json"
 	dateFormat = "2 January 2006"
 )
 
@@ -18,14 +17,14 @@ type articlesparser struct {
 	url string
 }
 
-/// create an instance of the parser
+/// create an instance of articles parser
 func NewParser(URL string) parser.ArticlesParser {
 	return &articlesparser{
 		url: URL,
 	}
 }
 
-/// parse all avaibale posts on a web page
+/// parse all avaibale articles on a web page
 func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
@@ -47,7 +46,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 	return
 }
 
-/// parse posts with a date less than the given one
+/// parse all articles that were created earler than the target date
 func (p *articlesparser) ParseBefore(maxDate time.Time) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
@@ -72,7 +71,7 @@ func (p *articlesparser) ParseBefore(maxDate time.Time) (articles []model.Articl
 	return
 }
 
-/// parse n posts with a date less than the given one
+/// parse n articles with a date less than the given one
 func (p *articlesparser) ParseBeforeN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
