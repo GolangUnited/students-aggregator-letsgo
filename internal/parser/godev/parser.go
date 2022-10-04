@@ -47,7 +47,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 }
 
 /// parse all articles that were created earler than the target date
-func (p *articlesparser) ParseBefore(maxDate time.Time) (articles []model.Article, err error) {
+func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
 
@@ -72,7 +72,7 @@ func (p *articlesparser) ParseBefore(maxDate time.Time) (articles []model.Articl
 }
 
 /// parse n articles with a date less than the given one
-func (p *articlesparser) ParseBeforeN(maxDate time.Time, n int) (articles []model.Article, err error) {
+func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
 

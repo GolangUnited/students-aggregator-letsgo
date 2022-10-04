@@ -21,12 +21,12 @@ func TestParseAll(t *testing.T) {
 	}
 }
 
-func TestParseBefore(t *testing.T) {
+func TestParseAfter(t *testing.T) {
 
 	date := time.Now()
 
 	parser := godev.NewParser(URL)
-	articles, err := parser.ParseBefore(date)
+	articles, err := parser.ParseAfter(date)
 
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
@@ -39,12 +39,12 @@ func TestParseBefore(t *testing.T) {
 	}
 }
 
-func TestParseBeforeN(t *testing.T) {
+func TestParseAfterN(t *testing.T) {
 
 	const maxPostsQuantity = 3
 
 	parser := godev.NewParser(URL)
-	articles, err := parser.ParseBeforeN(time.Now(), maxPostsQuantity)
+	articles, err := parser.ParseAfterN(time.Now(), maxPostsQuantity)
 
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
