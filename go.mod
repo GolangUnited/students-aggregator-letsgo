@@ -2,7 +2,10 @@ module github.com/indikator/aggregator_lets_go
 
 go 1.18
 
-require github.com/gocolly/colly v1.2.0
+require (
+	github.com/gocolly/colly v1.2.0
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
