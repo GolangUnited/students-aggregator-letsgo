@@ -95,3 +95,7 @@ func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model
 
 	return
 }
+
+func init() {
+	parser.RegisterParser("go.dev", NewParser)
+}
