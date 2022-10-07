@@ -100,7 +100,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 		initNumberState += 26
 
 		// 604800 - second in week
-		if (dateNow - dateLastState) >= 86400 {
+		if (dateNow - dateLastState) >= 604800 {
 			break
 		}
 
