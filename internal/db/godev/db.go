@@ -34,7 +34,7 @@ func DBinit(uri string) {
 	collection = client.Database("news").Collection("articles")
 }
 
-func WriteArticle(articles *model.Article) error {
+func WriteArticle(article *model.Article) error {
 	_, err := collection.InsertOne(ctx, article)
 	return err
 }

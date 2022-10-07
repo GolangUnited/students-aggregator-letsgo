@@ -7,6 +7,6 @@ import (
 // DbWriter interface to write and read to/from db
 type DbWriter interface {
 	DBinit(uri string)
-	WriteArticle(articles *model.Article) error
+	WriteArticle(article *model.Article) error
 	ReadAll() ([]*model.Article, error)
 }
