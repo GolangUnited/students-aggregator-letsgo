@@ -1,19 +1,20 @@
 package webservice
 
 import (
+	"github.com/indikator/aggregator_lets_go/model"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 )
 
-var mockNews = []DB{
+var mockNews = []model.Article{
 	{
-		Id:          1,
-		Datetime:    time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
+		Title:       "1",
+		Created:     time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
 		Description: "Short description of the article1",
-		Link:        "http://funlink1.com",
-		PageHtml:    "pages/page1.html",
+		URL:         "http://funlink1.com",
+		Author:      "m.mikhailov",
 	},
 }
 
@@ -40,7 +41,7 @@ func TestMessageHandler(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := `[{"id":1,"datetime":"2022-01-01T01:01:01.000000001Z","description":"Short description of the article1","link":"http://funlink1.com","page-html":"pages/page1.html"}]`
+	expected := `[{"title":"1","created":"2022-01-01T01:01:01.000000001Z","author":"m.mikhailov","summary":"Short description of the article1","url":"http://funlink1.com"}]`
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
