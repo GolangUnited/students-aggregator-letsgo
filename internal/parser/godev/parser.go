@@ -17,27 +17,20 @@ type articlesparser struct {
 	url string
 }
 
-/// create an instance of articles parser
+// create an instance of articles parser
 func NewParser(URL string) parser.ArticlesParser {
 	return &articlesparser{
 		url: URL,
 	}
 }
 
-/// parse all avaibale articles on a web page
+// parse all avaibale articles on a web page
 func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 
-	c := colly.NewCollector()
+	c, articleContainerRef := colly.NewCollector(), p.getArticleContainerRef()
 
-	c.OnHTML("p.blogtitle", func(h *colly.HTMLElement) {
-		date, _ := time.Parse(dateFormat, h.ChildText("span.date"))
-		article := model.Article{
-			Title:       h.ChildText("a[href]"),
-			URL:         h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
-			Created:     date,
-			Author:      h.ChildText("span.author"),
-			Description: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
-		}
+	c.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
+		article := p.getNewArticle(h)
 		articles = append(articles, article)
 	})
 
@@ -46,22 +39,15 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 	return
 }
 
-/// parse all articles that were created earler than the target date
+// parse all articles that were created earler than the target date
 func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
-	c := colly.NewCollector()
+	c, articleContainerRef := colly.NewCollector(), p.getArticleContainerRef()
 
-	c.OnHTML("p.blogtitle", func(h *colly.HTMLElement) {
-		date, _ := time.Parse(dateFormat, h.ChildText("span.date"))
-		if !date.Before(maxDate) {
+	c.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
+		article := p.getNewArticle(h)
+		if !article.Created.After(maxDate) {
 			return
-		}
-		article := model.Article{
-			Title:       h.ChildText("a[href]"),
-			URL:         h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
-			Created:     date,
-			Author:      h.ChildText("span.author"),
-			Description: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
 		}
 		articles = append(articles, article)
 	})
@@ -71,22 +57,15 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 	return
 }
 
-/// parse n articles with a date less than the given one
+// parse n articles with a date less than the given one
 func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
-	c := colly.NewCollector()
+	c, articleContainerRef := colly.NewCollector(), p.getArticleContainerRef()
 
-	c.OnHTML("p.blogtitle", func(h *colly.HTMLElement) {
-		date, _ := time.Parse(dateFormat, h.ChildText("span.date"))
-		if !(date.Before(maxDate) && len(articles) < n) {
+	c.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
+		article := p.getNewArticle(h)
+		if !(article.Created.After(maxDate) && len(articles) < n) {
 			return
-		}
-		article := model.Article{
-			Title:       h.ChildText("a[href]"),
-			URL:         h.Request.AbsoluteURL(h.ChildAttr("a", "href")),
-			Created:     date,
-			Author:      h.ChildText("span.author"),
-			Description: strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text()),
 		}
 		articles = append(articles, article)
 	})
@@ -94,4 +73,48 @@ func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model
 	c.Visit(p.url)
 
 	return
+}
+
+// get parseable articles html container
+func (p *articlesparser) getArticleContainerRef() string {
+	return "p.blogtitle"
+}
+
+// get an article title from html element
+func (p *articlesparser) getTitle(h *colly.HTMLElement) string {
+	return h.ChildText("a[href]")
+}
+
+// get an article absolute url
+func (p *articlesparser) getAbsoluteURL(h *colly.HTMLElement) string {
+	return h.Request.AbsoluteURL(h.ChildAttr("a", "href"))
+}
+
+// get an article datetime
+func (p *articlesparser) getDatetime(h *colly.HTMLElement) time.Time {
+	strdate := h.ChildText("span.date")
+	datetime, _ := time.Parse(dateFormat, strdate)
+	return datetime
+}
+
+// get an article author
+func (p *articlesparser) getAuthor(h *colly.HTMLElement) string {
+	return h.ChildText("span.author")
+}
+
+// get an article description (summary)
+func (p *articlesparser) getDescription(h *colly.HTMLElement) string {
+	return strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text())
+}
+
+// get a new article
+func (p *articlesparser) getNewArticle(h *colly.HTMLElement) model.Article {
+	newArticle := model.Article{
+		Title:       p.getTitle(h),
+		URL:         p.getAbsoluteURL(h),
+		Created:     p.getDatetime(h),
+		Author:      p.getAuthor(h),
+		Description: p.getDescription(h),
+	}
+	return newArticle
 }
