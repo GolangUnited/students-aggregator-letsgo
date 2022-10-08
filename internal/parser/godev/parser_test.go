@@ -17,13 +17,13 @@ func TestParseAll(t *testing.T) {
 	articles, _ := parser.ParseAll()
 
 	if len(articles) == 0 {
-		t.Errorf("error: no any news %d\n", len(articles))
+		t.Errorf("error: no any articles  %d\n", len(articles))
 	}
 }
 
 func TestParseAfter(t *testing.T) {
 
-	date := time.Now()
+	date := time.Now().AddDate(-1, 0, 0)
 
 	parser := godev.NewParser(URL)
 	articles, err := parser.ParseAfter(date)
@@ -33,8 +33,8 @@ func TestParseAfter(t *testing.T) {
 	}
 
 	for _, article := range articles {
-		if !article.Created.Before(date) {
-			t.Errorf("error: a post date %v isn't before %v\n", article.Created, date)
+		if !article.Created.After(date) {
+			t.Errorf("error: an article date %v isn't after %v\n", article.Created, date)
 		}
 	}
 }
@@ -43,14 +43,22 @@ func TestParseAfterN(t *testing.T) {
 
 	const maxPostsQuantity = 3
 
+	date := time.Now().AddDate(-1, 0, 0)
+
 	parser := godev.NewParser(URL)
-	articles, err := parser.ParseAfterN(time.Now(), maxPostsQuantity)
+	articles, err := parser.ParseAfterN(date, maxPostsQuantity)
 
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
 
 	if len(articles) != maxPostsQuantity {
-		t.Errorf("error: amount of parsed posts doesn't equal to max quantity value, %d != %d \n", len(articles), maxPostsQuantity)
+		t.Errorf("error: amount of parsed articles doesn't equal to max quantity value, %d != %d \n", len(articles), maxPostsQuantity)
+	}
+
+	for _, article := range articles {
+		if !article.Created.After(date) {
+			t.Errorf("error: an article date %v isn't after %v\n", article.Created, date)
+		}
 	}
 }
