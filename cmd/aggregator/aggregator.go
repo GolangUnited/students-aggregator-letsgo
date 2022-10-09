@@ -16,5 +16,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	parsers, err := GetParsers(c.Parsers)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, v := range parsers {
+		articles, err := v.ParseAll()
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		fmt.Println(articles)
+	}
 	fmt.Println(c)
 }
