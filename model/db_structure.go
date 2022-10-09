@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Articles struct {
+type DBArticle struct {
 	ID primitive.ObjectID `bson:"_id"`
 	Article
 }
