@@ -1,4 +1,4 @@
-package godev
+package mongo
 
 import (
 	"context"
@@ -11,11 +11,10 @@ import (
 )
 
 // instantiate new collection and context
-var collection *mongo.Collection
 var ctx = context.TODO()
 
 // DBinit creates a new MongoDB client and connect to your running MongoDB server
-func DBinit(uri string) {
+func DBinit(uri string) *mongo.Collection {
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(ctx, clientOptions)
 
@@ -31,21 +30,22 @@ func DBinit(uri string) {
 	fmt.Println("Connected to mongo")
 
 	// create a database
-	collection = client.Database("news").Collection("articles")
+	collection := client.Database("news").Collection("articles")
+	return collection
 }
 
-func WriteArticle(article *model.Article) error {
+func WriteArticle(article *model.Article, collection *mongo.Collection) error {
 	_, err := collection.InsertOne(ctx, article)
 	return err
 }
 
-func ReadAll() ([]*model.Article, error) {
+func ReadAllArticles(collection *mongo.Collection) ([]*model.Article, error) {
 	//passing bson.D{{}} matches all documents in the collection
 	filter := bson.D{{}}
-	return filterArticles(filter)
+	return filterArticles(filter, collection)
 }
 
-func filterArticles(filter interface{}) ([]*model.Article, error) {
+func filterArticles(filter interface{}, collection *mongo.Collection) ([]*model.Article, error) {
 	// a slice of articles for storing the decoded documents
 	var articles []*model.Article
 	cur, err := collection.Find(ctx, filter)
