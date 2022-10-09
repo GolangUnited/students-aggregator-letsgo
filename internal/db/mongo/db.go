@@ -34,27 +34,27 @@ func DBinit(uri string) *mongo.Collection {
 	return collection
 }
 
-func WriteArticle(article *model.Article, collection *mongo.Collection) error {
+func WriteArticle(article *model.DBArticle, collection *mongo.Collection) error {
 	_, err := collection.InsertOne(ctx, article)
 	return err
 }
 
-func ReadAllArticles(collection *mongo.Collection) ([]*model.Article, error) {
+func ReadAllArticles(collection *mongo.Collection) ([]*model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
 	filter := bson.D{{}}
 	return filterArticles(filter, collection)
 }
 
-func filterArticles(filter interface{}, collection *mongo.Collection) ([]*model.Article, error) {
+func filterArticles(filter interface{}, collection *mongo.Collection) ([]*model.DBArticle, error) {
 	// a slice of articles for storing the decoded documents
-	var articles []*model.Article
+	var articles []*model.DBArticle
 	cur, err := collection.Find(ctx, filter)
 	if err != nil {
 		return articles, err
 	}
 
 	for cur.Next(ctx) {
-		var a model.Article
+		var a model.DBArticle
 		err := cur.Decode(&a)
 		if err != nil {
 			return articles, err

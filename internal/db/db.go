@@ -8,6 +8,6 @@ import (
 // Db interface to write and read to/from db
 type Db interface {
 	DBinit(uri string) *mongo.Collection
-	WriteArticle(article *model.Article, collection *mongo.Collection) error
-	ReadAllArticles(collection *mongo.Collection) ([]*model.Article, error)
+	WriteArticle(article *model.DBArticle, collection *mongo.Collection) error
+	ReadAllArticles(collection *mongo.Collection) ([]*model.DBArticle, error)
 }
