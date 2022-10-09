@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/indikator/aggregator_lets_go/config"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/parser/godev"
 )
 
-func GetParsers(pc []config.ParserConfig) (parsers []parser.ArticlesParser, err error) {
+func GetParsers(pc []parser.Config) (parsers []parser.ArticlesParser, err error) {
 	for _, v := range pc {
 		switch v.Name {
 		case "go.dev":
