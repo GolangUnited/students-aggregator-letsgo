@@ -13,5 +13,5 @@ parsers:
 #    url: https://github.com/golang/go/tags
 - go.dev:
     url: https://go.dev/blog
-#- medium.com:
-#    url: https://medium.com/tag/golang
+- medium.com:
+    url: https://medium.com/tag/golang
