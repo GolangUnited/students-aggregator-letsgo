@@ -1,4 +1,4 @@
-package main
+package aggregator
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/indikator/aggregator_lets_go/config"
 )
 
-func main() {
+func Execute() {
 	c := config.NewConfig()
 
 	err := c.Read("aggregator.yaml")

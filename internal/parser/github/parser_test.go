@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/indikator/aggregator_lets_go/internal/parser/golang"
+	golang "github.com/indikator/aggregator_lets_go/internal/parser/github"
 )
 
 const (
