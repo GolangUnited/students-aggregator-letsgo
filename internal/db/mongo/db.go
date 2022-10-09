@@ -11,68 +11,59 @@ import (
 )
 
 // instantiate new collection and context
-var ctx = context.TODO()
+//var Ctx = context.TODO()
+var collection *mongo.Collection
 
 // DBinit creates a new MongoDB client and connect to your running MongoDB server
-func DBinit(uri string) *mongo.Collection {
+func DBinit(uri string) {
 	clientOptions := options.Client().ApplyURI(uri)
-	client, err := mongo.Connect(ctx, clientOptions)
+	client, err := mongo.Connect(context.Background(), clientOptions)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	// Next, let’s ensure that your MongoDB server was found and connected to successfully using the Ping method.
 
-	err = client.Ping(ctx, nil)
+	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Connected to mongo")
 
 	// create a database
-	collection := client.Database("news").Collection("articles")
-	return collection
+	collection = client.Database("news").Collection("articles")
 }
 
-func WriteArticle(article *model.DBArticle, collection *mongo.Collection) error {
-	_, err := collection.InsertOne(ctx, article)
-	return err
+func WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
+	_, err := collection.InsertOne(context.Background(), article)
+	if err != nil {
+		article = nil
+	}
+	return article, err
 }
 
-func ReadAllArticles(collection *mongo.Collection) ([]*model.DBArticle, error) {
+func ReadAllArticles() ([]model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
 	filter := bson.D{{}}
-	return filterArticles(filter, collection)
-}
-
-func filterArticles(filter interface{}, collection *mongo.Collection) ([]*model.DBArticle, error) {
-	// a slice of articles for storing the decoded documents
-	var articles []*model.DBArticle
-	cur, err := collection.Find(ctx, filter)
+	var articles []model.DBArticle
+	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		return articles, err
+		return nil, err
 	}
 
-	for cur.Next(ctx) {
-		var a model.DBArticle
-		err := cur.Decode(&a)
-		if err != nil {
-			return articles, err
-		}
-
-		articles = append(articles, &a)
+	if err = cur.All(context.Background(), &articles); err != nil {
+		return nil, err
 	}
 
 	if err := cur.Err(); err != nil {
-		return articles, err
+		return nil, err
 	}
 
 	//once exhausted, close the cursor
-	cur.Close(ctx)
+	cur.Close(context.Background())
 
 	if len(articles) == 0 {
-		return articles, mongo.ErrNoDocuments
+		return nil, mongo.ErrNoDocuments
 	}
-
 	return articles, nil
 }
