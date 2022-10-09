@@ -8,9 +8,9 @@ import (
 
 /// articles parser interface
 type ArticlesParser interface {
-	ParseAll() (posts []model.Article, err error)
-	ParseAfter(date time.Time) (posts []model.Article, err error)
-	ParseAfterN(date time.Time, n int) (posts []model.Article, err error)
+	ParseAll() (articles []model.Article, err error)
+	ParseAfter(date time.Time) (articles []model.Article, err error)
+	ParseAfterN(date time.Time, n int) (articles []model.Article, err error)
 }
 
 type NewParserFunc func(string) ArticlesParser

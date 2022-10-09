@@ -3,26 +3,16 @@ package config
 import (
 	"os"
 
+	"github.com/indikator/aggregator_lets_go/cmd/webservice"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"gopkg.in/yaml.v3"
 )
 
-type DatabaseConfig struct {
-	Url string `yaml:"url"`
-}
-
-type WebServiceConfig struct {
-	Port uint16 `yaml:"port"`
-}
-
-type ParserConfig struct {
-	Name string
-	Url  string
-}
-
 type Config struct {
-	Database   DatabaseConfig
-	WebService WebServiceConfig
-	Parsers    []ParserConfig
+	Database   db.Config
+	WebService webservice.Config
+	Parsers    []parser.Config
 }
 
 func NewConfig() *Config {
@@ -34,8 +24,8 @@ type parserYamlConfig struct {
 }
 
 type yamlConfig struct {
-	Database   DatabaseConfig                `yaml:"database"`
-	WebService WebServiceConfig              `yaml:"webservice"`
+	Database   db.Config                     `yaml:"database"`
+	WebService webservice.Config             `yaml:"webservice"`
 	Parsers    []map[string]parserYamlConfig `yaml:"parsers"`
 }
 
@@ -58,11 +48,11 @@ func (c *Config) Read(fileName string) (err error) {
 
 	c.Database = yc.Database
 	c.WebService = yc.WebService
-	c.Parsers = make([]ParserConfig, len(yc.Parsers))
+	c.Parsers = make([]parser.Config, len(yc.Parsers))
 
 	for i, v := range yc.Parsers {
-		for name, parser := range v {
-			c.Parsers[i] = ParserConfig{Name: name, Url: parser.Url}
+		for name, p := range v {
+			c.Parsers[i] = parser.Config{Name: name, Url: p.Url}
 		}
 	}
 
