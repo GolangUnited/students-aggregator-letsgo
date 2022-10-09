@@ -118,3 +118,7 @@ func (p *articlesparser) getNewArticle(h *colly.HTMLElement) model.Article {
 	}
 	return newArticle
 }
+
+func init() {
+	parser.RegisterParser("go.dev", NewParser)
+}

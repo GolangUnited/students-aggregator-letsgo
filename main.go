@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	//"aggregator_lets_go/config"
-	"aggregator/config"
+	"github.com/indikator/aggregator_lets_go/config"
 )
 
 func main() {

@@ -16,7 +16,7 @@ type articlesparser struct {
 	url string
 }
 
-/// create an instance of articles parser
+// / create an instance of articles parser
 func NewParser(URL string) parser.ArticlesParser {
 	return &articlesparser{
 		url: URL,
@@ -57,7 +57,7 @@ func (p *articlesparser) getNewArticle(h *colly.HTMLElement) model.Article {
 	return newArticle
 }
 
-/// parse all avaibale articles on a web page
+// / parse all avaibale articles on a web page
 func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
@@ -72,7 +72,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 	return
 }
 
-/// parse all articles that were created earler than the target date
+// / parse all articles that were created earler than the target date
 func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
@@ -91,7 +91,7 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 	return
 }
 
-/// parse n articles with a date less than the given one
+// / parse n articles with a date less than the given one
 func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
@@ -108,4 +108,8 @@ func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model
 	c.Visit(p.url)
 
 	return
+}
+
+func init() {
+	parser.RegisterParser("medium.com", NewParser)
 }
