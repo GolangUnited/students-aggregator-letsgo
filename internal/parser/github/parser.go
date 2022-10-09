@@ -111,5 +111,5 @@ func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model
 }
 
 func init() {
-	parser.RegisterParser("medium.com", NewParser)
+	parser.RegisterParser("github", NewParser)
 }
