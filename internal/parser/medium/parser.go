@@ -57,6 +57,10 @@ func NewParser(URL string) parser.ArticlesParser {
 	}
 }
 
+func init() {
+	parser.RegisterParser("medium", NewParser)
+}
+
 func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 
 	var (
