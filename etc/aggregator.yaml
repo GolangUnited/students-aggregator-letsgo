@@ -14,4 +14,4 @@ parsers:
 - go.dev:
     url: https://go.dev/blog
 - medium.com:
-    url: https://medium.com/tag/golang
+    url: https://medium.com/_/graphql

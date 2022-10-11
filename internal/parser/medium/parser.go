@@ -58,7 +58,7 @@ func NewParser(URL string) parser.ArticlesParser {
 }
 
 func init() {
-	parser.RegisterParser("medium", NewParser)
+	parser.RegisterParser("medium.com", NewParser)
 }
 
 func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
@@ -113,13 +113,13 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 	return
 }
 
-/// parse all articles that were created earler than the target date
+// / parse all articles that were created earler than the target date
 func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	return
 }
 
-/// parse n articles with a date less than the given one
+// / parse n articles with a date less than the given one
 func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
 	return
