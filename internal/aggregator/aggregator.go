@@ -10,7 +10,7 @@ import (
 func Execute() {
 	c := config.NewConfig()
 
-	err := c.Read("aggregator.yaml")
+	err := c.Read("config.yaml")
 
 	if err != nil {
 		log.Fatal(err)

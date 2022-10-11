@@ -1,5 +1,5 @@
-# Aggregator YAML
-core:
+# Project Aggregator YAML
+aggregator:
   nothing:
 
 database:
