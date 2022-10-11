@@ -1,10 +1,8 @@
-package golang_test
+package github
 
 import (
 	"testing"
 	"time"
-
-	golang "github.com/indikator/aggregator_lets_go/internal/parser/github"
 )
 
 const (
@@ -13,7 +11,7 @@ const (
 
 func TestParseAll(t *testing.T) {
 
-	parser := golang.NewParser(URL)
+	parser := NewParser(URL)
 	articles, _ := parser.ParseAll()
 
 	if len(articles) == 0 {
@@ -25,7 +23,7 @@ func TestParseAfter(t *testing.T) {
 
 	date := time.Now()
 
-	parser := golang.NewParser(URL)
+	parser := NewParser(URL)
 	articles, err := parser.ParseAfter(date)
 
 	if err != nil {
@@ -43,7 +41,7 @@ func TestParseAfterN(t *testing.T) {
 
 	const maxPostsQuantity = 3
 
-	parser := golang.NewParser(URL)
+	parser := NewParser(URL)
 	articles, err := parser.ParseAfterN(time.Now(), maxPostsQuantity)
 
 	if err != nil {

@@ -4,9 +4,9 @@ import "time"
 
 /// parsable model
 type Article struct {
-	Title       string    `json:"title"`
-	Created     time.Time `json:"created"`
-	Author      string    `json:"author"`
-	Description string    `json:"summary"`
-	URL         string    `json:"url"`
+	Title       string    `bson:"title"`
+	Created     time.Time `bson:"created"`
+	Author      string    `bson:"author"`
+	Description string    `bson:"summary"`
+	URL         string    `bson:"url"`
 }
