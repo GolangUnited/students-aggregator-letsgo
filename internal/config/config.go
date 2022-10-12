@@ -3,9 +3,9 @@ package config
 import (
 	"os"
 
-	"github.com/indikator/aggregator_lets_go/cmd/webservice"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
+	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	"gopkg.in/yaml.v3"
 )
 

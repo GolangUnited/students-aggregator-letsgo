@@ -1,16 +1,16 @@
-package main
+package aggregator
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/indikator/aggregator_lets_go/config"
+	"github.com/indikator/aggregator_lets_go/internal/config"
 )
 
-func main() {
+func Execute() {
 	c := config.NewConfig()
 
-	err := c.Read("aggregator.yaml")
+	err := c.Read("config.yaml")
 
 	if err != nil {
 		log.Fatal(err)
