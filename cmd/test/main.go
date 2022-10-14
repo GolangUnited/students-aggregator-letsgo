@@ -1,20 +1,14 @@
 package main
 
 import (
-	"aggregator/parsers/stub"
 	"fmt"
 	"log"
+
+	"github.com/indikator/aggregator_lets_go/internal/parser/stub"
 )
 
 func main() {
-
-	p := stub.NewStubParser()
-
-	err := p.Init(map[string]string{"Url": "123"})
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	p := stub.NewParser("http://stub.com")
 
 	articles, err := p.ParseAll()
 
