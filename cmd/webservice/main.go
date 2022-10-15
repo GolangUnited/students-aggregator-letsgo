@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	arcticles := make([]model.Article, 0)
-	webservice.RunServer(arcticles)
-	fmt.Println(arcticles)
+	articles := make([]model.Article, 0)
+	webservice.RunServer(articles)
+	fmt.Println(articles)
 }
