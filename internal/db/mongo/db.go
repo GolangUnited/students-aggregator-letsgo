@@ -63,7 +63,7 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 // init creates a new MongoDB client and connect to your running MongoDB server
 func init() {
 	c := config.NewConfig()
-	err := c.Read("../../../etc/config.yaml")
+	err := c.Read("etc/config.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
