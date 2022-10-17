@@ -10,7 +10,7 @@ import (
 func Execute() {
 	c := config.NewConfig()
 
-	err := c.Read("config.yaml")
+	err := c.ReadFile("config.yaml")
 
 	if err != nil {
 		log.Fatal(err)

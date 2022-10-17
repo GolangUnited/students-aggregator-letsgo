@@ -29,17 +29,20 @@ type yamlConfig struct {
 	Parsers    []map[string]parserYamlConfig `yaml:"parsers"`
 }
 
-func (c *Config) Read(fileName string) (err error) {
+func (c *Config) ReadFile(fileName string) (err error) {
 	file, err := os.ReadFile(fileName)
 
 	if err != nil {
-
 		return
 	}
 
+	return c.Read(file)
+}
+
+func (c *Config) Read(data []byte) (err error) {
 	var yc yamlConfig
 
-	err = yaml.Unmarshal(file, &yc)
+	err = yaml.Unmarshal(data, &yc)
 
 	if err != nil {
 
