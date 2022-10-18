@@ -28,7 +28,13 @@ func TestRead(t *testing.T) {
 
 	c := NewConfig()
 
-	err := c.Read([]byte(configData))
+	err := c.SetData([]byte(configData))
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -40,10 +46,6 @@ func TestRead(t *testing.T) {
 
 	if c.WebService.Port != 8080 {
 		t.Errorf("incorrect webservice port %d, expected %d", c.WebService.Port, 8080)
-	}
-
-	if len(c.Parsers) != 3 {
-		t.Errorf("incorrect parsers count %d, expected %d", len(c.Parsers), 3)
 	}
 
 	if len(c.Parsers) != 3 {

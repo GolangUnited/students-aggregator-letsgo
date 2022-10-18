@@ -40,7 +40,13 @@ parsers:
 - medium.com:
     url: https://medium.com/_/graphql`
 	fmt.Println([]byte(s))
-	err := c.Read([]byte(s))
+	err := c.SetData([]byte(s))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.Read()
 
 	if err != nil {
 		log.Fatal(err)

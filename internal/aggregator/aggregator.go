@@ -2,34 +2,48 @@ package aggregator
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
 )
 
-func Execute() {
-	c := config.NewConfig()
+type Aggregator struct {
+	config config.Config
+}
 
-	err := c.ReadFile("config.yaml")
+func NewAggregator() *Aggregator {
+	return &Aggregator{}
+}
+
+func (a *Aggregator) Init(config *config.Config) error {
+	a.config = *config
+
+	return nil
+}
+
+func (a *Aggregator) Execute() error {
+	err := a.config.Read()
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	parsers, err := GetParsers(c.Parsers)
+	parsers, err := GetParsers(a.config.Parsers)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, v := range parsers {
 		articles, err := v.ParseAll()
 
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 
 		fmt.Println(articles)
 	}
-	fmt.Println(c)
+
+	fmt.Println(a.config)
+
+	return nil
 }
