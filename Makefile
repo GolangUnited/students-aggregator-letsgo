@@ -10,8 +10,11 @@ run-webservice: build-webservice
 build-webserver-image:
 	docker build -t web-service -f ./Dockerfile.webservice .
 
-start-webserver-container: build-webserver-image
-	docker run -p 80:8080 --name webservice webservice -d --rm
+up-webserver-container: build-webserver-image
+	docker run --name web-service --detach --rm -p 80:8080 web-service
 
-run:
-	docker-compose upbuil
+up:
+	docker-compose up --build --detach
+
+down:
+	docker-compose down
