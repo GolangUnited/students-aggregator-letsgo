@@ -10,28 +10,40 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func Execute() {
-	c := config.NewConfig()
+type Aggregator struct {
+	config config.Config
+}
 
-	err := c.Read("config.yaml")
+func NewAggregator() *Aggregator {
+	return &Aggregator{}
+}
+
+func (a *Aggregator) Init(config *config.Config) error {
+	a.config = *config
+
+	return nil
+}
+
+func (a *Aggregator) Execute() error {
+	err := a.config.Read()
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	mongo.DBinit(c.Database.Url)
+	parsers, err := GetParsers(a.config.Parsers)
 
-	parsers, err := GetParsers(c.Parsers)
+	mongo.DBinit(a.config.Database.Url)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, v := range parsers {
 		articles, err := v.ParseAll()
 
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 
 		for _, a := range articles {
@@ -53,5 +65,8 @@ func Execute() {
 
 		fmt.Println(articles)
 	}
-	fmt.Println(c)
+
+	fmt.Println(a.config)
+
+	return nil
 }
