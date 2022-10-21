@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+
+  webservice:
+    image: web-service
+    container_name: web-service
+    build:
+      context: .
+      dockerfile: ./Dockerfile.webservice
+    ports: 
+      - "80:8080"
+    # depends_on:
+    #    - mongodb
+
+  # aggregator:
+  #   image: aggregator
+  #   container_name: aggregator
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile.aggregator
+  #   depends_on:
+  #     - mongodb
+
+  # mongodb:
+  #   image: mongo:latest
+  #   container_name: mongodb
+  #   environment:
+  #     - MONGO_DATA_DIR=/data/db
+  #     - MONGO_LOG_DIR=/dev/null
+  #     - MONGODB_DATABASE=testdb
+  #   volumes:
+  #     - ./.data/db:/data/db
+  #   ports:
+  #     - 27017:27017
+    
