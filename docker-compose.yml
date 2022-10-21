@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  agregator:
+    image: aggregator
+    entrypoint: ""
+    user: root
+    command: crond -f -d 8
+    ports:
+      - 3306:3306
+    build:
+      context: .
+      dockerfile: ./Dockerfile.aggregator
+  
