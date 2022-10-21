@@ -2,6 +2,7 @@ package aggregator
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
@@ -31,8 +32,8 @@ func (a *Aggregator) Execute() error {
 	}
 
 	parsers, err := GetParsers(a.config.Parsers)
-	mongo.DBinit(c.Database.Url)
 
+	mongo.DBinit(a.config.Database.Url)
 
 	if err != nil {
 		return err
