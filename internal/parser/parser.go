@@ -1,9 +1,8 @@
 package parser
 
 import (
-	"time"
-
 	"github.com/indikator/aggregator_lets_go/model"
+	"time"
 )
 
 /// articles parser interface

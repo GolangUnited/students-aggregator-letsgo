@@ -9,6 +9,7 @@ import (
 type Db interface {
 	WriteArticle(article *model.DBArticle) (*model.DBArticle, error)
 	ReadAllArticles() ([]model.DBArticle, error)
+	DBInit(url string)
 }
 
 func ConvertArticle(article model.Article) *model.DBArticle {

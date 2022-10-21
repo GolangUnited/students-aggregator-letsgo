@@ -1,22 +1,66 @@
 package last_news
 
 import (
-	"github.com/indikator/aggregator_lets_go/internal/config"
-	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
-	"log"
+	"fmt"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
-func TestMessageHandler(t *testing.T) {
-	c := config.NewConfig()
-	err := c.Read("../../../etc/config.yaml")
-	if err != nil {
-		log.Fatal(err)
+type database struct {
+	url string
+}
+
+// NewDb create an instance of database
+func NewDb(URL string) db.Db {
+	return &database{
+		url: URL,
 	}
+}
+
+var id1 = primitive.NewObjectID()
+var id2 = primitive.NewObjectID()
+
+func (mockdb *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
+	return article, nil
+}
+
+func (mockdb *database) ReadAllArticles() ([]model.DBArticle, error) {
+	articles := []model.DBArticle{
+		{
+			ID:          id1,
+			Title:       "test_title",
+			Created:     time.Date(2022, 1, 1, 2, 1, 1, 1, time.UTC),
+			Author:      "mikhailov.mk",
+			Description: "test article for db",
+			URL:         "test_article.com",
+		},
+		{
+			ID:          id2,
+			Title:       "test_title1",
+			Created:     time.Date(2022, 1, 1, 2, 1, 1, 1, time.UTC),
+			Author:      "mikhailov.mk",
+			Description: "test article1 for db",
+			URL:         "test_article1.com",
+		},
+	}
+	return articles, nil
+}
+
+// DBInit creates a new MongoDB client and connect to your running MongoDB server
+func (mockdb *database) DBInit(url string) {
+
+	fmt.Printf("Connected to %s\n", url)
+
+}
+
+func TestMessageHandler(t *testing.T) {
 	ws := NewWebservice("/last_news")
-	db := mongo.NewDb(c.Database.Url)
+	db := NewDb("test_url")
 
 	handler := ws.MessageHandler(db)
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
@@ -39,7 +83,7 @@ func TestMessageHandler(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := `[{"ID":"634af235bc6ca8ab6a2af4d3","Title":"test_title","Created":"2022-01-01T01:01:01Z","Author":"mikhailov.mk","Description":"test article for db","URL":"test_article.com"},{"ID":"634af2803e95239b839a93f0","Title":"test_title1","Created":"2022-01-01T01:01:01Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"},{"ID":"634af2803e95239b839a93f1","Title":"test_title2","Created":"2022-01-01T01:01:01Z","Author":"mikhailov.mk","Description":"test article2 for db","URL":"test_article2.com"},{"ID":"634afb50ec373cdf2e238503","Title":"test lerik1","Created":"2022-01-01T02:01:01Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"},{"ID":"634afc2c8e81c3431f0591b3","Title":"test lerik1","Created":"2022-01-01T02:01:01Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"},{"ID":"634b11715e4c2a42650f922f","Title":"test lerik1","Created":"2022-01-01T02:01:01Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"},{"ID":"634b117c85ef84f5420f26a2","Title":"test lerik1","Created":"2022-01-01T02:01:01Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"},{"ID":"634b11ddb1964d53dc1f53c5","Title":"test lerik1","Created":"2022-01-01T02:01:01Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"}]`
+	expected := fmt.Sprintf(`[{"ID":"%s","Title":"test_title","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article for db","URL":"test_article.com"},{"ID":"%s","Title":"test_title1","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"}]`, id1.Hex(), id2.Hex())
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)

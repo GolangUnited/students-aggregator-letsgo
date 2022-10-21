@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -60,15 +59,10 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 	return articles, nil
 }
 
-// init creates a new MongoDB client and connect to your running MongoDB server
-func init() {
-	c := config.NewConfig()
-	err := c.Read("etc/config.yaml")
-	if err != nil {
-		log.Fatal(err)
-	}
+// DBInit creates a new MongoDB client and connect to your running MongoDB server
+func (db *database) DBInit(url string) {
 
-	clientOptions := options.Client().ApplyURI(c.Database.Url)
+	clientOptions := options.Client().ApplyURI(url)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 
 	if err != nil {

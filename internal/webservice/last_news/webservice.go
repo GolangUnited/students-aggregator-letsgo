@@ -36,16 +36,11 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	})
 }
 
-func RunServer(ws webservice.Webservice, handle string) error {
-	c := config.NewConfig()
-	err := c.Read("etc/config.yaml")
-	if err != nil {
-		log.Fatal(err)
-	}
+func RunServer(ws webservice.Webservice, c config.Config, handle string) error {
 	db := mongo.NewDb(c.Database.Url)
 	mux := http.NewServeMux()
 	mux.Handle(handle, ws.MessageHandler(db))
-	err = http.ListenAndServe(":"+strconv.Itoa(int(c.WebService.Port)), mux)
+	err := http.ListenAndServe(":"+strconv.Itoa(int(c.WebService.Port)), mux)
 	if err != nil {
 		return fmt.Errorf("Can't start the server")
 	}
