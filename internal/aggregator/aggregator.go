@@ -4,6 +4,9 @@ import (
 	"fmt"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
+	"github.com/indikator/aggregator_lets_go/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Aggregator struct {
@@ -28,6 +31,8 @@ func (a *Aggregator) Execute() error {
 	}
 
 	parsers, err := GetParsers(a.config.Parsers)
+	mongo.DBinit(c.Database.Url)
+
 
 	if err != nil {
 		return err
@@ -38,6 +43,23 @@ func (a *Aggregator) Execute() error {
 
 		if err != nil {
 			return err
+		}
+
+		for _, a := range articles {
+			id := primitive.NewObjectID()
+
+			_, err = mongo.WriteArticle(&model.DBArticle{
+				ID:          id,
+				Title:       a.Title,
+				Created:     a.Created,
+				Author:      a.Author,
+				Description: a.Description,
+				URL:         a.URL,
+			})
+
+			if err != nil {
+				log.Println(err)
+			}
 		}
 
 		fmt.Println(articles)
