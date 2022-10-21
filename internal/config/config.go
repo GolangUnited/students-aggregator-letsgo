@@ -1,14 +1,17 @@
 package config
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	"gopkg.in/yaml.v3"
-	"os"
 )
 
 type Config struct {
+	data       []byte
 	Database   db.Config
 	WebService webservice.Config
 	Parsers    []parser.Config
@@ -28,12 +31,25 @@ type yamlConfig struct {
 	Parsers    []map[string]parserYamlConfig `yaml:"parsers"`
 }
 
-func (c *Config) Read(fileName string) (err error) {
-	file, err := os.ReadFile(fileName)
+func (c *Config) SetDataFromFile(fileName string) error {
+	data, err := os.ReadFile(fileName)
 
 	if err != nil {
+		return err
+	}
 
-		return
+	return c.SetData(data)
+}
+
+func (c *Config) SetData(data []byte) error {
+	c.data = data
+
+	return nil
+}
+
+func (c *Config) Read() (err error) {
+	if len(c.data) == 0 {
+		return fmt.Errorf("data to read not found")
 	}
 
 	var yc yamlConfig
