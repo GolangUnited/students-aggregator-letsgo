@@ -1,11 +1,12 @@
 package webservice
 
 import (
-	"github.com/indikator/aggregator_lets_go/model"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/indikator/aggregator_lets_go/model"
 )
 
 var mockNews = []model.Article{
