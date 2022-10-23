@@ -47,18 +47,16 @@ func (c *Config) SetData(data []byte) error {
 	return nil
 }
 
-func (c *Config) Read(fileName string) (err error) {
+func (c *Config) Read() (err error) {
 	if len(c.data) == 0 {
 		return fmt.Errorf("data to read not found")
 	}
 
 	var yc yamlConfig
-	file, err := os.ReadFile(fileName)
 
-	err = yaml.Unmarshal(file, &yc)
+	err = yaml.Unmarshal(c.data, &yc)
 
 	if err != nil {
-
 		return
 	}
 
