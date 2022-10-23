@@ -24,7 +24,6 @@ func NewAggregator() *Aggregator {
 
 func (a *Aggregator) InitAllByConfig(config *config.Config) error {
 	err := config.Read()
-
 	if err != nil {
 		return err
 	}

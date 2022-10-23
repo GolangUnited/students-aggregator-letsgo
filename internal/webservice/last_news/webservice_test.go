@@ -52,9 +52,9 @@ func (mockdb *database) ReadAllArticles() ([]model.DBArticle, error) {
 }
 
 // DBInit creates a new MongoDB client and connect to your running MongoDB server
-func (mockdb *database) DBInit(url string) {
+func (mockdb *database) DBInit() {
 
-	fmt.Printf("Connected to %s\n", url)
+	fmt.Printf("Connected to %s\n", mockdb.url)
 
 }
 

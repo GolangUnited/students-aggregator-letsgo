@@ -61,9 +61,9 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 }
 
 // DBInit creates a new MongoDB client and connect to your running MongoDB server
-func (db *database) DBInit(url string) {
+func (db *database) DBInit() {
 
-	clientOptions := options.Client().ApplyURI(url)
+	clientOptions := options.Client().ApplyURI(db.url)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 
 	if err != nil {
