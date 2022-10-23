@@ -59,7 +59,6 @@ func (c *Config) Read() (err error) {
 	err = yaml.Unmarshal(c.data, &yc)
 
 	if err != nil {
-
 		return
 	}
 

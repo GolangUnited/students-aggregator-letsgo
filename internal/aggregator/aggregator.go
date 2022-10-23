@@ -37,6 +37,7 @@ func (a *Aggregator) InitAllByConfig(config *config.Config) error {
 	}
 
 	db, err := GetDb(config.Database)
+	mongoDb := mongo.NewDb(a.config.Database.Url)
 
 	if err != nil {
 		return err
@@ -66,7 +67,7 @@ func (a *Aggregator) Execute() error {
 		for _, a := range articles {
 			id := primitive.NewObjectID()
 
-			_, err = mongo.WriteArticle(&model.DBArticle{
+			_, err = mongoDb.WriteArticle(&model.DBArticle{
 				ID:          id,
 				Title:       a.Title,
 				Created:     a.Created,
