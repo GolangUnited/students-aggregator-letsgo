@@ -20,7 +20,6 @@ func NewAggregator() *Aggregator {
 
 func (a *Aggregator) Init(config *config.Config) error {
 	a.config = *config
-
 	return nil
 }
 
@@ -34,7 +33,7 @@ func (a *Aggregator) Execute() error {
 	parsers, err := GetParsers(a.config.Parsers)
 	mongoDb := mongo.NewDb(a.config.Database.Url)
 
-	mongoDb.DBInit(a.config.Database.Url)
+	mongoDb.DBInit()
 
 	if err != nil {
 		return err

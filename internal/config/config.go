@@ -43,7 +43,6 @@ func (c *Config) SetDataFromFile(fileName string) error {
 
 func (c *Config) SetData(data []byte) error {
 	c.data = data
-
 	return nil
 }
 
