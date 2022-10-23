@@ -14,7 +14,7 @@ func main() {
 
 	a := aggregator.NewAggregator()
 
-	err := a.Init(c)
+	err := a.InitAllByConfig(c)
 
 	if err != nil {
 		log.Fatal(err)
