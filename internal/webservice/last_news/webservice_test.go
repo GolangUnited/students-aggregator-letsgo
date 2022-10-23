@@ -2,13 +2,14 @@ package last_news
 
 import (
 	"fmt"
-	"github.com/indikator/aggregator_lets_go/internal/db"
-	"github.com/indikator/aggregator_lets_go/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type database struct {
@@ -52,9 +53,11 @@ func (mockdb *database) ReadAllArticles() ([]model.DBArticle, error) {
 }
 
 // DBInit creates a new MongoDB client and connect to your running MongoDB server
-func (mockdb *database) DBInit() {
+func (mockdb *database) DBInit() error {
 
 	fmt.Printf("Connected to %s\n", mockdb.url)
+
+	return nil
 
 }
 

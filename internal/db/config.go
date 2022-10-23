@@ -1,5 +1,6 @@
 package db
 
 type Config struct {
-	Url string `yaml:"url"`
+	Name string `yaml:"name"`
+	Url  string `yaml:"url"`
 }

@@ -3,13 +3,14 @@ package last_news
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
-	"log"
-	"net/http"
-	"strconv"
 )
 
 type webService struct {
@@ -38,11 +39,15 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 
 func RunServer(ws webservice.Webservice, c config.Config, handle string) error {
 	db := mongo.NewDb(c.Database.Url)
+	err := db.DBInit()
+	if err != nil {
+		return fmt.Errorf("can't start the server: %w", err)
+	}
 	mux := http.NewServeMux()
 	mux.Handle(handle, ws.MessageHandler(db))
-	err := http.ListenAndServe(":"+strconv.Itoa(int(c.WebService.Port)), mux)
+	err = http.ListenAndServe(":"+strconv.Itoa(int(c.WebService.Port)), mux)
 	if err != nil {
-		return fmt.Errorf("Can't start the server")
+		return fmt.Errorf("can't start the server: %w", err)
 	}
 	log.Println("Listening...")
 	return nil

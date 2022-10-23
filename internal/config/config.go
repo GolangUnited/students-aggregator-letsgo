@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	aggregator "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
@@ -12,6 +13,7 @@ import (
 
 type Config struct {
 	data       []byte
+	Aggregator aggregator.Config
 	Database   db.Config
 	WebService webservice.Config
 	Parsers    []parser.Config

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-/// articles parser interface
+// / articles parser interface
 type ArticlesParser interface {
 	ParseAll() (articles []model.Article, err error)
 	ParseAfter(date time.Time) (articles []model.Article, err error)
