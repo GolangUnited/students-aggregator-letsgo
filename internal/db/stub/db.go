@@ -1,6 +1,8 @@
 package stub
 
 import (
+	"fmt"
+
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
 )
@@ -11,12 +13,15 @@ type database struct {
 }
 
 // NewDb create an instance of database
-func NewDb(URL string) db.Db {
-	return &database{}
+func NewDb(config db.Config) db.Db {
+	return &database{config: config}
 }
 
-func (d *database) DBInit(uri string) {
-	d.config.Url = uri
+func (d *database) DBInit() error {
+	if d.config.Name != "stub" {
+		return fmt.Errorf("incorrect db name %s, expected %s", d.config.Name, "stub")
+	}
+	return nil
 }
 
 func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {

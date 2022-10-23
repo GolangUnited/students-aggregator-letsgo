@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -61,22 +60,23 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 }
 
 // DBInit creates a new MongoDB client and connect to your running MongoDB server
-func (db *database) DBInit() {
+func (db *database) DBInit() error {
 
 	clientOptions := options.Client().ApplyURI(db.url)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	// Next, let’s ensure that your MongoDB server was found and connected to successfully using the Ping method.
 
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	fmt.Println("Connected to mongo")
 
 	// create a database
 	collection = client.Database("news").Collection("articles")
+	return nil
 }

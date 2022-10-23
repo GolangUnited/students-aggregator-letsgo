@@ -13,14 +13,18 @@ func GetDb(config db.Config) (db.Db, error) {
 
 	switch config.Name {
 	case "stub":
-		d = stub.NewDb(config.Url)
+		d = stub.NewDb(config)
 	case "mongo":
 		d = mongo.NewDb(config.Url)
 	default:
 		return nil, fmt.Errorf("unknown dbms %s", config.Name)
 	}
 
-	d.DBInit(config.Url)
+	err := d.DBInit()
+
+	if err != nil {
+		return nil, err
+	}
 
 	return d, nil
 }
