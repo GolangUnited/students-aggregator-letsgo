@@ -7,7 +7,6 @@ import (
 	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
-	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -37,7 +36,6 @@ func (a *Aggregator) InitAllByConfig(config *config.Config) error {
 	}
 
 	db, err := GetDb(config.Database)
-	mongoDb := mongo.NewDb(a.config.Database.Url)
 
 	if err != nil {
 		return err
@@ -64,16 +62,16 @@ func (a *Aggregator) Execute() error {
 			return err
 		}
 
-		for _, a := range articles {
+		for _, article := range articles {
 			id := primitive.NewObjectID()
 
-			_, err = mongoDb.WriteArticle(&model.DBArticle{
+			_, err = a.db.WriteArticle(&model.DBArticle{
 				ID:          id,
-				Title:       a.Title,
-				Created:     a.Created,
-				Author:      a.Author,
-				Description: a.Description,
-				URL:         a.URL,
+				Title:       article.Title,
+				Created:     article.Created,
+				Author:      article.Author,
+				Description: article.Description,
+				URL:         article.URL,
 			})
 
 			if err != nil {

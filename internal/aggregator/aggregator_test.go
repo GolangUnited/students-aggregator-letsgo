@@ -9,17 +9,18 @@ import (
 const (
 	configData = `# Project Aggregator YAML
 aggregator:
- nothing:
+  nothing:
 
 database:
- url: mongodb://localhost:27018/
+  name: stub
+  url: stub://localhost:22222/
 
 webservice:
- port: 8080
+  port: 8080
 
 parsers:
 - stub:
-   url: https://stub.com`
+    url: https://stub.com`
 )
 
 func TestWorkWithStubParser(t *testing.T) {
@@ -61,7 +62,7 @@ func TestWorkWithStubParser(t *testing.T) {
 	}
 
 	if len(articles) != 3 {
-		t.Errorf("incorrect parsers count %d, expected %d", len(parsers), 3)
+		t.Errorf("incorrect articles count %d, expected %d", len(articles), 3)
 	}
 
 	db, err := GetDb(c.Database)
@@ -88,4 +89,13 @@ func TestWorkWithStubParser(t *testing.T) {
 		t.Errorf("unexpected error %v", err)
 	}
 
+	dbArticles, err := db.ReadAllArticles()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	if len(dbArticles) != 3 {
+		t.Errorf("incorrect db articles count %d, expected %d", len(dbArticles), 3)
+	}
 }

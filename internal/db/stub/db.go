@@ -5,21 +5,26 @@ import (
 	"github.com/indikator/aggregator_lets_go/model"
 )
 
-type Db struct {
+type database struct {
 	config   db.Config
 	Articles []model.DBArticle
 }
 
-func (db *Db) DBinit(uri string) {
-	db.config.Url = uri
+// NewDb create an instance of database
+func NewDb(URL string) db.Db {
+	return &database{}
 }
 
-func (db *Db) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
-	db.Articles = append(db.Articles, *article)
+func (d *database) DBInit(uri string) {
+	d.config.Url = uri
+}
+
+func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
+	d.Articles = append(d.Articles, *article)
 
 	return article, nil
 }
 
-func (db *Db) ReadAllArticles() ([]model.DBArticle, error) {
-	return db.Articles, nil
+func (d *database) ReadAllArticles() ([]model.DBArticle, error) {
+	return d.Articles, nil
 }

@@ -3,6 +3,7 @@ aggregator:
   nothing:
 
 database:
+  name: mongo
   url: mongodb://localhost:27018/
 
 webservice:
