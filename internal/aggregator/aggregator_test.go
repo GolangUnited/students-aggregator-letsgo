@@ -9,17 +9,17 @@ import (
 const (
 	configData = `# Project Aggregator YAML
 aggregator:
-  nothing:
+ nothing:
 
 database:
-  url: mongodb://localhost:27018/
+ url: mongodb://localhost:27018/
 
 webservice:
-  port: 8080
+ port: 8080
 
 parsers:
 - stub:
-    url: https://stub.com`
+   url: https://stub.com`
 )
 
 func TestWorkWithStubParser(t *testing.T) {

@@ -13,6 +13,7 @@ import (
 
 func TestWriteArticle(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	mongoDb := NewDb("test_url")
 	defer mt.Close()
 
 	mt.Run("write article", func(mt *mtest.T) {
@@ -20,7 +21,7 @@ func TestWriteArticle(t *testing.T) {
 		id := primitive.NewObjectID()
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 
-		insertedArticle, err := WriteArticle(&model.DBArticle{
+		insertedArticle, err := mongoDb.WriteArticle(&model.DBArticle{
 			ID:          id,
 			Title:       "test_title",
 			Created:     time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
@@ -47,7 +48,7 @@ func TestWriteArticle(t *testing.T) {
 			Message: "duplicate key error",
 		}))
 
-		insertedArticle, err := WriteArticle(&model.DBArticle{})
+		insertedArticle, err := mongoDb.WriteArticle(&model.DBArticle{})
 
 		assert.Nil(t, insertedArticle)
 		assert.NotNil(t, err)
@@ -55,10 +56,11 @@ func TestWriteArticle(t *testing.T) {
 	})
 
 	mt.Run("simple error", func(mt *mtest.T) {
+
 		collection = mt.Coll
 		mt.AddMockResponses(bson.D{{"ok", 0}})
 
-		insertedArticle, err := WriteArticle(&model.DBArticle{})
+		insertedArticle, err := mongoDb.WriteArticle(&model.DBArticle{})
 
 		assert.Nil(t, insertedArticle)
 		assert.NotNil(t, err)
@@ -67,6 +69,7 @@ func TestWriteArticle(t *testing.T) {
 
 func TestReadAllArticles(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	mongoDb := NewDb("test_url")
 	defer mt.Close()
 
 	mt.Run("success", func(mt *mtest.T) {
@@ -89,7 +92,7 @@ func TestReadAllArticles(t *testing.T) {
 			{"url", expectedArticle.URL},
 		}), killCursors)
 
-		articleResponse, err := ReadAllArticles()
+		articleResponse, err := mongoDb.ReadAllArticles()
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedArticle, articleResponse[0])
