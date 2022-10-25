@@ -13,14 +13,19 @@ services:
     # depends_on:
     #    - mongodb
 
-  # aggregator:
-  #   image: aggregator
-  #   container_name: aggregator
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile.aggregator
-  #   depends_on:
-  #     - mongodb
+  aggregator:
+    image: aggregator
+    container_name: aggregator
+    entrypoint: ""
+    user: root
+    command: crond -f -d 8
+    ports:
+      - 3306:3306
+    build:
+      context: .
+      dockerfile: ./Dockerfile.aggregator
+    # depends_on:
+    #   - mongodb
 
   # mongodb:
   #   image: mongo:latest
