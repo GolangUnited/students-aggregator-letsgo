@@ -10,7 +10,8 @@ aggregator:
   nothing:
 
 database:
-  url: mongodb://localhost:27018/
+  name: stub
+  url: stub://localhost:22222/
 
 webservice:
   port: 8080
@@ -40,8 +41,12 @@ func TestRead(t *testing.T) {
 		t.Errorf("unexpected error %v", err)
 	}
 
-	if c.Database.Url != "mongodb://localhost:27018/" {
-		t.Errorf("incorrect database url \"%v\", expected \"%s\"", c.Database.Url, "mongodb://localhost:27018/")
+	if c.Database.Name != "stub" {
+		t.Errorf("incorrect database url \"%v\", expected \"%s\"", c.Database.Name, "stub")
+	}
+
+	if c.Database.Url != "stub://localhost:22222/" {
+		t.Errorf("incorrect database url \"%v\", expected \"%s\"", c.Database.Url, "stub://localhost:22222/")
 	}
 
 	if c.WebService.Port != 8080 {
