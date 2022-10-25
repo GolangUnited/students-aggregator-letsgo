@@ -1,0 +1,31 @@
+FROM golang:1.18.7-alpine3.16 AS aggregator
+
+RUN go version
+RUN apk add git
+
+COPY ./ /github.com/indikator/aggregator_lets_go
+WORKDIR /github.com/indikator/aggregator_lets_go
+
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux go build -o ./.bin/app ./cmd/aggregator/main.go
+
+FROM alpine:latest
+
+ENV APP_USER appuser
+
+RUN adduser -g "App User" -D $APP_USER
+
+COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /root
+COPY --from=aggregator /github.com/indikator/aggregator_lets_go/./configs/config.yaml /root
+COPY launch_aggregator /var/spool/cron/crontabs/$APP_USER/my_script
+
+COPY crontab /var/spool/cron/crontabs/$APP_USER
+#RUN chmod +x /bin/launch_aggregator
+RUN chmod 0600 /var/spool/cron/crontabs/$APP_USER
+
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+
+ENTRYPOINT "crond"
+
+CMD ["-f", "-d", "8"]
