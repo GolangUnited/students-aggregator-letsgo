@@ -16,7 +16,7 @@ ENV APP_USER appuser
 RUN adduser -g "App User" -D $APP_USER
 
 COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /root
-COPY --from=aggregator /github.com/indikator/aggregator_lets_go/./cmd/aggregator/config.yaml /root
+COPY --from=aggregator /github.com/indikator/aggregator_lets_go/./configs/config.yaml /root
 COPY launch_aggregator /var/spool/cron/crontabs/$APP_USER/my_script
 
 COPY crontab /var/spool/cron/crontabs/$APP_USER
