@@ -10,21 +10,15 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -o ./.bin/app ./cmd/aggre
 
 FROM alpine:latest
 
-ENV APP_USER appuser
-
-RUN adduser -g "App User" -D $APP_USER
-
-COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /root
+COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /etc
 COPY --from=aggregator /github.com/indikator/aggregator_lets_go/./configs/config.yaml /root
-COPY launch_aggregator /var/spool/cron/crontabs/$APP_USER/my_script
 
-COPY crontab /var/spool/cron/crontabs/$APP_USER
-#RUN chmod +x /bin/launch_aggregator
-RUN chmod 0600 /var/spool/cron/crontabs/$APP_USER
+COPY launch_aggregator /etc/periodic/1min/my_script
 
-# Create the log file to be able to run tail
-RUN touch /var/log/cron.log
+RUN echo "*/1 * * * * /etc/periodic/1min/my_script" > /etc/crontabs/root
 
-ENTRYPOINT "crond"
+RUN dos2unix /etc/periodic/1min/my_script
 
-CMD ["-f", "-d", "8"]
+RUN chmod -R a+x /etc/periodic/1min/my_script
+
+CMD [ "crond", "-l", "2", "-f" ]
