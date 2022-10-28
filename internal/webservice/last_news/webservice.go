@@ -38,8 +38,14 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 }
 
 func RunServer(ws webservice.Webservice, c config.Config, handle string) error {
+	err := c.Read()
+
+	if err != nil {
+		return err
+	}
+
 	db := mongo.NewDb(c.Database.Url)
-	err := db.DBInit()
+	err = db.DBInit()
 	if err != nil {
 		return fmt.Errorf("can't start the server: %w", err)
 	}
