@@ -1,3 +1,6 @@
+// Aggregator parses sites, collects last articles from sites, and saves articles in database
+//
+// Aggregator uses config.yaml file with application settings
 package main
 
 import (
