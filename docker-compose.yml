@@ -2,27 +2,24 @@ version: '3.9'
 
 services:
 
-  webservice:
-    image: web-service
-    container_name: web-service
-    build:
-      context: .
-      dockerfile: ./Dockerfile.webservice
-    ports: 
-      - "80:8080"
+  # webservice:
+  #   image: web-service
+  #   container_name: web-service
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile.webservice
+  #   ports: 
+  #     - "80:8080"
     # depends_on:
     #    - mongodb
 
   aggregator:
     image: aggregator
     container_name: aggregator
-    entrypoint: ""
-    user: root
-    command: crond -f -d 8
     ports:
       - 3306:3306
     build:
-      context: .
+      # context: .
       dockerfile: ./Dockerfile.aggregator
     # depends_on:
     #   - mongodb
