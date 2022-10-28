@@ -11,5 +11,6 @@ func main() {
 	ws := last_news.NewWebservice(handle)
 
 	c := config.NewConfig()
+	c.SetDataFromFile("config.yaml")
 	last_news.RunServer(ws, *c, handle)
 }
