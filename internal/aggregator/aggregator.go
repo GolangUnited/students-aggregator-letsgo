@@ -2,34 +2,86 @@ package aggregator
 
 import (
 	"fmt"
-	"log"
 
+	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/internal/parser"
+	"github.com/indikator/aggregator_lets_go/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func Execute() {
-	c := config.NewConfig()
+type Aggregator struct {
+	config  aconfig.Config
+	parsers []parser.ArticlesParser
+	db      db.Db
+}
 
-	err := c.Read("config.yaml")
+func NewAggregator() *Aggregator {
+	return &Aggregator{}
+}
+
+func (a *Aggregator) InitAllByConfig(config *config.Config) error {
+	err := config.Read()
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	parsers, err := GetParsers(c.Parsers)
+	parsers, err := GetParsers(config.Parsers)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	for _, v := range parsers {
+	db, err := GetDb(config.Database)
+
+	if err != nil {
+		return err
+	}
+
+	return a.Init(&config.Aggregator, parsers, db)
+}
+
+func (a *Aggregator) Init(config *aconfig.Config, parsers []parser.ArticlesParser, db db.Db) error {
+	a.config = *config
+
+	a.parsers = parsers
+
+	a.db = db
+
+	return nil
+}
+
+func (a *Aggregator) Execute() error {
+	for _, v := range a.parsers {
 		articles, err := v.ParseAll()
 
 		if err != nil {
-			log.Println(err)
+			return err
+		}
+
+		for _, article := range articles {
+			id := primitive.NewObjectID()
+
+			_, err = a.db.WriteArticle(&model.DBArticle{
+				ID:          id,
+				Title:       article.Title,
+				Created:     article.Created,
+				Author:      article.Author,
+				Description: article.Description,
+				URL:         article.URL,
+			})
+
+			if err != nil {
+				return err
+			}
 		}
 
 		fmt.Println(articles)
 	}
-	fmt.Println(c)
+
+	fmt.Println(a.config)
+
+	return nil
 }

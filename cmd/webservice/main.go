@@ -1,14 +1,16 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/indikator/aggregator_lets_go/internal/webservice"
-	"github.com/indikator/aggregator_lets_go/model"
+	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/webservice/last_news"
 )
 
 func main() {
-	arcticles := make([]model.Article, 0)
-	webservice.RunServer(arcticles)
-	fmt.Println(arcticles)
+	handle := "/last_news"
+
+	ws := last_news.NewWebservice(handle)
+
+	c := config.NewConfig()
+	c.SetDataFromFile("config.yaml")
+	last_news.RunServer(ws, *c, handle)
 }
