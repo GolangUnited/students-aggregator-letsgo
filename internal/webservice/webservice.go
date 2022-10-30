@@ -7,4 +7,5 @@ import (
 
 type Webservice interface {
 	MessageHandler(db db.Db) http.Handler
+	RunServer(db db.Db)
 }

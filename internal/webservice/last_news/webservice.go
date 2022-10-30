@@ -2,24 +2,25 @@ package last_news
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
-	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 )
 
 type webService struct {
 	handle string
+	port   uint16
 }
 
-func NewWebservice(handle string) webservice.Webservice {
+func NewWebservice(config webservice.Config) webservice.Webservice {
+	handle := config.Handle
+	port := config.Port
 	return &webService{
 		handle: handle,
+		port:   port,
 	}
 }
 
@@ -32,23 +33,18 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-		news, _ := json.Marshal(news)
-		w.Write(news)
+		newsJson, _ := json.Marshal(news)
+		_, err = w.Write(newsJson)
+		if err != nil {
+			return
+		}
 	})
 }
 
-func RunServer(ws webservice.Webservice, c config.Config, handle string) error {
-	db := mongo.NewDb(c.Database.Url)
-	err := db.DBInit()
-	if err != nil {
-		return fmt.Errorf("can't start the server: %w", err)
-	}
+func (ws *webService) RunServer(db db.Db) {
 	mux := http.NewServeMux()
-	mux.Handle(handle, ws.MessageHandler(db))
-	err = http.ListenAndServe(":"+strconv.Itoa(int(c.WebService.Port)), mux)
-	if err != nil {
-		return fmt.Errorf("can't start the server: %w", err)
-	}
+	mux.Handle(ws.handle, ws.MessageHandler(db))
+
+	http.ListenAndServe(":"+strconv.Itoa(int(ws.port)), mux)
 	log.Println("Listening...")
-	return nil
 }

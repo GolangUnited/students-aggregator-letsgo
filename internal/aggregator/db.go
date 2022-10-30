@@ -15,7 +15,7 @@ func GetDb(config db.Config) (db.Db, error) {
 	case "stub":
 		d = stub.NewDb(config)
 	case "mongo":
-		d = mongo.NewDb(config.Url)
+		d = mongo.NewDb(config)
 	default:
 		return nil, fmt.Errorf("unknown dbms %s", config.Name)
 	}
