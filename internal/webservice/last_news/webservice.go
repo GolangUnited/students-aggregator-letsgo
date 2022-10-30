@@ -41,6 +41,7 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	})
 }
 
+
 func (ws *webService) RunServer(db db.Db) {
 	mux := http.NewServeMux()
 	mux.Handle(ws.handle, ws.MessageHandler(db))

@@ -1,3 +1,6 @@
+// Aggregator parses sites, collects last articles from sites, and saves articles in database
+//
+// Aggregator uses config.yaml file with application settings
 package main
 
 import (
@@ -8,13 +11,17 @@ import (
 )
 
 func main() {
+
 	c := config.NewConfig()
 
-	c.SetDataFromFile("config.yaml")
+	err := c.SetDataFromFile("config.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	a := aggregator.NewAggregator()
 
-	err := a.InitAllByConfig(c)
+	err = a.InitAllByConfig(c)
 
 	if err != nil {
 		log.Fatal(err)

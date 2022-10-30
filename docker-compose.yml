@@ -10,22 +10,19 @@ services:
       dockerfile: ./Dockerfile.webservice
     ports: 
       - "80:8080"
-    # depends_on:
-    #    - mongodb
+    depends_on:
+       - mongodb
 
   aggregator:
     image: aggregator
     container_name: aggregator
-    entrypoint: ""
-    user: root
-    command: crond -f -d 8
     ports:
       - 3306:3306
     build:
       context: .
       dockerfile: ./Dockerfile.aggregator
-    # depends_on:
-    #   - mongodb
+    depends_on:
+      - mongodb
 
   # mongodb:
   #   image: mvertes/alpine-mongo

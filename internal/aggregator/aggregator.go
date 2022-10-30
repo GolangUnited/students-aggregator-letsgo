@@ -2,7 +2,6 @@ package aggregator
 
 import (
 	"fmt"
-	"log"
 
 	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/config"
@@ -24,6 +23,7 @@ func NewAggregator() *Aggregator {
 
 func (a *Aggregator) InitAllByConfig(config *config.Config) error {
 	err := config.Read()
+
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func (a *Aggregator) Execute() error {
 			})
 
 			if err != nil {
-				log.Println(err)
+				return err
 			}
 		}
 
