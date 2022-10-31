@@ -19,18 +19,21 @@ type database struct {
 }
 
 // NewDb create an instance of database
-func NewDb(URL string) db.Db {
+func NewDb(c db.Config) db.Db {
+	URL := c.Url
 	return &database{
 		url: URL,
 	}
 }
 
 func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
+
 	_, err := collection.InsertOne(context.Background(), article)
 	if err != nil {
 		article = nil
 	}
 	return article, err
+
 }
 
 func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
@@ -46,19 +49,21 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 		return nil, err
 	}
 
-	if err := cur.Err(); err != nil {
+	if err = cur.Err(); err != nil {
 		return nil, err
 	}
 
 	//once exhausted, close the cursor
-	cur.Close(context.Background())
+	err = cur.Close(context.Background())
+	if err != nil {
+		return nil, err
+	}
 
 	return articles, nil
 }
 
 // DBInit creates a new MongoDB client and connect to your running MongoDB server
 func (db *database) DBInit() error {
-
 	clientOptions := options.Client().ApplyURI(db.url)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
@@ -66,7 +71,6 @@ func (db *database) DBInit() error {
 	}
 
 	// Next, let’s ensure that your MongoDB server was found and connected to successfully using the Ping method.
-
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		return err
@@ -76,6 +80,24 @@ func (db *database) DBInit() error {
 
 	// create a database
 	collection = client.Database("news").Collection("articles")
+
+	// Declare model for the indexes
+	indexName, err := collection.Indexes().CreateOne(
+		context.Background(),
+		mongo.IndexModel{
+			Keys: bson.D{
+				{Key: "author", Value: 1},
+				{Key: "title", Value: 1},
+				{Key: "created", Value: 1},
+				{Key: "url", Value: 1},
+			},
+			Options: options.Index().SetUnique(true),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	fmt.Println(indexName)
 
 	return nil
 }

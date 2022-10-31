@@ -2,6 +2,7 @@ package last_news
 
 import (
 	"fmt"
+	"github.com/indikator/aggregator_lets_go/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,9 +18,9 @@ type database struct {
 }
 
 // NewDb create an instance of database
-func NewDb(URL string) db.Db {
+func NewDb(c db.Config) db.Db {
 	return &database{
-		url: URL,
+		url: c.Url,
 	}
 }
 
@@ -62,10 +63,19 @@ func (mockdb *database) DBInit() error {
 }
 
 func TestMessageHandler(t *testing.T) {
-	ws := NewWebservice("/last_news")
-	db := NewDb("test_url")
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../configs/config.yaml")
+	if err != nil {
+		return
+	}
+	err = c.Read()
+	if err != nil {
+		return
+	}
+	ws := NewWebservice(c.WebService)
+	newDb := NewDb(c.Database)
 
-	handler := ws.MessageHandler(db)
+	handler := ws.MessageHandler(newDb)
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
 	req, err := http.NewRequest("GET", "/last_news", nil)
@@ -86,7 +96,7 @@ func TestMessageHandler(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := fmt.Sprintf(`[{"ID":"%s","Title":"test_title","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article for db","URL":"test_article.com"},{"ID":"%s","Title":"test_title1","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article1 for db","URL":"test_article1.com"}]`, id1.Hex(), id2.Hex())
+	expected := fmt.Sprintf(`[{"ID":"%s","Title":"test_title","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article for newDb","URL":"test_article.com"},{"ID":"%s","Title":"test_title1","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article1 for newDb","URL":"test_article1.com"}]`, id1.Hex(), id2.Hex())
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
