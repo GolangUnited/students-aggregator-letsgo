@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"fmt"
+
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson"
@@ -38,7 +39,7 @@ func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, er
 func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
 	filter := bson.D{{}}
-	var articles []model.DBArticle
+	articles := make([]model.DBArticle, 0)
 	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
@@ -58,9 +59,6 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 		return nil, err
 	}
 
-	if len(articles) == 0 {
-		return nil, mongo.ErrNoDocuments
-	}
 	return articles, nil
 }
 
@@ -77,6 +75,7 @@ func (db *database) DBInit() error {
 	if err != nil {
 		return err
 	}
+
 	fmt.Println("Connected to mongo")
 
 	// create a database
@@ -95,6 +94,9 @@ func (db *database) DBInit() error {
 			Options: options.Index().SetUnique(true),
 		},
 	)
+	if err != nil {
+		return err
+	}
 	fmt.Println(indexName)
 
 	return nil

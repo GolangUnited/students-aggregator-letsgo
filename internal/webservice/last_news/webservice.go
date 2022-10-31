@@ -25,6 +25,7 @@ func NewWebservice(config webservice.Config) webservice.Webservice {
 }
 
 func (ws *webService) MessageHandler(db db.Db) http.Handler {
+
 	news, err := db.ReadAllArticles()
 	if err != nil {
 		log.Fatal(err)
@@ -33,19 +34,18 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-		newsJson, _ := json.Marshal(news)
-		_, err = w.Write(newsJson)
+		newsJson, err := json.Marshal(news)
 		if err != nil {
+			w.Write([]byte(err.Error()))
 			return
 		}
+		w.Write(newsJson)
 	})
 }
-
 
 func (ws *webService) RunServer(db db.Db) {
 	mux := http.NewServeMux()
 	mux.Handle(ws.handle, ws.MessageHandler(db))
-
-	http.ListenAndServe(":"+strconv.Itoa(int(ws.port)), mux)
 	log.Println("Listening...")
+	http.ListenAndServe(":"+strconv.Itoa(int(ws.port)), mux)
 }

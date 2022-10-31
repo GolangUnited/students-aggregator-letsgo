@@ -1,31 +1,34 @@
 package main
 
 import (
+	"log"
+
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/webservice/last_news"
-	"log"
+)
+
+const (
+	configFilePath = "./configs/config.yaml"
 )
 
 func main() {
 
-	c := config.NewConfig()
-	err := c.SetDataFromFile("configs/config.yaml")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = c.Read()
-	if err != nil {
+	cfg := config.NewConfig()
+	if err := cfg.SetDataFromFile(configFilePath); err != nil {
 		log.Fatal(err)
 	}
 
-	db_ := mongo.NewDb(c.Database)
-	err = db_.DBInit()
-	if err != nil {
+	if err := cfg.Read(); err != nil {
 		log.Fatal(err)
 	}
 
-	ws := last_news.NewWebservice(c.WebService)
+	db := mongo.NewDb(cfg.Database)
+	if err := db.DBInit(); err != nil {
+		log.Fatal(err)
+	}
 
-	ws.RunServer(db_)
+	ws := last_news.NewWebservice(cfg.WebService)
+
+	ws.RunServer(db)
 }

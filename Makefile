@@ -1,17 +1,19 @@
 .PHONY:
 
-build-webservice:
-	go mod download && go mod tidy
-	go build -o ./.bin/webservice ./cmd/webservice/main.go
-
-run-webservice: build-webservice
-	./.bin/webservice
+build-aggregator-image:
+	docker build -t aggregator -f ./Dockerfile.aggregator .
 
 build-webserver-image:
 	docker build -t web-service -f ./Dockerfile.webservice .
 
+up-aggregator-container: build-aggregator-image
+	docker run --name aggregator --detach --rm -p 3306:3306 aggregator	
+
 up-webserver-container: build-webserver-image
-	docker run --name web-service --detach --rm -p 80:8080 web-service
+	docker run --name webservice --detach --rm -p 80:8080 web-service
+
+up-mongo-container:
+	docker run --name mongodb --detach --rm -p 27017:27017 mongo:latest
 
 up:
 	docker-compose up --build --detach
