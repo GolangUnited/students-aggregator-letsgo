@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/model"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +14,16 @@ import (
 
 func TestWriteArticle(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
-	mongoDb := NewDb("test_url")
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../configs/config.yaml")
+	if err != nil {
+		return
+	}
+	err = c.Read()
+	if err != nil {
+		return
+	}
+	mongoDb := NewDb(c.Database)
 	defer mt.Close()
 
 	mt.Run("write article", func(mt *mtest.T) {
@@ -29,6 +39,7 @@ func TestWriteArticle(t *testing.T) {
 			Description: "test article for db",
 			URL:         "test_article.com",
 		})
+
 		assert.Nil(t, err)
 		assert.Equal(t, &model.DBArticle{
 			ID:          id,
@@ -56,7 +67,6 @@ func TestWriteArticle(t *testing.T) {
 	})
 
 	mt.Run("simple error", func(mt *mtest.T) {
-
 		collection = mt.Coll
 		mt.AddMockResponses(bson.D{{"ok", 0}})
 
@@ -69,7 +79,12 @@ func TestWriteArticle(t *testing.T) {
 
 func TestReadAllArticles(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
-	mongoDb := NewDb("test_url")
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../configs/config.yaml")
+	if err != nil {
+		return
+	}
+	mongoDb := NewDb(c.Database)
 	defer mt.Close()
 
 	mt.Run("success", func(mt *mtest.T) {

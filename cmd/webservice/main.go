@@ -2,15 +2,30 @@ package main
 
 import (
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/webservice/last_news"
+	"log"
 )
 
 func main() {
-	handle := "/last_news"
-
-	ws := last_news.NewWebservice(handle)
 
 	c := config.NewConfig()
-	c.SetDataFromFile("config.yaml")
-	last_news.RunServer(ws, *c, handle)
+	err := c.SetDataFromFile("configs/config.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = c.Read()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db_ := mongo.NewDb(c.Database)
+	err = db_.DBInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ws := last_news.NewWebservice(c.WebService)
+
+	ws.RunServer(db_)
 }
