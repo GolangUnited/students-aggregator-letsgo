@@ -5,12 +5,18 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/webservice/last_news"
 )
 
+const (
+	configFilePath = "./configs/config.yaml"
+)
+
 func main() {
+
 	handle := "/last_news"
 
 	ws := last_news.NewWebservice(handle)
 
-	c := config.NewConfig()
-	c.SetDataFromFile("config.yaml")
-	last_news.RunServer(ws, *c, handle)
+	cfg := config.NewConfig()
+	cfg.SetDataFromFile(configFilePath)
+
+	last_news.RunServer(ws, *cfg, handle)
 }

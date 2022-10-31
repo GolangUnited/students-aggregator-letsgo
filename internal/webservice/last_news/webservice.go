@@ -24,6 +24,7 @@ func NewWebservice(handle string) webservice.Webservice {
 }
 
 func (ws *webService) MessageHandler(db db.Db) http.Handler {
+
 	news, err := db.ReadAllArticles()
 	if err != nil {
 		log.Fatal(err)
@@ -32,29 +33,31 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-		news, _ := json.Marshal(news)
+		news, err := json.Marshal(news)
+		if err != nil {
+			w.Write([]byte(err.Error()))
+			return
+		}
 		w.Write(news)
 	})
 }
 
-func RunServer(ws webservice.Webservice, c config.Config, handle string) error {
-	err := c.Read()
-
-	if err != nil {
+func RunServer(ws webservice.Webservice, cfg config.Config, handle string) error {
+	if err := cfg.Read(); err != nil {
 		return err
 	}
 
-	db := mongo.NewDb(c.Database.Url)
-	err = db.DBInit()
-	if err != nil {
+	db := mongo.NewDb(cfg.Database.Url)
+	if err := db.DBInit(); err != nil {
+		fmt.Println("BBB")
 		return fmt.Errorf("can't start the server: %w", err)
 	}
+
 	mux := http.NewServeMux()
 	mux.Handle(handle, ws.MessageHandler(db))
-	err = http.ListenAndServe(":"+strconv.Itoa(int(c.WebService.Port)), mux)
-	if err != nil {
-		return fmt.Errorf("can't start the server: %w", err)
-	}
-	log.Println("Listening...")
+
+	log.Println("Listening... on port: ", cfg.WebService.Port)
+	http.ListenAndServe(":"+strconv.Itoa(int(cfg.WebService.Port)), mux)
+
 	return nil
 }

@@ -10,11 +10,15 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/config"
 )
 
+const (
+	configFilePath = "./configs/config.yaml"
+)
+
 func main() {
 
 	c := config.NewConfig()
 
-	err := c.SetDataFromFile("config.yaml")
+	err := c.SetDataFromFile(configFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}

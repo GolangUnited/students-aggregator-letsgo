@@ -36,7 +36,7 @@ func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, er
 func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
 	filter := bson.D{{}}
-	var articles []model.DBArticle
+	articles := make([]model.DBArticle, 0)
 	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
@@ -53,9 +53,6 @@ func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 	//once exhausted, close the cursor
 	cur.Close(context.Background())
 
-	if len(articles) == 0 {
-		return nil, mongo.ErrNoDocuments
-	}
 	return articles, nil
 }
 
@@ -64,19 +61,21 @@ func (db *database) DBInit() error {
 
 	clientOptions := options.Client().ApplyURI(db.url)
 	client, err := mongo.Connect(context.Background(), clientOptions)
-
 	if err != nil {
 		return err
 	}
+
 	// Next, let’s ensure that your MongoDB server was found and connected to successfully using the Ping method.
 
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		return err
 	}
+
 	fmt.Println("Connected to mongo")
 
 	// create a database
 	collection = client.Database("news").Collection("articles")
+
 	return nil
 }
