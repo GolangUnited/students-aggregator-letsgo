@@ -2,12 +2,13 @@ package last_news
 
 import (
 	"encoding/json"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/internal/webservice"
+	"github.com/indikator/aggregator_lets_go/model"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/indikator/aggregator_lets_go/internal/db"
-	"github.com/indikator/aggregator_lets_go/internal/webservice"
+	"time"
 )
 
 type webService struct {
@@ -24,6 +25,18 @@ func NewWebservice(config webservice.Config) webservice.Webservice {
 	}
 }
 
+type Time struct {
+	time.Time
+}
+
+func (t Time) MarshalJSON() ([]byte, error) {
+	b := make([]byte, 0, len(time.RFC3339)+2)
+	b = append(b, '"')
+	b = t.AppendFormat(b, time.RFC3339)
+	b = append(b, '"')
+	return b, nil
+}
+
 func (ws *webService) MessageHandler(db db.Db) http.Handler {
 
 	news, err := db.ReadAllArticles()
@@ -34,6 +47,15 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
+		for i, value := range news {
+			news[i] = model.DBArticle{
+				ID:          value.ID,
+				Title:       value.Title,
+				Created:     value.Created,
+				Author:      value.Author,
+				Description: value.Description,
+				URL:         value.URL}
+		}
 		newsJson, err := json.Marshal(news)
 		if err != nil {
 			w.Write([]byte(err.Error()))
