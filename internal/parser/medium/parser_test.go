@@ -6,22 +6,32 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/parser/medium"
 )
 
-const (
-	URL = "https://medium.com/_/graphql"
-)
+func Test_articlesparser_ParseAll(t *testing.T) {
 
-func TestParseAll(t *testing.T) {
-
-	parser := medium.NewParser(URL)
-	articles, err := parser.ParseAll()
-
-	if err != nil {
-		t.Errorf("articlesparser.ParseAll() unexpected error = %v", err)
-		return
+	tests := []struct {
+		name    string
+		url     string
+		wantErr bool
+	}{
+		{name: "Default case", url: "https://medium.com/_/graphql", wantErr: false},
+		{name: "Incorect url", url: "https://mediumsssss.com/_/graphql", wantErr: true},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 
-	if len(articles) == 0 {
-		t.Errorf("articlesparser.ParseAll() responce is empty")
-		return
+			parser := medium.NewParser(tt.url)
+			gotArticles, err := parser.ParseAll()
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("articlesparser.ParseAll() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if len(gotArticles) == 0 && err == nil {
+				t.Errorf("articlesparser.ParseAll() responce is empty")
+				return
+			}
+
+		})
 	}
 }
