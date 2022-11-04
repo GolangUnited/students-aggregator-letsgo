@@ -25,33 +25,21 @@ func NewWebservice(config webservice.Config) webservice.Webservice {
 	}
 }
 
-type Time struct {
-	time.Time
-}
-
-func (t Time) MarshalJSON() ([]byte, error) {
-	b := make([]byte, 0, len(time.RFC3339)+2)
-	b = append(b, '"')
-	b = t.AppendFormat(b, time.RFC3339)
-	b = append(b, '"')
-	return b, nil
-}
-
 func (ws *webService) MessageHandler(db db.Db) http.Handler {
 
-	news, err := db.ReadAllArticles()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		news, err := db.ReadAllArticles()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		for i, value := range news {
 			news[i] = model.DBArticle{
 				ID:          value.ID,
 				Title:       value.Title,
-				Created:     value.Created,
+				Created:     time.Unix(value.Created.Unix(), 0),
 				Author:      value.Author,
 				Description: value.Description,
 				URL:         value.URL}
