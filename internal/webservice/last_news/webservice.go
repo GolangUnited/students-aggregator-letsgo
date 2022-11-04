@@ -4,11 +4,9 @@ import (
 	"encoding/json"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
-	"github.com/indikator/aggregator_lets_go/model"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type webService struct {
@@ -35,15 +33,6 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-		for i, value := range news {
-			news[i] = model.DBArticle{
-				ID:          value.ID,
-				Title:       value.Title,
-				Created:     time.Unix(value.Created.Unix(), 0),
-				Author:      value.Author,
-				Description: value.Description,
-				URL:         value.URL}
-		}
 		newsJson, err := json.Marshal(news)
 		if err != nil {
 			w.Write([]byte(err.Error()))
