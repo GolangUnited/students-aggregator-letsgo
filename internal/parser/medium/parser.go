@@ -90,7 +90,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 				article := model.Article{
 					Title:       itemState.Post.Title,
 					URL:         itemState.Post.MediumUrl,
-					Created:     time.Unix(itemState.Post.FirstPublishedAt, 0),
+					Created:     time.Unix(itemState.Post.FirstPublishedAt/1000, 0),
 					Author:      itemState.Post.Creator.Name,
 					Description: itemState.Post.ExtendedPreviewContent.Subtitle,
 				}
