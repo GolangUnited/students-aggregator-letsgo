@@ -21,8 +21,6 @@ services:
   aggregator:
     image: aggregator
     container_name: aggregator
-    ports:
-      - 3306:3306
     build:
       context: .
       dockerfile: ./Dockerfile.aggregator
