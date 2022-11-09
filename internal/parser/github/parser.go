@@ -17,9 +17,9 @@ type articlesparser struct {
 }
 
 // / create an instance of articles parser
-func NewParser(URL string) parser.ArticlesParser {
+func NewParser(cfg parser.Config) parser.ArticlesParser {
 	return &articlesparser{
-		url: URL,
+		url: cfg.URL,
 	}
 }
 
@@ -79,7 +79,7 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 
 	c.OnHTML(p.getArticleContainerRef(), func(h *colly.HTMLElement) {
 		date := p.getDatetime(h)
-		if !date.Before(maxDate) {
+		if !date.After(maxDate) {
 			return
 		}
 		newArticle := p.getNewArticle(h)
@@ -91,7 +91,7 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 	return
 }
 
-// / parse n articles with a date less than the given one
+// parse n articles with a date less than the given one
 func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
 
 	c := colly.NewCollector()
