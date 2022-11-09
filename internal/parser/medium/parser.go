@@ -52,9 +52,9 @@ type ExtendedPreviewContent struct {
 }
 
 // create an instance of articles parser
-func NewParser(URL string) parser.ArticlesParser {
+func NewParser(cfg parser.Config) parser.ArticlesParser {
 	return &articlesparser{
-		url: URL,
+		url: cfg.URL,
 	}
 }
 
