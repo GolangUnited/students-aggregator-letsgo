@@ -2,6 +2,7 @@ package aggregator
 
 import (
 	"testing"
+	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
 )
@@ -55,7 +56,8 @@ func TestWorkWithStubParser(t *testing.T) {
 
 	parser := parsers[0]
 
-	articles, err := parser.ParseAll()
+	date := time.Now().AddDate(0, -2, 0)
+	articles, err := parser.ParseAfter(date)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
