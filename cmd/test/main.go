@@ -5,20 +5,22 @@ import (
 	"log"
 	"os"
 
-	//"time"
-
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/parser"
 	stub "github.com/indikator/aggregator_lets_go/internal/parser/stub"
 )
 
 func main() {
-	p := stub.NewParser("http://stub.com")
+
+	cfg := parser.Config{URL: "http://stub.com"}
+	p := stub.NewParser(cfg)
 	fmt.Println(p)
 
 	file, er := os.ReadFile("..\\aggregator\\config.yaml")
 	if er != nil {
 		log.Fatal(er)
 	}
+
 	fmt.Println(file)
 	c := config.NewConfig()
 
@@ -39,19 +41,16 @@ parsers:
     url: https://go.dev/blog
 - medium.com:
     url: https://medium.com/_/graphql`
+
 	fmt.Println([]byte(s))
-	err := c.SetData([]byte(s))
 
-	if err != nil {
+	if err := c.SetData([]byte(s)); err != nil {
 		log.Fatal(err)
 	}
 
-	err = c.Read()
-
-	if err != nil {
+	if err := c.Read(); err != nil {
 		log.Fatal(err)
 	}
-
 	fmt.Println(c)
 
 	//articles, err := p.ParseAll()
