@@ -56,7 +56,7 @@ func TestWorkWithStubParser(t *testing.T) {
 
 	parser := parsers[0]
 
-	date := time.Now().AddDate(0, -2, 0)
+	date := time.Now().AddDate(0, -3, 0)
 	articles, err := parser.ParseAfter(date)
 
 	if err != nil {
