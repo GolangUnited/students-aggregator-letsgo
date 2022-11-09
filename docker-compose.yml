@@ -34,8 +34,6 @@ services:
   mongodb:
     image: mvertes/alpine-mongo
     container_name: mongodb
-    ports:
-      - 27017:27017
     networks:
       - aggregatorNet
 
