@@ -60,16 +60,16 @@ func TestRead(t *testing.T) {
 	for _, p := range c.Parsers {
 		switch p.Name {
 		case "github":
-			if p.Url != "https://github.com/golang/go/tags" {
-				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.Url, "https://github.com/golang/go/tags")
+			if p.URL != "https://github.com/golang/go/tags" {
+				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.URL, "https://github.com/golang/go/tags")
 			}
 		case "go.dev":
-			if p.Url != "https://go.dev/blog" {
-				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.Url, "https://go.dev/blog")
+			if p.URL != "https://go.dev/blog" {
+				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.URL, "https://go.dev/blog")
 			}
 		case "medium.com":
-			if p.Url != "https://medium.com/_/graphql" {
-				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.Url, "https://medium.com/_/graphql")
+			if p.URL != "https://medium.com/_/graphql" {
+				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.URL, "https://medium.com/_/graphql")
 			}
 		default:
 			t.Errorf("unknown parser \"%s\"", p.Name)
