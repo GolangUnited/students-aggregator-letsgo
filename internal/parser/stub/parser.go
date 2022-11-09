@@ -1,7 +1,6 @@
 package stub
 
 import (
-	"sort"
 	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/parser"
@@ -38,16 +37,10 @@ func prepare(url string, date time.Time) []model.Article {
 }
 
 // create an instance of articles parser
-func NewParser(URL string) parser.ArticlesParser {
+func NewParser(cfg parser.Config) parser.ArticlesParser {
 	return &articlesparser{
-		url: URL,
+		url: cfg.URL,
 	}
-}
-
-// parse all avaibale articles
-func (p *articlesparser) ParseAll() ([]model.Article, error) {
-	articles := prepare(p.url, time.Now())
-	return articles, nil
 }
 
 // parse all articles that were created earler than the target date
@@ -59,28 +52,6 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) ([]model.Article, error) 
 	for _, a := range articles {
 		if a.Created.Before(maxDate) {
 			articles2 = append(articles2, a)
-		}
-	}
-
-	return articles2, nil
-}
-
-// parse n articles with a date less than the given one
-func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) ([]model.Article, error) {
-	articles := prepare(p.url, maxDate)
-
-	articles2 := make([]model.Article, 0)
-
-	sort.SliceStable(articles, func(i, j int) bool {
-		return articles[i].Created.Before(articles[j].Created)
-	})
-
-	for _, a := range articles {
-		if a.Created.Before(maxDate) {
-			articles2 = append(articles2, a)
-			if len(articles2) == n {
-				break
-			}
 		}
 	}
 
