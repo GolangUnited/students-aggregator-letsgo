@@ -85,7 +85,7 @@ func (p *articlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 		}
 
 		if len(states) == 0 && !initialRequest {
-			log.Printf("Problems in site at %v", time.Now())
+			log.Printf("Problems in site - medium.com - at %v", time.Now())
 			return articles, nil
 		}
 
