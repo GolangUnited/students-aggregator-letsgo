@@ -2,6 +2,7 @@ package aggregator
 
 import (
 	"fmt"
+	"time"
 
 	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/config"
@@ -55,7 +56,8 @@ func (a *Aggregator) Init(config *aconfig.Config, parsers []parser.ArticlesParse
 
 func (a *Aggregator) Execute() error {
 	for _, v := range a.parsers {
-		articles, err := v.ParseAll()
+		date := time.Now().AddDate(0, -2, 0)
+		articles, err := v.ParseAfter(date)
 
 		if err != nil {
 			return err

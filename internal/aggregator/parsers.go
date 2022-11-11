@@ -15,7 +15,8 @@ func GetParsers(pc []parser.Config) (parsers []parser.ArticlesParser, err error)
 			return nil, fmt.Errorf("unsupported parser name %s", v.Name)
 		}
 
-		parsers = append(parsers, newParserFunc(v.Url))
+		cfg := parser.Config{URL: v.URL}
+		parsers = append(parsers, newParserFunc(cfg))
 	}
 	return parsers, nil
 }

@@ -6,7 +6,7 @@ COPY ./ /github.com/indikator/aggregator_lets_go
 WORKDIR /github.com/indikator/aggregator_lets_go
 
 RUN go mod download && go mod tidy
-RUN CGO_ENABLED=0 GOOS=linux go build -o ./.bin/app ./cmd/webservice/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./.bin/app ./cmd/webservice/main.go
 
 FROM alpine:latest
 

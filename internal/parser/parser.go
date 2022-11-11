@@ -11,7 +11,7 @@ type ArticlesParser interface {
 	ParseAfter(date time.Time) (articles []model.Article, err error)
 }
 
-type NewParserFunc func(string) ArticlesParser
+type NewParserFunc func(cfg Config) ArticlesParser
 
 var ParserDefinitions map[string]NewParserFunc = make(map[string]NewParserFunc, 0)
 

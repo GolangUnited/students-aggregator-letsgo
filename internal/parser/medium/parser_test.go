@@ -4,10 +4,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/parser/medium"
 )
 
-func Test_articlesparser_ParseAll(t *testing.T) {
+func TestParseAfter(t *testing.T) {
 
 	tests := []struct {
 		name    string
@@ -20,8 +21,9 @@ func Test_articlesparser_ParseAll(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			parser := medium.NewParser(tt.url)
-			gotArticles, err := parser.ParseAfter(time.Date(2022, time.November, 8, 14, 0, 0, 0, time.UTC))
+			cfg := parser.Config{URL: tt.url}
+			parser, date := medium.NewParser(cfg), time.Now().AddDate(0, -2, 0)
+			gotArticles, err := parser.ParseAfter(date)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("articlesparser.ParseAll() error = %v, wantErr %v", err, tt.wantErr)
@@ -32,7 +34,6 @@ func Test_articlesparser_ParseAll(t *testing.T) {
 				t.Errorf("articlesparser.ParseAll() responce is empty")
 				return
 			}
-
 		})
 	}
 }
