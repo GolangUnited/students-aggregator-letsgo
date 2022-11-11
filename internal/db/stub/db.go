@@ -30,6 +30,6 @@ func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, err
 	return article, nil
 }
 
-func (d *database) ReadAllArticles() ([]model.DBArticle, error) {
+func (d *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	return d.Articles, nil
 }

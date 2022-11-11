@@ -33,7 +33,7 @@ func (mockdb *database) WriteArticle(article *model.DBArticle) (*model.DBArticle
 	return article, nil
 }
 
-func (mockdb *database) ReadAllArticles() ([]model.DBArticle, error) {
+func (mockdb *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	articles := []model.DBArticle{
 		{
 			ID:          id1,
@@ -57,16 +57,13 @@ func (mockdb *database) ReadAllArticles() ([]model.DBArticle, error) {
 
 // DBInit creates a new MongoDB client and connect to your running MongoDB server
 func (mockdb *database) DBInit() error {
-
 	fmt.Printf("Connected to %s\n", mockdb.url)
-
 	return nil
-
 }
 
 func TestMessageHandler(t *testing.T) {
 	c := config.NewConfig()
-	err := c.SetDataFromFile("../../configs/config.yaml")
+	err := c.SetDataFromFile("../../tests/configs/webservice/config.yaml")
 	if err != nil {
 		return
 	}
@@ -80,7 +77,7 @@ func TestMessageHandler(t *testing.T) {
 	handler := ws.MessageHandler(newDb)
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
-	req, err := http.NewRequest("GET", "/last_news", nil)
+	req, err := http.NewRequest("GET", c.WebService.Handle, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

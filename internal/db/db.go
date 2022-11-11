@@ -8,7 +8,7 @@ import (
 // Db interface to write and read to/from db
 type Db interface {
 	WriteArticle(article *model.DBArticle) (*model.DBArticle, error)
-	ReadAllArticles() ([]model.DBArticle, error)
+	ReadArticles(nDays int) ([]model.DBArticle, error)
 	DBInit() error
 }
 

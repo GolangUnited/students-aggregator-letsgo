@@ -26,7 +26,7 @@ func NewWebservice(config webservice.Config) webservice.Webservice {
 func (ws *webService) MessageHandler(db db.Db) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		news, err := db.ReadAllArticles()
+		news, err := db.ReadArticles(7)
 		if err != nil {
 			log.Fatal(err)
 		}

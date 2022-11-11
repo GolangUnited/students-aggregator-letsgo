@@ -38,10 +38,10 @@ func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, er
 
 }
 
-func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
+func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
 	filter := bson.M{"created": bson.M{
-		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -7)), //last 7 days
+		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -nDays)), //last 7 days
 	}}
 	articles := make([]model.DBArticle, 0)
 	cur, err := collection.Find(context.Background(), filter)
