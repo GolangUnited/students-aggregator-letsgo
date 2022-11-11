@@ -32,7 +32,7 @@ func prepare(url string, date time.Time) []model.Article {
 		Author:      "Stub Stub",
 	},
 	}
-	//fmt.Sprintf("Url = %s", p.Url)
+
 	return articles
 }
 

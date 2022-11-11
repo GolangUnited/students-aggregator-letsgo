@@ -1,34 +1,23 @@
 package aggregator
 
 import (
+	"reflect"
 	"testing"
-	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/model"
 )
 
 const (
-	configData = `# Project Aggregator YAML
-aggregator:
-  nothing:
-
-database:
-  name: stub
-  url: stub://localhost:22222/
-
-webservice:
-  port: 8080
-
-parsers:
-- stub:
-    url: https://stub.com`
+	configFilePath = "../../tests/configs/aggregator/config.yaml"
 )
 
-func TestWorkWithStubParser(t *testing.T) {
+func TestWorkWithStubParserAndDb(t *testing.T) {
 
 	c := config.NewConfig()
 
-	err := c.SetData([]byte(configData))
+	err := c.SetDataFromFile(configFilePath)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -40,46 +29,9 @@ func TestWorkWithStubParser(t *testing.T) {
 		t.Errorf("unexpected error %v", err)
 	}
 
-	if len(c.Parsers) != 1 {
-		t.Errorf("incorrect config parsers count %d, expected %d", len(c.Parsers), 1)
-	}
-
-	parsers, err := GetParsers(c.Parsers)
-
-	if err != nil {
-		t.Errorf("unexpected error %v", err)
-	}
-
-	if len(parsers) != 1 {
-		t.Errorf("incorrect parsers count %d, expected %d", len(parsers), 1)
-	}
-
-	parser := parsers[0]
-
-	date := time.Now().AddDate(0, -3, 0)
-	articles, err := parser.ParseAfter(date)
-
-	if err != nil {
-		t.Errorf("unexpected error %v", err)
-	}
-
-	if len(articles) != 3 {
-		t.Errorf("incorrect articles count %d, expected %d", len(articles), 3)
-	}
-
-	db, err := GetDb(c.Database)
-
-	// if db.As(db_stub.Db) {
-	// 	t.Errorf("incorrect dbms, expected stub")
-	// }
-
-	if err != nil {
-		t.Errorf("unexpected error %v", err)
-	}
-
 	a := NewAggregator()
 
-	err = a.Init(&c.Aggregator, parsers, db)
+	err = a.InitAllByConfig(c)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -91,13 +43,29 @@ func TestWorkWithStubParser(t *testing.T) {
 		t.Errorf("unexpected error %v", err)
 	}
 
-	dbArticles, err := db.ReadAllArticles()
+	articlesFromParser, err := a.parsers[0].ParseAfter(a.lastCheckDatetime)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
 	}
 
-	if len(dbArticles) != 3 {
-		t.Errorf("incorrect db articles count %d, expected %d", len(dbArticles), 3)
+	articles, err := a.db.ReadAllArticles()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	var articlesFromDb []model.Article
+
+	for _, article := range articles {
+		dbArticle := db.ConvertFromDbArticle(article)
+
+		articlesFromDb = append(articlesFromDb, *dbArticle)
+	}
+
+	if !reflect.DeepEqual(articlesFromDb, articlesFromParser) {
+		t.Log(articlesFromDb, articlesFromParser)
+
+		t.Errorf("articles received from a database are different from articles received from a parser")
 	}
 }

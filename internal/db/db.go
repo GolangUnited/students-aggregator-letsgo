@@ -22,3 +22,24 @@ func ConvertArticle(article model.Article) *model.DBArticle {
 		URL:         article.URL,
 	}
 }
+
+func ConvertToDbArticle(article model.Article) *model.DBArticle {
+	return &model.DBArticle{
+		ID:          primitive.NewObjectID(),
+		Title:       article.Title,
+		Created:     article.Created,
+		Author:      article.Author,
+		Description: article.Description,
+		URL:         article.URL,
+	}
+}
+
+func ConvertFromDbArticle(article model.DBArticle) *model.Article {
+	return &model.Article{
+		Title:       article.Title,
+		Created:     article.Created,
+		Author:      article.Author,
+		Description: article.Description,
+		URL:         article.URL,
+	}
+}

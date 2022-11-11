@@ -1,7 +1,6 @@
 package aggregator
 
 import (
-	"fmt"
 	"time"
 
 	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
@@ -13,10 +12,15 @@ import (
 )
 
 type Aggregator struct {
-	config  aconfig.Config
-	parsers []parser.ArticlesParser
-	db      db.Db
+	config            aconfig.Config
+	parsers           []parser.ArticlesParser
+	db                db.Db
+	lastCheckDatetime time.Time
 }
+
+const (
+	daysAgo = 1
+)
 
 func NewAggregator() *Aggregator {
 	return &Aggregator{}
@@ -55,9 +59,10 @@ func (a *Aggregator) Init(config *aconfig.Config, parsers []parser.ArticlesParse
 }
 
 func (a *Aggregator) Execute() error {
+	a.lastCheckDatetime = time.Now().AddDate(0, -daysAgo, 0)
+
 	for _, v := range a.parsers {
-		date := time.Now().AddDate(0, -2, 0)
-		articles, err := v.ParseAfter(date)
+		articles, err := v.ParseAfter(a.lastCheckDatetime)
 
 		if err != nil {
 			return err
@@ -79,11 +84,7 @@ func (a *Aggregator) Execute() error {
 				return err
 			}
 		}
-
-		fmt.Println(articles)
 	}
-
-	fmt.Println(a.config)
 
 	return nil
 }

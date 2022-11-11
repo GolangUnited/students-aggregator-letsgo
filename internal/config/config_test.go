@@ -5,31 +5,14 @@ import (
 )
 
 const (
-	configData = `# Project Aggregator YAML
-aggregator:
-  nothing:
-
-database:
-  name: stub
-  url: stub://localhost:22222/
-
-webservice:
-  port: 8080
-
-parsers:
-- github:
-    url: https://github.com/golang/go/tags
-- go.dev:
-    url: https://go.dev/blog
-- medium.com:
-    url: https://medium.com/_/graphql`
+	configFilePath = "../../tests/configs/config/config.yaml"
 )
 
 func TestRead(t *testing.T) {
 
 	c := NewConfig()
 
-	err := c.SetData([]byte(configData))
+	err := c.SetDataFromFile(configFilePath)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
