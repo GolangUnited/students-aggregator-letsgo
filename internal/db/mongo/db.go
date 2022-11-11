@@ -30,9 +30,9 @@ func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, er
 
 	_, err := collection.InsertOne(context.Background(), article)
 	if err != nil {
-		article = nil
+		return nil, err
 	}
-	return article, err
+	return article, nil
 
 }
 
