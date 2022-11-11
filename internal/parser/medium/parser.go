@@ -13,7 +13,11 @@ import (
 	"github.com/indikator/aggregator_lets_go/model"
 )
 
-type articlesparser struct {
+const (
+	limitQuantityStates = 25
+)
+
+type articlesParser struct {
 	url string
 }
 
@@ -53,7 +57,7 @@ type ExtendedPreviewContent struct {
 
 // create an instance of articles parser
 func NewParser(cfg parser.Config) parser.ArticlesParser {
-	return &articlesparser{
+	return &articlesParser{
 		url: cfg.URL,
 	}
 }
@@ -63,7 +67,7 @@ func init() {
 }
 
 // / parse all articles that were created earler than the target date
-func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
+func (p *articlesParser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	var (
 		dateLastState   int64
@@ -103,8 +107,9 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 		}
 
 		initialRequest = false
-		// Every time increase value an 26 because limit quantity states is 25
-		initNumberState += 26
+
+		// For implement pagination, this required in request
+		initNumberState += limitQuantityStates
 
 		if maxDateUnix >= dateLastState {
 			break
