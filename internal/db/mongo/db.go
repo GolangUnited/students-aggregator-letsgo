@@ -3,6 +3,8 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -38,7 +40,9 @@ func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, er
 
 func (db *database) ReadAllArticles() ([]model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
-	filter := bson.D{{}}
+	filter := bson.M{"created": bson.M{
+		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -7)), //last 7 days
+	}}
 	articles := make([]model.DBArticle, 0)
 	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
@@ -82,7 +86,7 @@ func (db *database) DBInit() error {
 	collection = client.Database("news").Collection("articles")
 
 	// Declare model for the indexes
-	indexName, err := collection.Indexes().CreateOne(
+	_, err = collection.Indexes().CreateOne(
 		context.Background(),
 		mongo.IndexModel{
 			Keys: bson.D{
@@ -94,10 +98,6 @@ func (db *database) DBInit() error {
 			Options: options.Index().SetUnique(true),
 		},
 	)
-	if err != nil {
-		return err
-	}
-	fmt.Println(indexName)
 
 	return nil
 }

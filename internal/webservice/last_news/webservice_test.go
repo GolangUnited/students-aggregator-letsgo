@@ -1,10 +1,12 @@
 package last_news
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 	"time"
 
@@ -96,9 +98,29 @@ func TestMessageHandler(t *testing.T) {
 	}
 
 	// Check the response body is what we expect.
-	expected := fmt.Sprintf(`[{"ID":"%s","Title":"test_title","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article for newDb","URL":"test_article.com"},{"ID":"%s","Title":"test_title1","Created":"2022-01-01T02:01:01.000000001Z","Author":"mikhailov.mk","Description":"test article1 for newDb","URL":"test_article1.com"}]`, id1.Hex(), id2.Hex())
-	if rr.Body.String() != expected {
+	expected := []model.DBArticle{
+		{
+			ID:          id1,
+			Title:       "test_title",
+			Created:     time.Date(2022, 1, 1, 2, 1, 1, 1, time.UTC),
+			Author:      "mikhailov.mk",
+			Description: "test article for db",
+			URL:         "test_article.com",
+		},
+		{
+			ID:          id2,
+			Title:       "test_title1",
+			Created:     time.Date(2022, 1, 1, 2, 1, 1, 1, time.UTC),
+			Author:      "mikhailov.mk",
+			Description: "test article1 for db",
+			URL:         "test_article1.com",
+		},
+	}
+	resp := &[]model.DBArticle{}
+	json.Unmarshal([]byte(rr.Body.String()), resp)
+	fmt.Println(resp, expected)
+	if !reflect.DeepEqual(resp, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
-			rr.Body.String(), expected)
+			resp, expected)
 	}
 }
