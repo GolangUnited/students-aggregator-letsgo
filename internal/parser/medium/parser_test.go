@@ -2,6 +2,7 @@ package medium_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/parser/medium"
 )
@@ -20,7 +21,7 @@ func Test_articlesparser_ParseAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			parser := medium.NewParser(tt.url)
-			gotArticles, err := parser.ParseAll()
+			gotArticles, err := parser.ParseAfter(time.Date(2022, time.November, 8, 14, 0, 0, 0, time.UTC))
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("articlesparser.ParseAll() error = %v, wantErr %v", err, tt.wantErr)

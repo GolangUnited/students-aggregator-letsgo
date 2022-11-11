@@ -17,15 +17,15 @@ type articlesparser struct {
 	url string
 }
 
-type ResponceMedium struct {
-	Data DataResponce
+type StatesMedium struct {
+	Data DataStates
 }
 
-type DataResponce struct {
-	TagFeed TagFeedResponce
+type DataStates struct {
+	TagFeed TagFeed
 }
 
-type TagFeedResponce struct {
+type TagFeed struct {
 	Items []Item
 }
 
@@ -62,14 +62,15 @@ func init() {
 	parser.RegisterParser("medium.com", NewParser)
 }
 
-func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
+// / parse all articles that were created earler than the target date
+func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	var (
 		dateLastState   int64
 		initNumberState int
 	)
 
-	dateNow := time.Now().UnixMilli()
+	maxDateUnix := maxDate.UnixMilli()
 	initialRequest := true
 
 	for true {
@@ -96,7 +97,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 				}
 				articles = append(articles, article)
 				if index == (lenItemsStates - 1) {
-					dateLastState = itemState.Post.FirstPublishedAt
+					dateLastState = itemState.Post.FirstPublishedAt / 1000
 				}
 			}
 		}
@@ -105,8 +106,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 		// Every time increase value an 26 because limit quantity states is 25
 		initNumberState += 26
 
-		// 604800 - second in week
-		if (dateNow - dateLastState) >= 604800 {
+		if maxDateUnix >= dateLastState {
 			break
 		}
 
@@ -115,19 +115,7 @@ func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
 	return
 }
 
-// / parse all articles that were created earler than the target date
-func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
-
-	return
-}
-
-// / parse n articles with a date less than the given one
-func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
-
-	return
-}
-
-func getStates(url string, initialRequest bool, initNumberState int) (states []ResponceMedium, err error) {
+func getStates(url string, initialRequest bool, initNumberState int) (states []StatesMedium, err error) {
 
 	responseBody := getBody(initialRequest, initNumberState)
 
