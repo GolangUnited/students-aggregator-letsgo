@@ -10,10 +10,10 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./.bin/app ./cmd/aggregato
 
 FROM alpine:latest
 
-COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /root
+COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /bin
 COPY ./configs /root/configs
 COPY ./etc /root/etc
 
-RUN echo "*/1 * * * * /root/app " > /etc/crontabs/root
+RUN echo "*/1 * * * * /bin/app " > /etc/crontabs/root
 
 CMD [ "crond", "-l", "2", "-f" ]
