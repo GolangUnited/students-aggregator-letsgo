@@ -76,28 +76,28 @@ func getArticles() (articles []model.Article, err error) {
 	return []model.Article{
 		{
 			Title:       "go1.19.3",
-			Created:     dates[0],
-			Description: "[release-branch.go1.19] go1.19.3\n      Change-Id: I167308920eeb7480efb626ce75f777a335e870b0\nReviewed-on: https://go-review.googlesource.com/c/go/+/446958\nRun-TryBot: Gopher Robot <gobot@golang.org>\nReviewed-by: Matthew Dempsky <mdempsky@google.com>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nReviewed-by: Heschi Kreinick <heschi@google.com>\nTryBot-Result: Gopher Robot <gobot@golang.org>",
 			URL:         "https://github.com/golang/go/releases/tag/go1.19.3",
-			Author:      "",
+			Created:     dates[0],
+			Author:      "Gopher Robot <gobot@golang.org>",
+			Description: "[release-branch.go1.19] go1.19.3\n      Change-Id: I167308920eeb7480efb626ce75f777a335e870b0\nReviewed-on: https://go-review.googlesource.com/c/go/+/446958\nRun-TryBot: Gopher Robot <gobot@golang.org>\nReviewed-by: Matthew Dempsky <mdempsky@google.com>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nReviewed-by: Heschi Kreinick <heschi@google.com>\nTryBot-Result: Gopher Robot <gobot@golang.org>",
 		}, {
 			Title:       "go1.18.8",
-			Created:     dates[1],
-			Description: "[release-branch.go1.18] go1.18.8\n      Change-Id: I89e791f1d6ae0984ba62bccef05886acbb10b2dd\nReviewed-on: https://go-review.googlesource.com/c/go/+/446957\nRun-TryBot: Gopher Robot <gobot@golang.org>\nReviewed-by: Matthew Dempsky <mdempsky@google.com>\nTryBot-Result: Gopher Robot <gobot@golang.org>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nReviewed-by: Heschi Kreinick <heschi@google.com>",
 			URL:         "https://github.com/golang/go/releases/tag/go1.18.8",
-			Author:      "",
+			Created:     dates[1],
+			Author:      "Gopher Robot <gobot@golang.org>",
+			Description: "[release-branch.go1.18] go1.18.8\n      Change-Id: I89e791f1d6ae0984ba62bccef05886acbb10b2dd\nReviewed-on: https://go-review.googlesource.com/c/go/+/446957\nRun-TryBot: Gopher Robot <gobot@golang.org>\nReviewed-by: Matthew Dempsky <mdempsky@google.com>\nTryBot-Result: Gopher Robot <gobot@golang.org>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nReviewed-by: Heschi Kreinick <heschi@google.com>",
 		}, {
 			Title:       "go1.19.2",
-			Created:     dates[2],
-			Description: "[release-branch.go1.19] go1.19.2\n      Change-Id: Ia5de3a0fa07f212c5c19f9e01b0ed2cfab739e95\nReviewed-on: https://go-review.googlesource.com/c/go/+/438598\nReviewed-by: Dmitri Shuralyov <dmitshur@google.com>\nReviewed-by: Carlos Amedee <carlos@golang.org>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nRun-TryBot: Gopher Robot <gobot@golang.org>\nTryBot-Result: Gopher Robot <gobot@golang.org>",
 			URL:         "https://github.com/golang/go/releases/tag/go1.19.2",
-			Author:      "",
+			Created:     dates[2],
+			Author:      "Gopher Robot <gobot@golang.org>",
+			Description: "[release-branch.go1.19] go1.19.2\n      Change-Id: Ia5de3a0fa07f212c5c19f9e01b0ed2cfab739e95\nReviewed-on: https://go-review.googlesource.com/c/go/+/438598\nReviewed-by: Dmitri Shuralyov <dmitshur@google.com>\nReviewed-by: Carlos Amedee <carlos@golang.org>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nRun-TryBot: Gopher Robot <gobot@golang.org>\nTryBot-Result: Gopher Robot <gobot@golang.org>",
 		}, {
 			Title:       "go1.18.7",
-			Created:     dates[3],
-			Description: "[release-branch.go1.18] go1.18.7\n      Change-Id: I0636d7335381c25ce39fd44c8cf758fb84737551\nReviewed-on: https://go-review.googlesource.com/c/go/+/438597\nReviewed-by: Carlos Amedee <carlos@golang.org>\nRun-TryBot: Gopher Robot <gobot@golang.org>\nReviewed-by: Dmitri Shuralyov <dmitshur@google.com>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nTryBot-Result: Gopher Robot <gobot@golang.org>",
 			URL:         "https://github.com/golang/go/releases/tag/go1.18.7",
-			Author:      "",
+			Created:     dates[3],
+			Author:      "Gopher Robot <gobot@golang.org>",
+			Description: "[release-branch.go1.18] go1.18.7\n      Change-Id: I0636d7335381c25ce39fd44c8cf758fb84737551\nReviewed-on: https://go-review.googlesource.com/c/go/+/438597\nReviewed-by: Carlos Amedee <carlos@golang.org>\nRun-TryBot: Gopher Robot <gobot@golang.org>\nReviewed-by: Dmitri Shuralyov <dmitshur@google.com>\nAuto-Submit: Gopher Robot <gobot@golang.org>\nTryBot-Result: Gopher Robot <gobot@golang.org>",
 		},
 	}, nil
 }
