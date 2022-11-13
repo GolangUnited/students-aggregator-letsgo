@@ -3,8 +3,9 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -17,15 +18,24 @@ import (
 var collection *mongo.Collection
 
 type database struct {
-	url string
+	name string
+	url  string
 }
 
 // NewDb create an instance of database
 func NewDb(c db.Config) db.Db {
-	URL := c.Url
 	return &database{
-		url: URL,
+		name: c.Name,
+		url:  c.Url,
 	}
+}
+
+func (db *database) Name() string {
+	return db.name
+}
+
+func (db *database) Url() string {
+	return db.url
 }
 
 func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {

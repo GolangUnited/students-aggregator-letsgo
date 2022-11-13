@@ -100,12 +100,12 @@ func TestReadAllArticles(t *testing.T) {
 		}
 		killCursors := mtest.CreateCursorResponse(0, "foo.bar", mtest.NextBatch)
 		mt.AddMockResponses(mtest.CreateCursorResponse(1, "foo.bar", mtest.FirstBatch, bson.D{
-			{"_id", expectedArticle.ID},
-			{"title", expectedArticle.Title},
-			{"author", expectedArticle.Author},
-			{"created", expectedArticle.Created},
-			{"summary", expectedArticle.Description},
-			{"url", expectedArticle.URL},
+			{Key: "_id", Value: expectedArticle.ID},
+			{Key: "title", Value: expectedArticle.Title},
+			{Key: "author", Value: expectedArticle.Author},
+			{Key: "created", Value: expectedArticle.Created},
+			{Key: "summary", Value: expectedArticle.Description},
+			{Key: "url", Value: expectedArticle.URL},
 		}), killCursors)
 
 		articleResponse, err := mongoDb.ReadArticles(2)

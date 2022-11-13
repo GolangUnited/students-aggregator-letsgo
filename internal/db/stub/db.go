@@ -15,6 +15,14 @@ func NewDb(config db.Config) db.Db {
 	return &database{config: config}
 }
 
+func (d *database) Name() string {
+	return d.config.Name
+}
+
+func (d *database) Url() string {
+	return d.config.Url
+}
+
 func (d *database) DBInit() error {
 	return nil
 }
