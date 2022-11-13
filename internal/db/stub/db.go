@@ -1,8 +1,6 @@
 package stub
 
 import (
-	"fmt"
-
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
 )
@@ -18,9 +16,6 @@ func NewDb(config db.Config) db.Db {
 }
 
 func (d *database) DBInit() error {
-	if d.config.Name != "stub" {
-		return fmt.Errorf("incorrect db name %s, expected %s", d.config.Name, "stub")
-	}
 	return nil
 }
 

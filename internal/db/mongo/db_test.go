@@ -1,6 +1,9 @@
 package mongo
 
 import (
+	"testing"
+	"time"
+
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/model"
 	"github.com/stretchr/testify/assert"
@@ -8,8 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
-	"testing"
-	"time"
 )
 
 func TestWriteArticle(t *testing.T) {
@@ -92,7 +93,7 @@ func TestReadAllArticles(t *testing.T) {
 		expectedArticle := model.DBArticle{
 			ID:          primitive.NewObjectID(),
 			Title:       "test_title",
-			Created:     time.Date(2022, 1, 1, 1, 1, 1, 0, time.UTC),
+			Created:     time.Now().AddDate(0, -1, 0),
 			Author:      "mikhailov.mk",
 			Description: "test article for db",
 			URL:         "test_article.com",
@@ -107,7 +108,7 @@ func TestReadAllArticles(t *testing.T) {
 			{"url", expectedArticle.URL},
 		}), killCursors)
 
-		articleResponse, err := mongoDb.ReadAllArticles()
+		articleResponse, err := mongoDb.ReadArticles(2)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedArticle, articleResponse[0])

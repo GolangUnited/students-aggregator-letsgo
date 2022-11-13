@@ -11,6 +11,7 @@ import (
 
 const (
 	configFilePath = "../../tests/configs/aggregator/config.yaml"
+	daysAgoFromDb  = 3
 )
 
 func TestWorkWithStubParserAndDb(t *testing.T) {
@@ -49,7 +50,7 @@ func TestWorkWithStubParserAndDb(t *testing.T) {
 		t.Errorf("unexpected error %v", err)
 	}
 
-	articles, err := a.db.ReadAllArticles()
+	articles, err := a.db.ReadArticles(daysAgoFromDb)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
