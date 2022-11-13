@@ -12,7 +12,6 @@ services:
       dockerfile: ./Dockerfile.webservice
     depends_on:
       - mongodb
-      - aggregator
     links:
       - mongodb
     networks:
