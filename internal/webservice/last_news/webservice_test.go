@@ -3,12 +3,13 @@ package last_news
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/indikator/aggregator_lets_go/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/indikator/aggregator_lets_go/internal/config"
 
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -16,14 +17,26 @@ import (
 )
 
 type database struct {
-	url string
+	name string
+	url  string
 }
 
 // NewDb create an instance of database
 func NewDb(c db.Config) db.Db {
 	return &database{
-		url: c.Url,
+		name: c.Name,
+		url:  c.Url,
 	}
+}
+
+// Name implements db.Db
+func (mockdb *database) Name() string {
+	return mockdb.name
+}
+
+// Url implements db.Db
+func (mockdb *database) Url() string {
+	return mockdb.url
 }
 
 var id1 = primitive.NewObjectID()
