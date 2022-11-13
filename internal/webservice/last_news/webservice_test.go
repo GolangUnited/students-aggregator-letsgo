@@ -2,7 +2,7 @@ package last_news
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/indikator/aggregator_lets_go/internal/db/stub"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -11,68 +11,12 @@ import (
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
 
-	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type database struct {
-	name string
-	url  string
-}
-
-// NewDb create an instance of database
-func NewDb(c db.Config) db.Db {
-	return &database{
-		name: c.Name,
-		url:  c.Url,
-	}
-}
-
-// Name implements db.Db
-func (mockdb *database) Name() string {
-	return mockdb.name
-}
-
-// Url implements db.Db
-func (mockdb *database) Url() string {
-	return mockdb.url
-}
-
 var id1 = primitive.NewObjectID()
 var id2 = primitive.NewObjectID()
-
-func (mockdb *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
-	return article, nil
-}
-
-func (mockdb *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
-	articles := []model.DBArticle{
-		{
-			ID:          id1,
-			Title:       "test_title",
-			Created:     time.Date(2022, 1, 1, 2, 1, 1, 1, time.UTC),
-			Author:      "mikhailov.mk",
-			Description: "test article for db",
-			URL:         "test_article.com",
-		},
-		{
-			ID:          id2,
-			Title:       "test_title1",
-			Created:     time.Date(2022, 1, 1, 2, 1, 1, 1, time.UTC),
-			Author:      "mikhailov.mk",
-			Description: "test article1 for db",
-			URL:         "test_article1.com",
-		},
-	}
-	return articles, nil
-}
-
-// DBInit creates a new MongoDB client and connect to your running MongoDB server
-func (mockdb *database) DBInit() error {
-	fmt.Printf("Connected to %s\n", mockdb.url)
-	return nil
-}
 
 func TestMessageHandler(t *testing.T) {
 	c := config.NewConfig()
@@ -85,15 +29,17 @@ func TestMessageHandler(t *testing.T) {
 		return
 	}
 	ws := NewWebservice(c.WebService)
-	newDb := NewDb(c.Database)
+	newDb := stub.NewDb(c.Database)
 
 	handler := ws.MessageHandler(newDb)
+
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
 	req, err := http.NewRequest("GET", c.WebService.Handle, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
 
@@ -126,9 +72,13 @@ func TestMessageHandler(t *testing.T) {
 			URL:         "test_article1.com",
 		},
 	}
+
 	resp := &[]model.DBArticle{}
-	json.Unmarshal([]byte(rr.Body.String()), resp)
-	fmt.Println(resp, expected)
+	err = json.Unmarshal([]byte(rr.Body.String()), resp)
+	if err != nil {
+		return
+	}
+
 	if !reflect.DeepEqual(resp, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			resp, expected)
