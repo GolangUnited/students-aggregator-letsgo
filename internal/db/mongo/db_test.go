@@ -54,34 +54,33 @@ func TestWriteArticle(t *testing.T) {
 
 	mt.Run("custom error duplicate", func(mt *mtest.T) {
 		collection = mt.Coll
+		id := primitive.NewObjectID()
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
 			Message: "duplicate key error",
 		}))
 
-		insertedArticle, err := mongoDb.WriteArticle(&model.DBArticle{})
+		insertedArticle, err := mongoDb.WriteArticle(&model.DBArticle{
+			ID:          id,
+			Title:       "test_title",
+			Created:     time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
+			Author:      "mikhailov.mk",
+			Description: "test article for db",
+			URL:         "test_article.com",
+		})
 
 		assert.Nil(t, insertedArticle)
 		assert.NotNil(t, err)
 		assert.True(t, mongo.IsDuplicateKeyError(err))
 	})
 
-	mt.Run("simple error", func(mt *mtest.T) {
-		collection = mt.Coll
-		mt.AddMockResponses(bson.D{{"ok", 0}})
-
-		insertedArticle, err := mongoDb.WriteArticle(&model.DBArticle{})
-
-		assert.Nil(t, insertedArticle)
-		assert.NotNil(t, err)
-	})
 }
 
-func TestReadAllArticles(t *testing.T) {
+func TestReadArticles(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	c := config.NewConfig()
-	err := c.SetDataFromFile("../../configs/config.yaml")
+	err := c.SetDataFromFile("../../tests/configs/mongo/config.yaml")
 	if err != nil {
 		return
 	}
