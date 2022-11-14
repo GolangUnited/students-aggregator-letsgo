@@ -6,13 +6,12 @@ services:
     image: web-service
     container_name: web-service
     ports:
-      - 8080:8080
+      - 80:8080
     build:
       context: .
       dockerfile: ./Dockerfile.webservice
     depends_on:
       - mongodb
-      - aggregator
     links:
       - mongodb
     networks:
@@ -21,8 +20,6 @@ services:
   aggregator:
     image: aggregator
     container_name: aggregator
-    ports:
-      - 3306:3306
     build:
       context: .
       dockerfile: ./Dockerfile.aggregator
@@ -36,8 +33,6 @@ services:
   mongodb:
     image: mvertes/alpine-mongo
     container_name: mongodb
-    ports:
-      - 27017:27017
     networks:
       - aggregatorNet
 

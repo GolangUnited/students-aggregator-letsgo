@@ -2,6 +2,7 @@ package aggregator
 
 import (
 	"fmt"
+	"time"
 
 	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/config"
@@ -12,10 +13,15 @@ import (
 )
 
 type Aggregator struct {
-	config  aconfig.Config
-	parsers []parser.ArticlesParser
-	db      db.Db
+	config            aconfig.Config
+	parsers           []parser.ArticlesParser
+	db                db.Db
+	lastCheckDatetime time.Time
 }
+
+const (
+	daysAgo = 1
+)
 
 func NewAggregator() *Aggregator {
 	return &Aggregator{}
@@ -54,11 +60,20 @@ func (a *Aggregator) Init(config *aconfig.Config, parsers []parser.ArticlesParse
 }
 
 func (a *Aggregator) Execute() error {
+	a.lastCheckDatetime = time.Now().AddDate(0, -daysAgo, 0)
+
+	var errAll error = nil
+
 	for _, v := range a.parsers {
-		articles, err := v.ParseAll()
+		articles, err := v.ParseAfter(a.lastCheckDatetime)
 
 		if err != nil {
-			return err
+			if errAll != nil {
+				errAll = fmt.Errorf("%v; %v", errAll, err)
+			} else {
+				errAll = err
+			}
+			continue
 		}
 
 		for _, article := range articles {
@@ -74,14 +89,14 @@ func (a *Aggregator) Execute() error {
 			})
 
 			if err != nil {
-				return err
+				if errAll != nil {
+					errAll = fmt.Errorf("%v; %v", errAll, err)
+				} else {
+					errAll = err
+				}
 			}
 		}
-
-		fmt.Println(articles)
 	}
 
-	fmt.Println(a.config)
-
-	return nil
+	return errAll
 }

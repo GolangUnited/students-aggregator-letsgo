@@ -1,8 +1,6 @@
 package stub
 
 import (
-	"fmt"
-
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/model"
 )
@@ -17,10 +15,15 @@ func NewDb(config db.Config) db.Db {
 	return &database{config: config}
 }
 
+func (d *database) Name() string {
+	return d.config.Name
+}
+
+func (d *database) Url() string {
+	return d.config.Url
+}
+
 func (d *database) DBInit() error {
-	if d.config.Name != "stub" {
-		return fmt.Errorf("incorrect db name %s, expected %s", d.config.Name, "stub")
-	}
 	return nil
 }
 
@@ -30,6 +33,6 @@ func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, err
 	return article, nil
 }
 
-func (d *database) ReadAllArticles() ([]model.DBArticle, error) {
+func (d *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	return d.Articles, nil
 }

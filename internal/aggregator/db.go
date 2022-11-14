@@ -8,6 +8,18 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/db/stub"
 )
 
+const (
+	unknownDbmsErrorTemplate = "unknown dbms %s"
+)
+
+type UnknownDbmsError struct {
+	Text string
+}
+
+func (e *UnknownDbmsError) Error() string {
+	return e.Text
+}
+
 func GetDb(config db.Config) (db.Db, error) {
 	var d db.Db
 
@@ -17,7 +29,9 @@ func GetDb(config db.Config) (db.Db, error) {
 	case "mongo":
 		d = mongo.NewDb(config)
 	default:
-		return nil, fmt.Errorf("unknown dbms %s", config.Name)
+		return nil, &UnknownDbmsError{
+			Text: fmt.Sprintf(unknownDbmsErrorTemplate, config.Name),
+		}
 	}
 
 	err := d.DBInit()

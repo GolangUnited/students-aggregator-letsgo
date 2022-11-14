@@ -24,7 +24,7 @@ func NewConfig() *Config {
 }
 
 type parserYamlConfig struct {
-	Url string `yaml:"url"`
+	URL string `yaml:"url"`
 }
 
 type yamlConfig struct {
@@ -67,7 +67,7 @@ func (c *Config) Read() (err error) {
 
 	for i, v := range yc.Parsers {
 		for name, p := range v {
-			c.Parsers[i] = parser.Config{Name: name, Url: p.Url}
+			c.Parsers[i] = parser.Config{Name: name, URL: p.URL}
 		}
 	}
 

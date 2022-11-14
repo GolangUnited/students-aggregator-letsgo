@@ -3,12 +3,11 @@ aggregator:
   nothing:
 
 database:
-  name: mongo
-  url: mongodb://mongodb:27017
+  name: stub
+  url: stub://localhost:22222/
 
 webservice:
   port: 8080
-  handle: /last_news
 
 parsers:
 - github:

@@ -1,6 +1,7 @@
 package godev
 
 import (
+	"net/http"
 	"strings"
 	"time"
 
@@ -10,41 +11,39 @@ import (
 )
 
 const (
-	dateFormat = "2 January 2006"
+	dateFormat      = "2 January 2006"
+	scheme          = "file"
+	webpageLocation = "../../../tests/data/parser/godev/"
 )
 
 type articlesparser struct {
-	url string
+	url       string
+	collector *colly.Collector
 }
 
 // create an instance of articles parser
-func NewParser(URL string) parser.ArticlesParser {
-	return &articlesparser{
-		url: URL,
+func NewParser(cfg parser.Config) parser.ArticlesParser {
+
+	collector := colly.NewCollector()
+
+	if cfg.IsLocal {
+		transport := &http.Transport{}
+		transport.RegisterProtocol(scheme, http.NewFileTransport(http.Dir(webpageLocation)))
+		collector.WithTransport(transport)
 	}
-}
 
-// parse all avaibale articles on a web page
-func (p *articlesparser) ParseAll() (articles []model.Article, err error) {
-
-	c, articleContainerRef := colly.NewCollector(), p.getArticleContainerRef()
-
-	c.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
-		article := p.getNewArticle(h)
-		articles = append(articles, article)
-	})
-
-	c.Visit(p.url)
-
-	return
+	return &articlesparser{
+		url:       cfg.URL,
+		collector: collector,
+	}
 }
 
 // parse all articles that were created earler than the target date
 func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
-	c, articleContainerRef := colly.NewCollector(), p.getArticleContainerRef()
+	articleContainerRef := p.getArticleContainerRef()
 
-	c.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
+	p.collector.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
 		article := p.getNewArticle(h)
 		if !article.Created.After(maxDate) {
 			return
@@ -52,25 +51,7 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 		articles = append(articles, article)
 	})
 
-	c.Visit(p.url)
-
-	return
-}
-
-// parse n articles with a date less than the given one
-func (p *articlesparser) ParseAfterN(maxDate time.Time, n int) (articles []model.Article, err error) {
-
-	c, articleContainerRef := colly.NewCollector(), p.getArticleContainerRef()
-
-	c.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
-		article := p.getNewArticle(h)
-		if !(article.Created.After(maxDate) && len(articles) < n) {
-			return
-		}
-		articles = append(articles, article)
-	})
-
-	c.Visit(p.url)
+	p.collector.Visit(p.url)
 
 	return
 }

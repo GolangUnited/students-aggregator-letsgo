@@ -16,20 +16,17 @@ jobs:
       - name: Install dependencies
         run: go get -v ./...
 
-      - name: Build
-        run: go build -v ./...
-
       - name: Test
         run: go test -v ./...
         
       - name: Coverage
-        run: go test ./... -coverprofile cover.out
+        run: go test ./... -coverprofile cover.html
         
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
         with:
-          name: cover.out
-          path: cover.out
+          name: cover.html
+          path: cover.html
           retention-days: 15
     
   publish:
@@ -42,9 +39,9 @@ jobs:
       - name: Extract Version
         id: version_step
         run: |
-          echo "##[set-output name=version;]VERSION=${GITHUB_REF#$"refs/tags/v"}"
-          echo "##[set-output name=version_tag;]$GITHUB_REPOSITORY:${GITHUB_REF#$"refs/tags/v"}"
-          echo "##[set-output name=latest_tag;]$GITHUB_REPOSITORY:latest"
+          echo "version=${GITHUB_REF#$"refs/tags/v"}" >> $GITHUB_OUTPUT
+          echo "version_tag=$GITHUB_REPOSITORY:${GITHUB_REF#$"refs/tags/v"}" >> $GITHUB_OUTPUT
+          echo "latest_tag=$GITHUB_REPOSITORY:latest" >> $GITHUB_OUTPUT
       - name: Print Version
         run: |
           echo ${{steps.version_step.outputs.version_tag}}
@@ -75,7 +72,8 @@ jobs:
           context: .
           file: ./Dockerfile.aggregator
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:latest,
+                ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:${{github.ref_name}}
           
       - name: Build and push webservice
         id: docker_build_webservice
@@ -84,4 +82,5 @@ jobs:
           context: .
           file: ./Dockerfile.webservice
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest,
+                ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:${{github.ref_name}}

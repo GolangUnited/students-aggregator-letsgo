@@ -1,0 +1,14 @@
+# Project Aggregator YAML
+aggregator:
+  nothing:
+
+database:
+  name: stub
+  url: stub://localhost:22222/
+
+webservice:
+  port: 8080
+
+parsers:
+- stub:
+    url: https://stub.com
