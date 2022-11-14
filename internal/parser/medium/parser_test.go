@@ -21,13 +21,13 @@ import (
 const (
 	// The file contains a request to the service database
 	url                  = "http://localhost/testMediumservice"
-	responceFile         = "../../../tests/data/parser/medium/responce.json"
+	responceFile         = "../../../tests/data/parser/medium/response.json"
 	testsArticlesFile    = "../../../tests/data/parser/medium/testArticles.json"
 	queryFileName        = "../../../etc/queryInMedium"
 	dateFormat           = "2006-01-02T15:04:05Z"
 	stringDate           = "2022-11-10T00:00:00Z"
 	hostService          = "localhost"
-	targetArticlesAmount = 4
+	targetArticlesAmount = 5
 )
 
 // RoundTripFunc .

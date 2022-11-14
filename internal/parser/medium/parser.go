@@ -81,11 +81,10 @@ func init() {
 func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	var (
-		dateLastState   int64
 		initNumberState int
+		firstCreated    time.Time
 	)
 
-	maxDateUnix := maxDate.UnixMilli()
 	initialRequest := true
 
 	for true {
@@ -101,30 +100,36 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 		}
 
 		for _, state := range states {
-			lenItemsStates := len(state.Data.TagFeed.Items)
-			for index, itemState := range state.Data.TagFeed.Items {
+			for _, itemState := range state.Data.TagFeed.Items {
+
+				created := time.Unix(itemState.Post.FirstPublishedAt/1000, 0)
+				if firstCreated.IsZero() {
+					firstCreated = created
+				}
+				if !created.After(maxDate) {
+					continue
+				}
 				article := model.Article{
 					Title:       itemState.Post.Title,
 					URL:         itemState.Post.MediumUrl,
-					Created:     time.Unix(itemState.Post.FirstPublishedAt/1000, 0),
+					Created:     created,
 					Author:      itemState.Post.Creator.Name,
 					Description: itemState.Post.ExtendedPreviewContent.Subtitle,
 				}
 				articles = append(articles, article)
-				if index == (lenItemsStates - 1) {
-					dateLastState = itemState.Post.FirstPublishedAt / 1000
+
+				if (created.Sub(firstCreated).Hours()/24) >= 7 || len(articles) >= 100 {
+					return articles, nil
 				}
 			}
 		}
 
-		initialRequest = false
+		if initialRequest {
+			initialRequest = false
+		}
 
 		// For implement pagination, this required in request
 		initNumberState += limitQuantityStates
-
-		if maxDateUnix >= dateLastState {
-			break
-		}
 
 	}
 
@@ -145,14 +150,14 @@ func getStates(p *ArticlesParser, initialRequest bool, initNumberState int) (sta
 	request.Header.Set("Host", p.Host)
 	request.Header.Set("Content-Type", "application/json")
 
-	responce, err := p.Client.Do(request)
-	if err != nil || responce.StatusCode != http.StatusOK {
+	response, err := p.Client.Do(request)
+	if err != nil || response.StatusCode != http.StatusOK {
 		return nil, err
 	}
 
-	defer responce.Body.Close()
+	defer response.Body.Close()
 
-	resBody, err := ioutil.ReadAll(responce.Body)
+	resBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +186,7 @@ func getBodyRequest(p *ArticlesParser, initialRequest bool, initNumberState int)
 	}
 
 	postBody = []byte(fmt.Sprintf(`[{"operationName":"TopicFeedQuery","variables":{"tagSlug":"golang","mode":"NEW",
-		"paging": %s,"query":"%s"}]`, paging, string(textFile)))
+		"paging": %s,"query":"%s`, paging, string(textFile)))
 
 	return bytes.NewBuffer(postBody), nil
 
