@@ -18,11 +18,8 @@ const (
 	limitQuantityStates = 25
 	// The file contains a request to the service database
 	queryFileName = "./etc/queryInMedium"
+	hostService   = "medium.com"
 )
-
-type articlesParser struct {
-	url string
-}
 
 type StatesMedium struct {
 	Data DataStates
@@ -58,19 +55,30 @@ type ExtendedPreviewContent struct {
 	Subtitle string
 }
 
+type ArticlesParser struct {
+	Client        *http.Client
+	Url           string
+	Host          string
+	QueryFileName string
+}
+
 // create an instance of articles parser
 func NewParser(cfg parser.Config) parser.ArticlesParser {
-	return &articlesParser{
-		url: cfg.URL,
+
+	return &ArticlesParser{
+		Client:        &http.Client{},
+		Url:           cfg.URL,
+		Host:          hostService,
+		QueryFileName: queryFileName,
 	}
+
 }
 
 func init() {
-	parser.RegisterParser("medium.com", NewParser)
+	parser.RegisterParser(hostService, NewParser)
 }
 
-// / parse all articles that were created earler than the target date
-func (p *articlesParser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
+func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
 
 	var (
 		dateLastState   int64
@@ -82,13 +90,13 @@ func (p *articlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 
 	for true {
 
-		states, err := getStates(p.url, initialRequest, initNumberState)
+		states, err := getStates(p, initialRequest, initNumberState)
 		if err != nil {
 			return nil, err
 		}
 
 		if len(states) == 0 && !initialRequest {
-			log.Printf("Problems in site - medium.com - at %v", time.Now())
+			log.Printf("Problems in site - %s - at %v", time.Now(), p.Host)
 			return articles, nil
 		}
 
@@ -123,21 +131,21 @@ func (p *articlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 	return
 }
 
-func getStates(url string, initialRequest bool, initNumberState int) (states []StatesMedium, err error) {
+func getStates(p *ArticlesParser, initialRequest bool, initNumberState int) (states []StatesMedium, err error) {
 
-	responseBody, err := getBody(initialRequest, initNumberState)
+	requestBody, err := getBodyRequest(p, initialRequest, initNumberState)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := http.NewRequest(http.MethodPost, url, responseBody)
+	request, err := http.NewRequest(http.MethodPost, p.Url, requestBody)
 	if err != nil {
 		return nil, err
 	}
-	request.Header.Set("Host", "medium.com")
+	request.Header.Set("Host", p.Host)
 	request.Header.Set("Content-Type", "application/json")
 
-	responce, err := http.DefaultClient.Do(request)
+	responce, err := p.Client.Do(request)
 	if err != nil || responce.StatusCode != http.StatusOK {
 		return nil, err
 	}
@@ -158,7 +166,7 @@ func getStates(url string, initialRequest bool, initNumberState int) (states []S
 
 }
 
-func getBody(initialRequest bool, initNumberState int) (*bytes.Buffer, error) {
+func getBodyRequest(p *ArticlesParser, initialRequest bool, initNumberState int) (*bytes.Buffer, error) {
 
 	var postBody []byte
 
@@ -167,7 +175,7 @@ func getBody(initialRequest bool, initNumberState int) (*bytes.Buffer, error) {
 		paging = fmt.Sprintf(`{"limit":%d}}`, limitQuantityStates)
 	}
 
-	textFile, err := os.ReadFile(queryFileName)
+	textFile, err := os.ReadFile(p.QueryFileName)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,1002 @@
+[
+    {
+        "data": {
+            "tagFeed": {
+                "items": [
+                    {
+                        "feedId": "5f8b3656-4fa9-4d23-ae1e-34df6db1f138",
+                        "reason": 89,
+                        "moduleSourceEncoding": 17,
+                        "postProviderExplanation": {
+                            "reason": null,
+                            "topic": null,
+                            "__typename": "PostProviderExplanation"
+                        },
+                        "post": {
+                            "id": "f7fd81dc2cfb",
+                            "creator": {
+                                "__typename": "User",
+                                "name": "Ray Lin",
+                                "username": "raaaaaaaay86",
+                                "id": "a131f7f3a60f",
+                                "mediumMemberAt": 0,
+                                "socialStats": {
+                                    "followerCount": 2,
+                                    "__typename": "SocialStats"
+                                },
+                                "customDomainState": {
+                                    "live": {
+                                        "domain": "raaaaaaaay86.medium.com",
+                                        "__typename": "CustomDomain"
+                                    },
+                                    "__typename": "CustomDomainState"
+                                },
+                                "hasSubdomain": true,
+                                "bio": "",
+                                "imageId": "1*umjtRonqUCioOkCbXskK8A.jpeg",
+                                "isAuroraVisible": true,
+                                "newsletterV3": null
+                            },
+                            "collection": null,
+                            "extendedPreviewContent": {
+                                "bodyModel": {
+                                    "sections": [
+                                        {
+                                            "name": "5895",
+                                            "startIndex": 0,
+                                            "textLayout": null,
+                                            "imageLayout": null,
+                                            "backgroundImage": null,
+                                            "videoLayout": null,
+                                            "backgroundVideo": null,
+                                            "__typename": "Section"
+                                        }
+                                    ],
+                                    "paragraphs": [
+                                        {
+                                            "id": "bdf254543ae6_preview_0",
+                                            "name": "2dab",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Don’t Let time.Now() Breaks Your Unit Test",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "bdf254543ae6_preview_1",
+                                            "name": "fe1b",
+                                            "type": "IMG",
+                                            "href": null,
+                                            "layout": "INSET_CENTER",
+                                            "metadata": {
+                                                "id": "1*X_12RuZwnBGB9DjxS9w8yg.jpeg",
+                                                "originalHeight": 4069,
+                                                "originalWidth": 6144,
+                                                "focusPercentX": null,
+                                                "focusPercentY": null,
+                                                "alt": null,
+                                                "__typename": "ImageMetadata"
+                                            },
+                                            "text": "",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "bdf254543ae6_preview_2",
+                                            "name": "3094",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "When people want to get the current time in the Go, the first thing that comes up must be the time.Now(). I will give you an example of what you should notice when you get the current time in the codes.",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 94,
+                                                    "end": 104,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "EM",
+                                                    "start": 94,
+                                                    "end": 104,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                }
+                                            ],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "bdf254543ae6_preview_3",
+                                            "name": "665a",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "source code",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [
+                                                {
+                                                    "type": "A",
+                                                    "start": 0,
+                                                    "end": 11,
+                                                    "href": "https://github.com/Raaaaaaaay86/time-now-go-unit-test",
+                                                    "anchorType": "LINK",
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 0,
+                                                    "end": 11,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                }
+                                            ],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "bdf254543ae6_preview_4",
+                                            "name": "21eb",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "The Original Design",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "bdf254543ae6_preview_5",
+                                            "name": "4bd7",
+                                            "type": "IFRAME",
+                                            "href": null,
+                                            "layout": "INSET_CENTER",
+                                            "metadata": null,
+                                            "text": "",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": {
+                                                "mediaResource": {
+                                                    "id": "849c4d294c814168d2f6ef32c2f35c1b",
+                                                    "iframeSrc": "",
+                                                    "iframeHeight": 0,
+                                                    "iframeWidth": 0,
+                                                    "title": "A message service with a method `Send`",
+                                                    "__typename": "MediaResource"
+                                                },
+                                                "__typename": "Iframe"
+                                            },
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "bdf254543ae6_preview_6",
+                                            "name": "cd5e",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "For example, here’s a message service…",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 59,
+                                                    "end": 63,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 69,
+                                                    "end": 73,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 103,
+                                                    "end": 108,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 113,
+                                                    "end": 120,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "EM",
+                                                    "start": 59,
+                                                    "end": 63,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "EM",
+                                                    "start": 69,
+                                                    "end": 73,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "EM",
+                                                    "start": 103,
+                                                    "end": 108,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "EM",
+                                                    "start": 113,
+                                                    "end": 120,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                }
+                                            ],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        }
+                                    ],
+                                    "__typename": "RichText"
+                                },
+                                "isFullContent": false,
+                                "__typename": "PreviewContent",
+                                "subtitle": "A tip about control the time value in the unit test."
+                            },
+                            "__typename": "Post",
+                            "firstPublishedAt": 1668322010269,
+                            "isLocked": false,
+                            "isSeries": false,
+                            "isShortform": false,
+                            "latestPublishedAt": 1668322010269,
+                            "inResponseToCatalogResult": null,
+                            "previewImage": {
+                                "id": "1*X_12RuZwnBGB9DjxS9w8yg.jpeg",
+                                "focusPercentX": null,
+                                "focusPercentY": null,
+                                "__typename": "ImageMetadata"
+                            },
+                            "readingTime": 1.439937106918239,
+                            "sequence": null,
+                            "title": "Don’t Let time.Now() Breaks Your Unit Test",
+                            "uniqueSlug": "dont-let-time-now-breaks-your-unit-test-f7fd81dc2cfb",
+                            "visibility": "PUBLIC",
+                            "pendingCollection": null,
+                            "statusForCollection": null,
+                            "isPublished": true,
+                            "allowResponses": true,
+                            "postResponses": {
+                                "count": 0,
+                                "__typename": "PostResponses"
+                            },
+                            "isLimitedState": false,
+                            "mediumUrl": "https://raaaaaaaay86.medium.com/dont-let-time-now-breaks-your-unit-test-f7fd81dc2cfb",
+                            "voterCount": 0,
+                            "recommenders": [],
+                            "clapCount": 0,
+                            "pinnedAt": 0,
+                            "pinnedByCreatorAt": 0,
+                            "curationEligibleAt": 0,
+                            "responseDistribution": "NOT_DISTRIBUTED",
+                            "inResponseToPostResult": null,
+                            "isNewsletter": false,
+                            "isAuthorNewsletter": false,
+                            "inResponseToEntityType": null,
+                            "tags": [
+                                {
+                                    "__typename": "Tag",
+                                    "id": "golang",
+                                    "displayTitle": "Golang",
+                                    "normalizedTagSlug": "golang"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "tıp",
+                                    "displayTitle": "Tıp",
+                                    "normalizedTagSlug": "tıp"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "testing",
+                                    "displayTitle": "Testing",
+                                    "normalizedTagSlug": "testing"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "design-patterns",
+                                    "displayTitle": "Design Patterns",
+                                    "normalizedTagSlug": "design-patterns"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "tutorial",
+                                    "displayTitle": "Tutorial",
+                                    "normalizedTagSlug": "tutorial"
+                                }
+                            ]
+                        },
+                        "__typename": "TagFeedItem"
+                    },
+                    {
+                        "feedId": "5f8b3656-4fa9-4d23-ae1e-34df6db1f138",
+                        "reason": 89,
+                        "moduleSourceEncoding": 17,
+                        "postProviderExplanation": {
+                            "reason": null,
+                            "topic": null,
+                            "__typename": "PostProviderExplanation"
+                        },
+                        "post": {
+                            "id": "92b6163ee077",
+                            "creator": {
+                                "__typename": "User",
+                                "name": "Huang Zi-Yang",
+                                "username": "lkk223303",
+                                "id": "4ba8a7cb657d",
+                                "mediumMemberAt": 0,
+                                "socialStats": {
+                                    "followerCount": 0,
+                                    "__typename": "SocialStats"
+                                },
+                                "customDomainState": null,
+                                "hasSubdomain": false,
+                                "bio": "",
+                                "imageId": "0*W13NAD4Bm5b0HSDG",
+                                "isAuroraVisible": true,
+                                "newsletterV3": null
+                            },
+                            "collection": null,
+                            "extendedPreviewContent": {
+                                "bodyModel": {
+                                    "sections": [
+                                        {
+                                            "name": "1e2d",
+                                            "startIndex": 0,
+                                            "textLayout": null,
+                                            "imageLayout": null,
+                                            "backgroundImage": null,
+                                            "videoLayout": null,
+                                            "backgroundVideo": null,
+                                            "__typename": "Section"
+                                        }
+                                    ],
+                                    "paragraphs": [
+                                        {
+                                            "id": "8af702f70853_preview_0",
+                                            "name": "3a82",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Golang os WriteString 與ioutil WriteFile的發現與疑惑",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "8af702f70853_preview_1",
+                                            "name": "b1e5",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "遇到了一個自己目前也不了解的file.writeString的問題",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "8af702f70853_preview_2",
+                                            "name": "c6e7",
+                                            "type": "IMG",
+                                            "href": null,
+                                            "layout": "INSET_CENTER",
+                                            "metadata": {
+                                                "id": "0*0eniyFSniE-iKuce",
+                                                "originalHeight": 3064,
+                                                "originalWidth": 4592,
+                                                "focusPercentX": null,
+                                                "focusPercentY": null,
+                                                "alt": null,
+                                                "__typename": "ImageMetadata"
+                                            },
+                                            "text": "Photo by Towfiqu barbhuiya on Unsplash",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [
+                                                {
+                                                    "type": "A",
+                                                    "start": 9,
+                                                    "end": 26,
+                                                    "href": "https://unsplash.com/@towfiqu999999?utm_source=medium&utm_medium=referral",
+                                                    "anchorType": "LINK",
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                },
+                                                {
+                                                    "type": "A",
+                                                    "start": 30,
+                                                    "end": 38,
+                                                    "href": "https://unsplash.com?utm_source=medium&utm_medium=referral",
+                                                    "anchorType": "LINK",
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                }
+                                            ],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "8af702f70853_preview_3",
+                                            "name": "134f",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "在操作file 讀取與寫入toml 格式時，如果使用os.File的file.WriteString會寫出錯誤的file content如下：",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        }
+                                    ],
+                                    "__typename": "RichText"
+                                },
+                                "isFullContent": false,
+                                "__typename": "PreviewContent",
+                                "subtitle": "遇到了一個自己目前也不了解的file.writeString的問題"
+                            },
+                            "__typename": "Post",
+                            "firstPublishedAt": 1668278767830,
+                            "isLocked": false,
+                            "isSeries": false,
+                            "isShortform": false,
+                            "latestPublishedAt": 1668278767830,
+                            "inResponseToCatalogResult": null,
+                            "previewImage": {
+                                "id": "0*0eniyFSniE-iKuce",
+                                "focusPercentX": null,
+                                "focusPercentY": null,
+                                "__typename": "ImageMetadata"
+                            },
+                            "readingTime": 3.7279999999999998,
+                            "sequence": null,
+                            "title": "Golang os WriteString 與ioutil WriteFile的發現與疑惑",
+                            "uniqueSlug": "golang-os-writestring-與ioutil-writefile的發現與疑惑-92b6163ee077",
+                            "visibility": "PUBLIC",
+                            "pendingCollection": null,
+                            "statusForCollection": null,
+                            "isPublished": true,
+                            "allowResponses": true,
+                            "postResponses": {
+                                "count": 0,
+                                "__typename": "PostResponses"
+                            },
+                            "isLimitedState": false,
+                            "mediumUrl": "https://medium.com/@lkk223303/golang-os-writestring-%E8%88%87ioutil-writefile%E7%9A%84%E7%99%BC%E7%8F%BE%E8%88%87%E7%96%91%E6%83%91-92b6163ee077",
+                            "voterCount": 0,
+                            "recommenders": [],
+                            "clapCount": 0,
+                            "pinnedAt": 0,
+                            "pinnedByCreatorAt": 0,
+                            "curationEligibleAt": 0,
+                            "responseDistribution": "NOT_DISTRIBUTED",
+                            "inResponseToPostResult": null,
+                            "isNewsletter": false,
+                            "isAuthorNewsletter": false,
+                            "inResponseToEntityType": null,
+                            "tags": [
+                                {
+                                    "__typename": "Tag",
+                                    "id": "golang",
+                                    "displayTitle": "Golang",
+                                    "normalizedTagSlug": "golang"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "problems",
+                                    "displayTitle": "Problems",
+                                    "normalizedTagSlug": "problems"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "issues",
+                                    "displayTitle": "Issues",
+                                    "normalizedTagSlug": "issues"
+                                }
+                            ]
+                        },
+                        "__typename": "TagFeedItem"
+                    },
+                    {
+                        "feedId": "5f8b3656-4fa9-4d23-ae1e-34df6db1f138",
+                        "reason": 89,
+                        "moduleSourceEncoding": 17,
+                        "postProviderExplanation": {
+                            "reason": null,
+                            "topic": null,
+                            "__typename": "PostProviderExplanation"
+                        },
+                        "post": {
+                            "id": "8b0c8180258b",
+                            "creator": {
+                                "__typename": "User",
+                                "name": "Itay",
+                                "username": "itay1542",
+                                "id": "6c173aa60063",
+                                "mediumMemberAt": 0,
+                                "socialStats": {
+                                    "followerCount": 0,
+                                    "__typename": "SocialStats"
+                                },
+                                "customDomainState": null,
+                                "hasSubdomain": false,
+                                "bio": "",
+                                "imageId": "0*wBVi6aiWANGTEuMy",
+                                "isAuroraVisible": true,
+                                "newsletterV3": null
+                            },
+                            "collection": null,
+                            "extendedPreviewContent": {
+                                "bodyModel": {
+                                    "sections": [
+                                        {
+                                            "name": "d7a1",
+                                            "startIndex": 0,
+                                            "textLayout": null,
+                                            "imageLayout": null,
+                                            "backgroundImage": null,
+                                            "videoLayout": null,
+                                            "backgroundVideo": null,
+                                            "__typename": "Section"
+                                        },
+                                        {
+                                            "name": "a7cd",
+                                            "startIndex": 1,
+                                            "textLayout": null,
+                                            "imageLayout": null,
+                                            "backgroundImage": null,
+                                            "videoLayout": null,
+                                            "backgroundVideo": null,
+                                            "__typename": "Section"
+                                        }
+                                    ],
+                                    "paragraphs": [
+                                        {
+                                            "id": "327ddda23459_preview_0",
+                                            "name": "aa62",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Collecting Form 4 Submission Data From Edgar Using Golang crawler",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "327ddda23459_preview_1",
+                                            "name": "e255",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Hi everyone, this is my first Medium article, I hope you find it useful.",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "327ddda23459_preview_2",
+                                            "name": "75a0",
+                                            "type": "H4",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Let’s start with what Form 4 submissions are.",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [
+                                                {
+                                                    "type": "STRONG",
+                                                    "start": 0,
+                                                    "end": 45,
+                                                    "href": null,
+                                                    "anchorType": null,
+                                                    "userId": null,
+                                                    "linkMetadata": null,
+                                                    "__typename": "Markup"
+                                                }
+                                            ],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "327ddda23459_preview_3",
+                                            "name": "5407",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Corporate insiders are required by law to publicly report their transactions when trading their company’s securities, be it common stocks, derivatives etc.. …",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        }
+                                    ],
+                                    "__typename": "RichText"
+                                },
+                                "isFullContent": false,
+                                "__typename": "PreviewContent",
+                                "subtitle": "Technical Guide On Collecting Form 4 SEC filings"
+                            },
+                            "__typename": "Post",
+                            "firstPublishedAt": 1668252305040,
+                            "isLocked": false,
+                            "isSeries": false,
+                            "isShortform": false,
+                            "latestPublishedAt": 1668254025486,
+                            "inResponseToCatalogResult": null,
+                            "previewImage": {
+                                "id": "1*Jb3i1aQFtk22TjVeQmF7mw.png",
+                                "focusPercentX": null,
+                                "focusPercentY": null,
+                                "__typename": "ImageMetadata"
+                            },
+                            "readingTime": 7.331132075471698,
+                            "sequence": null,
+                            "title": "Collecting Form 4 Submission Data From Edgar Using Golang crawler",
+                            "uniqueSlug": "collecting-form-4-submission-data-from-edgar-using-golang-crawler-8b0c8180258b",
+                            "visibility": "PUBLIC",
+                            "pendingCollection": null,
+                            "statusForCollection": null,
+                            "isPublished": true,
+                            "allowResponses": true,
+                            "postResponses": {
+                                "count": 0,
+                                "__typename": "PostResponses"
+                            },
+                            "isLimitedState": false,
+                            "mediumUrl": "https://medium.com/@itay1542/collecting-form-4-submission-data-from-edgar-using-golang-crawler-8b0c8180258b",
+                            "voterCount": 0,
+                            "recommenders": [],
+                            "clapCount": 0,
+                            "pinnedAt": 0,
+                            "pinnedByCreatorAt": 0,
+                            "curationEligibleAt": 0,
+                            "responseDistribution": "NOT_DISTRIBUTED",
+                            "inResponseToPostResult": null,
+                            "isNewsletter": false,
+                            "isAuthorNewsletter": false,
+                            "inResponseToEntityType": null,
+                            "tags": [
+                                {
+                                    "__typename": "Tag",
+                                    "id": "golang",
+                                    "displayTitle": "Golang",
+                                    "normalizedTagSlug": "golang"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "finance",
+                                    "displayTitle": "Finance",
+                                    "normalizedTagSlug": "finance"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "programming",
+                                    "displayTitle": "Programming",
+                                    "normalizedTagSlug": "programming"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "sec",
+                                    "displayTitle": "SEC",
+                                    "normalizedTagSlug": "sec"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "form-4",
+                                    "displayTitle": "Form 4",
+                                    "normalizedTagSlug": "form-4"
+                                }
+                            ]
+                        },
+                        "__typename": "TagFeedItem"
+                    },
+                    {
+                        "feedId": "5f8b3656-4fa9-4d23-ae1e-34df6db1f138",
+                        "reason": 89,
+                        "moduleSourceEncoding": 17,
+                        "postProviderExplanation": {
+                            "reason": null,
+                            "topic": null,
+                            "__typename": "PostProviderExplanation"
+                        },
+                        "post": {
+                            "id": "1dc79425e714",
+                            "creator": {
+                                "__typename": "User",
+                                "name": "Adnan Muhammad Lazuardi",
+                                "username": "adnanm.lazuardi",
+                                "id": "2dd7890f210c",
+                                "mediumMemberAt": 0,
+                                "socialStats": {
+                                    "followerCount": 1,
+                                    "__typename": "SocialStats"
+                                },
+                                "customDomainState": null,
+                                "hasSubdomain": false,
+                                "bio": "",
+                                "imageId": "0*JdCCCifFFJXFoCds",
+                                "isAuroraVisible": true,
+                                "newsletterV3": null
+                            },
+                            "collection": null,
+                            "extendedPreviewContent": {
+                                "bodyModel": {
+                                    "sections": [
+                                        {
+                                            "name": "9828",
+                                            "startIndex": 0,
+                                            "textLayout": null,
+                                            "imageLayout": null,
+                                            "backgroundImage": null,
+                                            "videoLayout": null,
+                                            "backgroundVideo": null,
+                                            "__typename": "Section"
+                                        }
+                                    ],
+                                    "paragraphs": [
+                                        {
+                                            "id": "614bdfaba607_preview_0",
+                                            "name": "e0cc",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "eFishery Academy: Aqua-Developer Batch 2.2 Day 6",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "614bdfaba607_preview_1",
+                                            "name": "7e90",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Bersama Mas Albi, kita belajar materi Golang yang lebih lanjut lagi. Materinya cukup banyak sehingga pembahasannya tidak terlalu detil tapi kurang lebih bisa kami tangkap gambaran besar dari konsepnya seperti apa. Berikut sedikit catatanku.",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "614bdfaba607_preview_2",
+                                            "name": "e4cf",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "RESTful API Concept",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "614bdfaba607_preview_3",
+                                            "name": "c0d2",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Mengutip dari AWS, RESTful API merupakan antarmuka yang digunakan dua sistem komputer untuk saling bertukar informasi…",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        }
+                                    ],
+                                    "__typename": "RichText"
+                                },
+                                "isFullContent": false,
+                                "__typename": "PreviewContent",
+                                "subtitle": "Bersama Mas Albi, kita belajar materi Golang yang lebih lanjut lagi. Materinya cukup banyak sehingga pembahasannya tidak terlalu detil tapi…"
+                            },
+                            "__typename": "Post",
+                            "firstPublishedAt": 1668073974240,
+                            "isLocked": false,
+                            "isSeries": false,
+                            "isShortform": false,
+                            "latestPublishedAt": 1668074091569,
+                            "inResponseToCatalogResult": null,
+                            "previewImage": {
+                                "id": "",
+                                "focusPercentX": null,
+                                "focusPercentY": null,
+                                "__typename": "ImageMetadata"
+                            },
+                            "readingTime": 3.0150943396226415,
+                            "sequence": null,
+                            "title": "eFishery Academy: Aqua-Developer Batch 2.2 Day 6",
+                            "uniqueSlug": "efishery-aqua-developer-batch-2-2-day-6-1dc79425e714",
+                            "visibility": "PUBLIC",
+                            "pendingCollection": null,
+                            "statusForCollection": null,
+                            "isPublished": true,
+                            "allowResponses": true,
+                            "postResponses": {
+                                "count": 0,
+                                "__typename": "PostResponses"
+                            },
+                            "isLimitedState": false,
+                            "mediumUrl": "https://medium.com/@adnanm.lazuardi/efishery-aqua-developer-batch-2-2-day-6-1dc79425e714",
+                            "voterCount": 0,
+                            "recommenders": [],
+                            "clapCount": 0,
+                            "pinnedAt": 0,
+                            "pinnedByCreatorAt": 0,
+                            "curationEligibleAt": 0,
+                            "responseDistribution": "NOT_DISTRIBUTED",
+                            "inResponseToPostResult": null,
+                            "isNewsletter": false,
+                            "isAuthorNewsletter": false,
+                            "inResponseToEntityType": null,
+                            "tags": [
+                                {
+                                    "__typename": "Tag",
+                                    "id": "rest-api",
+                                    "displayTitle": "Rest Api",
+                                    "normalizedTagSlug": "rest-api"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "golang",
+                                    "displayTitle": "Golang",
+                                    "normalizedTagSlug": "golang"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "echo-framework",
+                                    "displayTitle": "Echo Framework",
+                                    "normalizedTagSlug": "echo-framework"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "notes",
+                                    "displayTitle": "Notes",
+                                    "normalizedTagSlug": "notes"
+                                }
+                            ]
+                        },
+                        "__typename": "TagFeedItem"
+                    }
+                ],
+                "pagingInfo": {
+                    "next": {
+                        "limit": 25,
+                        "to": "25",
+                        "__typename": "PageParams"
+                    },
+                    "__typename": "Paging"
+                },
+                "__typename": "TagFeedResult"
+            }
+        }
+    }
+]
