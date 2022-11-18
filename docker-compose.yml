@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   webservice:
-    image: tsherbinin5/lets_go_webservice:latest
+    image: tsherbinin5/webservice:latest
     container_name: web-service
     ports:
       - "8080:8080"
@@ -18,7 +18,7 @@ services:
       - aggregatorNet
 
   aggregator:
-    image: tsherbinin5/lets_go_aggregator:latest
+    image: tsherbinin5/aggregator:latest
     container_name: aggregator
     build:
       context: .
