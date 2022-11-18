@@ -3,13 +3,10 @@ version: '3.9'
 services:
 
   webservice:
-    image: lets_go_webservice
+    image: sherbinin5/lets_go_webservice
     container_name: lets_go_webservice
     ports:
-      - 80:8080
-    build:
-      context: .
-      dockerfile: ./Dockerfile.webservice
+      - 8080:8080
     depends_on:
       - mongodb
     links:
@@ -18,11 +15,8 @@ services:
       - aggregatorNet
 
   aggregator:
-    image: lets_go_aggregator
+    image: sherbinin5/lets_go_aggregator
     container_name: lets_go_aggregator
-    build:
-      context: .
-      dockerfile: ./Dockerfile.aggregator
     depends_on:
       - mongodb
     links:
