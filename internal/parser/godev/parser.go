@@ -14,6 +14,16 @@ const (
 	dateFormat      = "2 January 2006"
 	scheme          = "file"
 	webpageLocation = "../../../tests/data/parser/godev/"
+
+	parserName = "go.dev"
+
+	articleContainerTag   = "p.blogtitle"
+	articleTitleTag       = "a[href]"
+	articleDatetimeTag    = "span.date"
+	articleAuthorTag      = "span.author"
+	articleDescriptionTag = "p.blogsummary"
+	a                     = "a"
+	href                  = "href"
 )
 
 type articlesparser struct {
@@ -58,34 +68,34 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 
 // get parseable articles html container
 func (p *articlesparser) getArticleContainerRef() string {
-	return "p.blogtitle"
+	return articleContainerTag
 }
 
 // get an article title from html element
 func (p *articlesparser) getTitle(h *colly.HTMLElement) string {
-	return h.ChildText("a[href]")
+	return h.ChildText(articleTitleTag)
 }
 
 // get an article absolute url
 func (p *articlesparser) getAbsoluteURL(h *colly.HTMLElement) string {
-	return h.Request.AbsoluteURL(h.ChildAttr("a", "href"))
+	return h.Request.AbsoluteURL(h.ChildAttr(a, href))
 }
 
 // get an article datetime
 func (p *articlesparser) getDatetime(h *colly.HTMLElement) time.Time {
-	strdate := h.ChildText("span.date")
+	strdate := h.ChildText(articleDatetimeTag)
 	datetime, _ := time.Parse(dateFormat, strdate)
 	return datetime
 }
 
 // get an article author
 func (p *articlesparser) getAuthor(h *colly.HTMLElement) string {
-	return h.ChildText("span.author")
+	return h.ChildText(articleAuthorTag)
 }
 
 // get an article description (summary)
 func (p *articlesparser) getDescription(h *colly.HTMLElement) string {
-	return strings.TrimSpace(h.DOM.NextFiltered("p.blogsummary").Text())
+	return strings.TrimSpace(h.DOM.NextFiltered(articleDescriptionTag).Text())
 }
 
 // get a new article
@@ -101,5 +111,5 @@ func (p *articlesparser) getNewArticle(h *colly.HTMLElement) model.Article {
 }
 
 func init() {
-	parser.RegisterParser("go.dev", NewParser)
+	parser.RegisterParser(parserName, NewParser)
 }
