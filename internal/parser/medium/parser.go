@@ -106,19 +106,18 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 				if firstCreated.IsZero() {
 					firstCreated = created
 				}
-				if !created.After(maxDate) {
-					continue
+				if created.After(maxDate) {
+					article := model.Article{
+						Title:       itemState.Post.Title,
+						URL:         itemState.Post.MediumUrl,
+						Created:     created,
+						Author:      itemState.Post.Creator.Name,
+						Description: itemState.Post.ExtendedPreviewContent.Subtitle,
+					}
+					articles = append(articles, article)
 				}
-				article := model.Article{
-					Title:       itemState.Post.Title,
-					URL:         itemState.Post.MediumUrl,
-					Created:     created,
-					Author:      itemState.Post.Creator.Name,
-					Description: itemState.Post.ExtendedPreviewContent.Subtitle,
-				}
-				articles = append(articles, article)
 
-				if (created.Sub(firstCreated).Hours()/24) >= 7 || len(articles) >= 100 {
+				if (firstCreated.Sub(created).Hours()/24 >= 7) || len(articles) >= 100 {
 					return articles, nil
 				}
 			}
