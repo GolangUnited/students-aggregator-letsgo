@@ -1,0 +1,2 @@
+RemoteCommand cd deploy && docker-compose -f ./docker-compose-host.yml up --detach && exit
+RequestTTY force
