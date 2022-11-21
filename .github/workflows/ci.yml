@@ -84,3 +84,37 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest,
                 ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:${{github.ref_name}}
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish
+    if: startsWith(github.ref, 'refs/tags')
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          sudo chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
+          cp ./etc/deploy/config ~/.ssh/config
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOST: ${{secrets.SSH_KNOWN_HOST}}
+      - name: Copy files
+        run: |
+          scp -P $SSH_REMOTE_HOST_PORT Makefile $SSH_REMOTE_HOST:~/deploy/Makefile
+          scp -P $SSH_REMOTE_HOST_PORT docker-compose-host.yml $SSH_REMOTE_HOST:~/deploy/docker-compose-host.yml
+        shell: bash
+        env:
+          SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
+          SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
+      - name: Connect SSH
+        run: |
+          ssh $SSH_REMOTE_HOST -p $SSH_REMOTE_HOST_PORT -tt
+        shell: bash
+        env:
+          SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
+          SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
