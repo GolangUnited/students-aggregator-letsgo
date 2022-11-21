@@ -98,7 +98,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           sudo chmod 600 ~/.ssh/id_rsa
           echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
-          cp ./etc/deploy/config ~/.ssh/config
+          cp ./etc/deploy/deploy_config ~/.ssh/config
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
