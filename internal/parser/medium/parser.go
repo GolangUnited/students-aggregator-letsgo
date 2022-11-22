@@ -94,8 +94,8 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 			return nil, err
 		}
 
-		if len(states) == 0 && !initialRequest {
-			log.Printf("Problems in site - %s - at %v", time.Now(), p.Host)
+		if len(states[0].Data.TagFeed.Items) == 0 && !initialRequest {
+			log.Printf("Problems in site - %s", p.Host)
 			return articles, nil
 		}
 
