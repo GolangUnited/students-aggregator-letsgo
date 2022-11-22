@@ -1,2 +1,2 @@
-RemoteCommand cd deploy && make -i run && exit
+RemoteCommand cd deploy && make run && exit
 RequestTTY force
