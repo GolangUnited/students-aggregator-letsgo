@@ -26,6 +26,6 @@ ifneq ($(strip $(IS_LETS_GO_WEBSERVICE)),)
 	docker rmi $$(docker images --filter=reference="*/lets_go_webservice" -aq)
 endif
 
-run:
+run: clear
 	docker-compose -f ./docker-compose-host.yml up --detach
 	
