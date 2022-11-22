@@ -1,5 +1,8 @@
 .PHONY:
 
+IS_LETS_GO_AGGREGATOR := $(shell docker images --filter=reference="*/lets_go_aggregator" -aq) 
+IS_LETS_GO_WEBSERVICE := $(shell docker images --filter=reference="*/lets_go_webservice" -aq) 
+
 up:
 	docker-compose up --build --detach
 
@@ -14,9 +17,15 @@ clear:
 	docker ps --filter name=lets_go_webservice --filter status=running -aq | xargs docker stop
 	docker ps --filter name=lets_go_aggregator --filter status=exited -aq | xargs docker rm
 	docker ps --filter name=lets_go_webservice --filter status=exited -aq | xargs docker rm
-	docker rmi $$(docker images --filter=reference="*/lets_go_aggregator" -aq) 
-	docker rmi $$(docker images --filter=reference="*/lets_go_webservice" -aq) 
 
-run: clear
+ifneq ($(strip $(IS_LETS_GO_AGGREGATOR)),)
+	docker rmi $$(docker images --filter=reference="*/lets_go_aggregator" -aq)
+endif
+
+ifneq ($(strip $(IS_LETS_GO_WEBSERVICE)),)
+	docker rmi $$(docker images --filter=reference="*/lets_go_webservice" -aq)
+endif
+
+run:
 	docker-compose -f ./docker-compose-host.yml up --detach
 	
