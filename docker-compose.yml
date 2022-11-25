@@ -5,8 +5,6 @@ services:
   webservice:
     image: lets_go_webservice
     container_name: lets_go_webservice
-    ports:
-      - 8080:8080
     build:
       context: .
       dockerfile: ./Dockerfile.webservice
