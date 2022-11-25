@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.webservice
+    ports:
+      - "8080:8080"
     depends_on:
       - mongodb
     links:
