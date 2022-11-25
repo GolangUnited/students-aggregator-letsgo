@@ -83,13 +83,14 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 	var (
 		initNumberState int
 		firstCreated    time.Time
+		created         time.Time
 	)
 
 	initialRequest := true
 
 	for true {
 
-		states, err := getStates(p, initialRequest, initNumberState)
+		states, err := p.getStates(initialRequest, initNumberState)
 		if err != nil {
 			return nil, err
 		}
@@ -102,24 +103,26 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 		for _, state := range states {
 			for _, itemState := range state.Data.TagFeed.Items {
 
-				created := time.Unix(itemState.Post.FirstPublishedAt/1000, 0)
+				created = time.Unix(itemState.Post.FirstPublishedAt/1000, 0)
 				if firstCreated.IsZero() {
 					firstCreated = created
 				}
-				if created.After(maxDate) {
-					article := model.Article{
-						Title:       itemState.Post.Title,
-						URL:         itemState.Post.MediumUrl,
-						Created:     created,
-						Author:      itemState.Post.Creator.Name,
-						Description: itemState.Post.ExtendedPreviewContent.Subtitle,
-					}
-					articles = append(articles, article)
+				if !created.After(maxDate) || !allFieldsFilled(itemState) {
+					continue
 				}
+				article := model.Article{
+					Title:       itemState.Post.Title,
+					URL:         itemState.Post.MediumUrl,
+					Created:     created,
+					Author:      itemState.Post.Creator.Name,
+					Description: itemState.Post.ExtendedPreviewContent.Subtitle,
+				}
+				articles = append(articles, article)
 
-				if (firstCreated.Sub(created).Hours()/24 >= 7) || len(articles) >= 100 {
-					return articles, nil
-				}
+			}
+
+			if (firstCreated.Sub(created).Hours()/24 >= 7) || len(articles) >= 100 {
+				return articles, nil
 			}
 		}
 
@@ -135,9 +138,9 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 	return
 }
 
-func getStates(p *ArticlesParser, initialRequest bool, initNumberState int) (states []StatesMedium, err error) {
+func (p *ArticlesParser) getStates(initialRequest bool, initNumberState int) (states []StatesMedium, err error) {
 
-	requestBody, err := getBodyRequest(p, initialRequest, initNumberState)
+	requestBody, err := p.getBodyRequest(initialRequest, initNumberState)
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +173,7 @@ func getStates(p *ArticlesParser, initialRequest bool, initNumberState int) (sta
 
 }
 
-func getBodyRequest(p *ArticlesParser, initialRequest bool, initNumberState int) (*bytes.Buffer, error) {
+func (p *ArticlesParser) getBodyRequest(initialRequest bool, initNumberState int) (*bytes.Buffer, error) {
 
 	var postBody []byte
 
@@ -189,4 +192,13 @@ func getBodyRequest(p *ArticlesParser, initialRequest bool, initNumberState int)
 
 	return bytes.NewBuffer(postBody), nil
 
+}
+
+func allFieldsFilled(itemState Item) bool {
+
+	return len(itemState.Post.Title) > 0 &&
+		len(itemState.Post.MediumUrl) > 0 &&
+		len(itemState.Post.Creator.Name) > 0 &&
+		len(itemState.Post.ExtendedPreviewContent.Subtitle) > 0 &&
+		itemState.Post.FirstPublishedAt > 0
 }
