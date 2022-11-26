@@ -18,12 +18,10 @@ import (
 // @title Swagger Web-Service
 // @version 1.0
 // @description Swagger Web-Service for Let's Go Aggregator
-// @termsOfService http://swagger.io/terms
+// @termsOfService http://swagger.io/terms/
 
 // @contact.name Web-Service Support
 // @contact.email mishajudoist@gmail.com
-
-// @BasePath /last_news
 
 const (
 	configFilePath = "./configs/config.yaml"
@@ -32,6 +30,7 @@ const (
 // GetLastNews godoc
 // @Summary Retrieves last news
 // @Produce json
+// @Success 200 {object} []model.DBArticle
 // @Router /last_news [get]
 func GetLastNews(db db.Db) http.Handler {
 
@@ -74,8 +73,8 @@ func main() {
 	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"),
 		httpSwagger.DeepLinking(true),
-		httpSwagger.DocExpansion("none"),
-		httpSwagger.DomID("#swagger-ui"),
+		//httpSwagger.DocExpansion("full"),
+		//httpSwagger.DomID("#swagger-ui"),
 	)).Methods(http.MethodGet)
 
 	lastNewsHandler := GetLastNews(db)
