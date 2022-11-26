@@ -5,6 +5,7 @@ import (
 	"os"
 
 	aggregator "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
+	"github.com/indikator/aggregator_lets_go/internal/config/logLevel"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
@@ -24,7 +25,8 @@ func NewConfig() *Config {
 }
 
 type parserYamlConfig struct {
-	URL string `yaml:"url"`
+	URL      string            `yaml:"url"`
+	LogLevel logLevel.LogLevel `yaml:"logLevel"`
 }
 
 type yamlConfig struct {
@@ -67,7 +69,7 @@ func (c *Config) Read() (err error) {
 
 	for i, v := range yc.Parsers {
 		for name, p := range v {
-			c.Parsers[i] = parser.Config{Name: name, URL: p.URL}
+			c.Parsers[i] = parser.Config{Name: name, URL: p.URL, LogLevel: p.LogLevel}
 		}
 	}
 

@@ -1,5 +1,9 @@
 package config
 
-// aggregator's parameters, will be added in the next version
+import (
+	"github.com/indikator/aggregator_lets_go/internal/config/logLevel"
+)
+
 type Config struct {
+	LogLevel logLevel.LogLevel `yaml:"logLevel"`
 }

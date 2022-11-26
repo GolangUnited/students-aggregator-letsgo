@@ -1,3 +1,4 @@
 database:
   name: mongo
   url: mongodb://mongodb:27017
+  logLevel: errors
