@@ -4,13 +4,14 @@ aggregator:
 
 database:
   name: mongo
-  url: mongodb://mongodb:27017
+  url: mongodb://localhost:27018
   logLevel: errors
 
 webservice:
-  port: 8080
-  handle: /last_news
-  logLevel: errors
+  - last_news:
+      handle: /last_news
+      port: 8080
+      logLevel: errors
 
 parsers:
 - github:

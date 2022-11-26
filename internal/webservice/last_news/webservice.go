@@ -1,8 +1,7 @@
 package last_news
 
 import (
-	"encoding/json"
-	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/gorilla/mux"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	"log"
 	"net/http"
@@ -10,41 +9,20 @@ import (
 )
 
 type webService struct {
-	handle string
-	port   uint16
+	handles map[string]webservice.Config
 }
 
-func NewWebservice(config webservice.Config) webservice.Webservice {
-	handle := config.Handle
-	port := config.Port
+func NewWebservice(config map[string]webservice.Config) webservice.Webservice {
 	return &webService{
-		handle: handle,
-		port:   port,
+		handles: config,
 	}
 }
 
-func (ws *webService) MessageHandler(db db.Db) http.Handler {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		news, err := db.ReadArticles(7) // hardcode 1 week
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "application/json")
-		newsJson, err := json.Marshal(news)
-		if err != nil {
-			w.Write([]byte(err.Error()))
-			return
-		}
-		w.Write(newsJson)
-	})
-}
-
-func (ws *webService) RunServer(db db.Db) {
-	mux := http.NewServeMux()
-	mux.Handle(ws.handle, ws.MessageHandler(db))
+func (ws *webService) RunServer(r *mux.Router, handlers map[string]*http.Handler) {
+	port := int(ws.handles["last_news"].Port)
+	for name, handle := range ws.handles {
+		r.Handle(handle.Handle, *handlers[name])
+	}
 	log.Println("Listening...")
-	http.ListenAndServe(":"+strconv.Itoa(int(ws.port)), mux)
+	http.ListenAndServe(":"+strconv.Itoa(port), r)
 }
