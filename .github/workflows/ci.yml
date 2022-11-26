@@ -20,7 +20,10 @@ jobs:
         run: go test -v ./...
         
       - name: Coverage
-        run: go test ./... -coverprofile cover.html
+        run: go test -v -coverprofile cover.out ./...
+        
+      - name: Coverage Report
+        run: go tool cover -html cover.out -o cover.html
         
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v3
