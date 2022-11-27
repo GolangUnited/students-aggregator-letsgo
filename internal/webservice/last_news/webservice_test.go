@@ -2,7 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"github.com/indikator/aggregator_lets_go/internal/db/stub"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -28,10 +27,13 @@ func TestMessageHandler(t *testing.T) {
 	if err != nil {
 		return
 	}
-	ws := NewWebservice(c.WebService)
-	newDb := stub.NewDb(c.Database)
+	ws := NewWebservice()
+	err = ws.InitAllByConfig(c)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
 
-	handler := ws.MessageHandler(newDb)
+	handler := ws.MessageHandler()
 
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.

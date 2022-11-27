@@ -1,10 +1,11 @@
 database:
   name: mongo
   url: mongodb://mongodb:27017
-  logLevel: errors
 
 webservice:
   port: 8080
   handle: /last_news
-  logLevel: errors
+  log:
+    type: std
+    level: errors
 

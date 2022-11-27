@@ -1,4 +1,4 @@
-package aggregator
+package common
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/db/stub"
+	"github.com/indikator/aggregator_lets_go/internal/log"
 )
 
 const (
@@ -20,14 +21,14 @@ func (e *UnknownDbmsError) Error() string {
 	return e.Text
 }
 
-func GetDb(config db.Config) (db.Db, error) {
+func GetDb(config db.Config, l log.Log) (db.Db, error) {
 	var d db.Db
 
 	switch config.Name {
 	case "stub":
-		d = stub.NewDb(config)
+		d = stub.NewDb(config, l)
 	case "mongo":
-		d = mongo.NewDb(config)
+		d = mongo.NewDb(config, l)
 	default:
 		return nil, &UnknownDbmsError{
 			Text: fmt.Sprintf(unknownDbmsErrorTemplate, config.Name),

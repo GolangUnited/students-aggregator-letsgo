@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/indikator/aggregator_lets_go/internal/config/logLevel"
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
 )
 
 const (
@@ -26,6 +26,10 @@ func TestRead(t *testing.T) {
 		t.Errorf("unexpected error %v", err)
 	}
 
+	if c.Aggregator.Log.Level != logLevel.Errors {
+		t.Errorf("incorrect aggregator log level \"%v\", expected \"%s\"", c.Aggregator.Log.Level, logLevel.Errors)
+	}
+
 	if c.Database.Name != "stub" {
 		t.Errorf("incorrect database url \"%v\", expected \"%s\"", c.Database.Name, "stub")
 	}
@@ -34,16 +38,12 @@ func TestRead(t *testing.T) {
 		t.Errorf("incorrect database url \"%v\", expected \"%s\"", c.Database.Url, "stub://localhost:22222/")
 	}
 
-	if c.Database.LogLevel != logLevel.Errors {
-		t.Errorf("incorrect database log level \"%v\", expected \"%s\"", c.Database.LogLevel, logLevel.Errors)
-	}
-
 	if c.WebService.Port != 8080 {
 		t.Errorf("incorrect webservice port %d, expected %d", c.WebService.Port, 8080)
 	}
 
-	if c.WebService.LogLevel != logLevel.Info {
-		t.Errorf("incorrect webservice log level \"%v\", expected \"%s\"", c.WebService.LogLevel, logLevel.Info)
+	if c.WebService.Log.Level != logLevel.Info {
+		t.Errorf("incorrect webservice log level \"%v\", expected \"%s\"", c.WebService.Log.Level, logLevel.Info)
 	}
 
 	if len(c.Parsers) != 3 {
@@ -56,22 +56,13 @@ func TestRead(t *testing.T) {
 			if p.URL != "https://github.com/golang/go/tags" {
 				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.URL, "https://github.com/golang/go/tags")
 			}
-			if p.LogLevel != logLevel.Errors {
-				t.Errorf("incorrect parser \"%s\" log level \"%s\", expected \"%s\"", p.Name, p.LogLevel, logLevel.Errors)
-			}
 		case "go.dev":
 			if p.URL != "https://go.dev/blog" {
 				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.URL, "https://go.dev/blog")
 			}
-			if p.LogLevel != logLevel.Errors {
-				t.Errorf("incorrect parser \"%s\" log level \"%s\", expected \"%s\"", p.Name, p.LogLevel, logLevel.Errors)
-			}
 		case "medium.com":
 			if p.URL != "https://medium.com/_/graphql" {
 				t.Errorf("incorrect parser \"%s\" url \"%s\", expected \"%s\"", p.Name, p.URL, "https://medium.com/_/graphql")
-			}
-			if p.LogLevel != logLevel.Errors {
-				t.Errorf("incorrect parser \"%s\" log level \"%s\", expected \"%s\"", p.Name, p.LogLevel, logLevel.Errors)
 			}
 		default:
 			t.Errorf("unknown parser \"%s\"", p.Name)

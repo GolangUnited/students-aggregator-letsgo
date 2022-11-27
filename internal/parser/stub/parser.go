@@ -3,12 +3,14 @@ package stub
 import (
 	"time"
 
+	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 )
 
 type articlesparser struct {
 	url string
+	log log.Log
 }
 
 func prepare(url string, date time.Time) []model.Article {
@@ -37,9 +39,10 @@ func prepare(url string, date time.Time) []model.Article {
 }
 
 // create an instance of articles parser
-func NewParser(cfg parser.Config) parser.ArticlesParser {
+func NewParser(cfg parser.Config, l log.Log) parser.ArticlesParser {
 	return &articlesparser{
 		url: cfg.URL,
+		log: l,
 	}
 }
 

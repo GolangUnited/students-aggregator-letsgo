@@ -7,6 +7,9 @@ import (
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
+	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
+	log "github.com/indikator/aggregator_lets_go/internal/log/stub"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 )
@@ -79,8 +82,8 @@ func TestGetParsersCorrectParser(t *testing.T) {
 		URL:     "https://stub.com",
 		IsLocal: false,
 	}}
-
-	p, err := GetParsers(pc)
+	l := log.NewLog(logLevel.Errors)
+	p, err := GetParsers(pc, l)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -97,8 +100,8 @@ func TestGetParsersIncorrectParser(t *testing.T) {
 		URL:     "https://mock.com",
 		IsLocal: false,
 	}}
-
-	_, err := GetParsers(pc)
+	l := log.NewLog(logLevel.Errors)
+	_, err := GetParsers(pc, l)
 
 	if err == nil {
 		t.Error("expect error is missing")
@@ -118,8 +121,8 @@ func TestGetDbCorrectDb(t *testing.T) {
 		Name: "stub",
 		Url:  "stub://localhost:22222/",
 	}
-
-	d, err := GetDb(c)
+	l := log.NewLog(logLevel.Errors)
+	d, err := cdb.GetDb(c, l)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
@@ -139,14 +142,14 @@ func TestGetDbIncorrectDb(t *testing.T) {
 		Name: "mock",
 		Url:  "mock://localhost:22222/",
 	}
-
-	_, err := GetDb(c)
+	l := log.NewLog(logLevel.Errors)
+	_, err := cdb.GetDb(c, l)
 
 	if err == nil {
 		t.Error("expect error is missing")
 	}
 
-	var unknownDbmsError *UnknownDbmsError
+	var unknownDbmsError *cdb.UnknownDbmsError
 
 	switch {
 	case errors.As(err, &unknownDbmsError):

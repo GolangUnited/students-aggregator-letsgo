@@ -1,24 +1,24 @@
 # Project Aggregator YAML
 aggregator:
-  logLevel: errors
+  log:
+    type: std
+    level: errors
 
 database:
   name: mongo
   url: mongodb://mongodb:27017
-  logLevel: errors
 
 webservice:
   port: 8080
   handle: /last_news
-  logLevel: errors
+  log:
+    type: std
+    level: errors
 
 parsers:
 - github:
     url: https://github.com/golang/go/tags
-    logLevel: errors
 - go.dev:
     url: https://go.dev/blog
-    logLevel: errors
 - medium.com:
     url: https://medium.com/_/graphql
-    logLevel: errors

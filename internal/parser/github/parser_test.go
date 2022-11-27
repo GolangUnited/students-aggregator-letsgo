@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
+	log "github.com/indikator/aggregator_lets_go/internal/log/stub"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/parser/github"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -24,7 +26,9 @@ func TestParseAfter(t *testing.T) {
 		t.Errorf("error: %s\n", err.Error())
 	}
 
-	parser := github.NewParser(cfg)
+	l := log.NewLog(logLevel.Errors)
+
+	parser := github.NewParser(cfg, l)
 	articles, err := parser.ParseAfter(date)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())

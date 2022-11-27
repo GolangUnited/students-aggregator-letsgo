@@ -7,6 +7,9 @@ import (
 	aconfig "github.com/indikator/aggregator_lets_go/internal/aggregator/config"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
+	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
+	"github.com/indikator/aggregator_lets_go/internal/log"
+	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,6 +17,7 @@ import (
 
 type Aggregator struct {
 	config            aconfig.Config
+	log               log.Log
 	parsers           []parser.ArticlesParser
 	db                db.Db
 	lastCheckDatetime time.Time
@@ -31,35 +35,57 @@ func (a *Aggregator) InitAllByConfig(config *config.Config) error {
 	err := config.Read()
 
 	if err != nil {
+		log.WriteError("Aggregator.InitAllByConfig.Error", err)
 		return err
 	}
 
-	parsers, err := GetParsers(config.Parsers)
+	l, err := clog.GetLog(config.Aggregator.Log)
 
 	if err != nil {
+		log.WriteError("Aggregator.InitAllByConfig.Error", err)
 		return err
 	}
 
-	db, err := GetDb(config.Database)
+	l.WriteInfo("Aggregator.InitAllByConfig.Begin")
+
+	parsers, err := GetParsers(config.Parsers, l)
 
 	if err != nil {
+		l.WriteError("Aggregator.InitAllByConfig.Error", err)
 		return err
 	}
 
-	return a.Init(&config.Aggregator, parsers, db)
+	db, err := cdb.GetDb(config.Database, l)
+
+	if err != nil {
+		l.WriteError("Aggregator.InitAllByConfig.Error", err)
+		return err
+	}
+
+	err = a.Init(&config.Aggregator, l, parsers, db)
+
+	if err != nil {
+		l.WriteError("Aggregator.InitAllByConfig.Error", err)
+		return err
+	}
+
+	l.WriteInfo("Aggregator.InitAllByConfig.End")
+
+	return nil
 }
 
-func (a *Aggregator) Init(config *aconfig.Config, parsers []parser.ArticlesParser, db db.Db) error {
+func (a *Aggregator) Init(config *aconfig.Config, l log.Log, parsers []parser.ArticlesParser, db db.Db) error {
 	a.config = *config
-
+	a.log = l
 	a.parsers = parsers
-
 	a.db = db
 
 	return nil
 }
 
 func (a *Aggregator) Execute() error {
+	a.log.WriteInfo("Aggregator.Execute.Begin")
+
 	a.lastCheckDatetime = time.Now().AddDate(0, -daysAgo, 0)
 
 	var errAll error = nil
@@ -68,6 +94,7 @@ func (a *Aggregator) Execute() error {
 		articles, err := v.ParseAfter(a.lastCheckDatetime)
 
 		if err != nil {
+			a.log.WriteError("Aggregator.Execute.Error", err)
 			if errAll != nil {
 				errAll = fmt.Errorf("%v; %v", errAll, err)
 			} else {
@@ -89,6 +116,7 @@ func (a *Aggregator) Execute() error {
 			})
 
 			if err != nil {
+				a.log.WriteError("Aggregator.Execute.Error", err)
 				if errAll != nil {
 					errAll = fmt.Errorf("%v; %v", errAll, err)
 				} else {
@@ -97,6 +125,8 @@ func (a *Aggregator) Execute() error {
 			}
 		}
 	}
+
+	a.log.WriteInfo("Aggregator.Execute.End")
 
 	return errAll
 }

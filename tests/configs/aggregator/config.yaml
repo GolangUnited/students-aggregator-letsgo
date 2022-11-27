@@ -1,17 +1,19 @@
 # Project Aggregator YAML
 aggregator:
-  logLevel: errors
+  log:
+    type: std
+    level: errors
 
 database:
   name: stub
   url: stub://localhost:22222/
-  logLevel: errors
 
 webservice:
   port: 8080
-  logLevel: errors
+  log:
+    type: std
+    level: errors
 
 parsers:
 - stub:
     url: https://stub.com
-    logLevel: errors

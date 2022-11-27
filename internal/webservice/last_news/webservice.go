@@ -2,33 +2,80 @@ package last_news
 
 import (
 	"encoding/json"
-	"github.com/indikator/aggregator_lets_go/internal/db"
-	"github.com/indikator/aggregator_lets_go/internal/webservice"
-	"log"
 	"net/http"
+	"os"
 	"strconv"
+
+	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
+	log2 "github.com/indikator/aggregator_lets_go/internal/log"
+	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
+	"github.com/indikator/aggregator_lets_go/internal/webservice"
+	wsconfig "github.com/indikator/aggregator_lets_go/internal/webservice/config"
 )
 
 type webService struct {
-	handle string
-	port   uint16
+	config wsconfig.Config
+	log    log2.Log
+	db     db.Db
 }
 
-func NewWebservice(config webservice.Config) webservice.Webservice {
-	handle := config.Handle
-	port := config.Port
-	return &webService{
-		handle: handle,
-		port:   port,
+func NewWebservice() webservice.Webservice {
+	return &webService{}
+}
+
+func (ws *webService) InitAllByConfig(config *config.Config) error {
+	err := config.Read()
+
+	if err != nil {
+		log2.WriteError("WebService.InitAllByConfig.Error", err)
+		return err
 	}
+
+	l, err := clog.GetLog(config.WebService.Log)
+
+	if err != nil {
+		log2.WriteError("WebService.InitAllByConfig.Error", err)
+		return err
+	}
+
+	l.WriteInfo("WebService.InitAllByConfig.Begin")
+
+	db, err := cdb.GetDb(config.Database, l)
+
+	if err != nil {
+		l.WriteError("WebService.InitAllByConfig.Error", err)
+		return err
+	}
+
+	err = ws.Init(&config.WebService, l, db)
+
+	if err != nil {
+		l.WriteError("Aggregator.InitAllByConfig.Error", err)
+		return err
+	}
+
+	l.WriteInfo("Aggregator.InitAllByConfig.End")
+
+	return nil
 }
 
-func (ws *webService) MessageHandler(db db.Db) http.Handler {
+func (ws *webService) Init(config *wsconfig.Config, l log2.Log, db db.Db) error {
+	ws.config = *config
+	ws.log = l
+	ws.db = db
+
+	return nil
+}
+
+func (ws *webService) MessageHandler() http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		news, err := db.ReadArticles(7) // hardcode 1 week
+		news, err := ws.db.ReadArticles(7) // hardcode 1 week
 		if err != nil {
-			log.Fatal(err)
+			ws.log.WriteError("WebService.MessageHandler.Error", err)
+			os.Exit(1)
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -42,9 +89,9 @@ func (ws *webService) MessageHandler(db db.Db) http.Handler {
 	})
 }
 
-func (ws *webService) RunServer(db db.Db) {
+func (ws *webService) RunServer() {
 	mux := http.NewServeMux()
-	mux.Handle(ws.handle, ws.MessageHandler(db))
-	log.Println("Listening...")
-	http.ListenAndServe(":"+strconv.Itoa(int(ws.port)), mux)
+	mux.Handle(ws.config.Handle, ws.MessageHandler())
+	ws.log.WriteInfo("Listening...")
+	http.ListenAndServe(":"+strconv.Itoa(int(ws.config.Port)), mux)
 }

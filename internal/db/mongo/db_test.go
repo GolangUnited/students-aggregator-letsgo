@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
+	log "github.com/indikator/aggregator_lets_go/internal/log/stub"
 	"github.com/indikator/aggregator_lets_go/model"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,7 +26,8 @@ func TestWriteArticle(t *testing.T) {
 	if err != nil {
 		return
 	}
-	mongoDb := NewDb(c.Database)
+	l := log.NewLog(logLevel.Errors)
+	mongoDb := NewDb(c.Database, l)
 	defer mt.Close()
 
 	mt.Run("write article", func(mt *mtest.T) {
@@ -84,7 +87,8 @@ func TestReadArticles(t *testing.T) {
 	if err != nil {
 		return
 	}
-	mongoDb := NewDb(c.Database)
+	l := log.NewLog(logLevel.Errors)
+	mongoDb := NewDb(c.Database, l)
 	defer mt.Close()
 
 	mt.Run("success", func(mt *mtest.T) {
