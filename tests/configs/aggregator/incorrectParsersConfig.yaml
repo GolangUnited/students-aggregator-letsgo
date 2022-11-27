@@ -1,0 +1,9 @@
+# Project Aggregator YAML
+aggregator:
+  log:
+    type: std
+    level: errors
+
+parsers:
+- mock:
+    url: https://mock.com

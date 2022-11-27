@@ -2,22 +2,198 @@ package aggregator
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
+	sdb "github.com/indikator/aggregator_lets_go/internal/db/stub"
+	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
-	log "github.com/indikator/aggregator_lets_go/internal/log/stub"
+	slog "github.com/indikator/aggregator_lets_go/internal/log/stub"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 )
 
 const (
-	configFilePath = "../../tests/configs/aggregator/config.yaml"
-	daysAgoFromDb  = 3
+	configFilePath                      = "../../tests/configs/aggregator/config.yaml"
+	incorrectLogConfigFilePath          = "../../tests/configs/aggregator/incorrectLogConfig.yaml"
+	incorrectParsersConfigFilePath      = "../../tests/configs/aggregator/incorrectParsersConfig.yaml"
+	incorrectDbConfigFilePath           = "../../tests/configs/aggregator/incorrectDbConfig.yaml"
+	incorrectEmptyParsersConfigFilePath = "../../tests/configs/aggregator/incorrectEmptyParsersConfig.yaml"
+	incorrectParserUrlConfigFilePath    = "../../tests/configs/aggregator/incorrectParserUrlConfig.yaml"
+	incorrectDbUrlConfigFilePath        = "../../tests/configs/aggregator/incorrectDbUrlConfig.yaml"
+	daysAgoFromDb                       = 3
+	incorrectParserName                 = "mock"
 )
+
+func TestIncorrectConfig(t *testing.T) {
+	c := config.NewConfig()
+
+	a := NewAggregator()
+
+	err := a.InitAllByConfig(c)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+func TestIncorrectLogConfig(t *testing.T) {
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(incorrectLogConfigFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.InitAllByConfig(c)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+func TestIncorrectDbConfig(t *testing.T) {
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(incorrectDbConfigFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.InitAllByConfig(c)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+func TestIncorrectParsersConfig(t *testing.T) {
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(incorrectParsersConfigFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.InitAllByConfig(c)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+
+func TestIncorrectEmptyParsersConfig(t *testing.T) {
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(incorrectEmptyParsersConfigFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.InitAllByConfig(c)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+
+func TestIncorrectInit(t *testing.T) {
+
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(configFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	l, err := clog.GetLog(c.Aggregator.Log)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	parsers, err := GetParsers(c.Parsers, l)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	db := sdb.NewDb(c.Database, l)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.Init(nil, l, parsers, db)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+
+	err = a.Init(&c.Aggregator, nil, parsers, db)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+
+	err = a.Init(&c.Aggregator, l, nil, db)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+
+	err = a.Init(&c.Aggregator, l, parsers, nil)
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
 
 func TestWorkWithStubParserAndDb(t *testing.T) {
 
@@ -76,13 +252,75 @@ func TestWorkWithStubParserAndDb(t *testing.T) {
 	}
 }
 
+func TestErrorInParseAfter(t *testing.T) {
+
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(incorrectParserUrlConfigFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.InitAllByConfig(c)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = a.Execute()
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+
+func TestErrorInDbAfter(t *testing.T) {
+
+	c := config.NewConfig()
+
+	err := c.SetDataFromFile(incorrectDbUrlConfigFilePath)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	a := NewAggregator()
+
+	err = a.InitAllByConfig(c)
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = a.Execute()
+
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+}
+
 func TestGetParsersCorrectParser(t *testing.T) {
 	pc := []parser.Config{{
 		Name:    "stub",
 		URL:     "https://stub.com",
 		IsLocal: false,
 	}}
-	l := log.NewLog(logLevel.Errors)
+	l := slog.NewLog(logLevel.Errors)
 	p, err := GetParsers(pc, l)
 
 	if err != nil {
@@ -96,11 +334,11 @@ func TestGetParsersCorrectParser(t *testing.T) {
 
 func TestGetParsersIncorrectParser(t *testing.T) {
 	pc := []parser.Config{{
-		Name:    "mock",
+		Name:    incorrectParserName,
 		URL:     "https://mock.com",
 		IsLocal: false,
 	}}
-	l := log.NewLog(logLevel.Errors)
+	l := slog.NewLog(logLevel.Errors)
 	_, err := GetParsers(pc, l)
 
 	if err == nil {
@@ -111,6 +349,10 @@ func TestGetParsersIncorrectParser(t *testing.T) {
 
 	switch {
 	case errors.As(err, &unsupportedParserNameError):
+		em := fmt.Sprintf(unsupportedParserNameErrorTemplate, incorrectParserName)
+		if err.Error() != em {
+			t.Errorf("error message \"%s\" incorrect expected \"%s\"", err.Error(), em)
+		}
 	default:
 		t.Errorf("unexpected error %v", err)
 	}
@@ -121,7 +363,7 @@ func TestGetDbCorrectDb(t *testing.T) {
 		Name: "stub",
 		Url:  "stub://localhost:22222/",
 	}
-	l := log.NewLog(logLevel.Errors)
+	l := slog.NewLog(logLevel.Errors)
 	d, err := cdb.GetDb(c, l)
 
 	if err != nil {
@@ -142,7 +384,7 @@ func TestGetDbIncorrectDb(t *testing.T) {
 		Name: "mock",
 		Url:  "mock://localhost:22222/",
 	}
-	l := log.NewLog(logLevel.Errors)
+	l := slog.NewLog(logLevel.Errors)
 	_, err := cdb.GetDb(c, l)
 
 	if err == nil {

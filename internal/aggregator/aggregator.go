@@ -75,12 +75,33 @@ func (a *Aggregator) InitAllByConfig(config *config.Config) error {
 }
 
 func (a *Aggregator) Init(config *aconfig.Config, l log.Log, parsers []parser.ArticlesParser, db db.Db) error {
+	if config == nil {
+		return fmt.Errorf("config is nil")
+	}
+	if l == nil {
+		return fmt.Errorf("log is nil")
+	}
+	if parsers == nil {
+		return fmt.Errorf("parsers is nil")
+	}
+	if db == nil {
+		return fmt.Errorf("db is nil")
+	}
 	a.config = *config
 	a.log = l
 	a.parsers = parsers
 	a.db = db
 
 	return nil
+}
+
+func composeError(errAll, err error) error {
+	if errAll != nil {
+		errAll = fmt.Errorf("%v; %v", errAll, err)
+	} else {
+		errAll = err
+	}
+	return errAll
 }
 
 func (a *Aggregator) Execute() error {
@@ -95,11 +116,7 @@ func (a *Aggregator) Execute() error {
 
 		if err != nil {
 			a.log.WriteError("Aggregator.Execute.Error", err)
-			if errAll != nil {
-				errAll = fmt.Errorf("%v; %v", errAll, err)
-			} else {
-				errAll = err
-			}
+			errAll = composeError(errAll, err)
 			continue
 		}
 
@@ -117,11 +134,7 @@ func (a *Aggregator) Execute() error {
 
 			if err != nil {
 				a.log.WriteError("Aggregator.Execute.Error", err)
-				if errAll != nil {
-					errAll = fmt.Errorf("%v; %v", errAll, err)
-				} else {
-					errAll = err
-				}
+				errAll = composeError(errAll, err)
 			}
 		}
 	}
