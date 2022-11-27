@@ -12,10 +12,10 @@ import (
 
 const (
 	configFilePath = "./configs/config.yaml"
+	//configFilePath = "../../configs/config.yaml"
 )
 
 func main() {
-
 	c := config.NewConfig()
 
 	err := c.SetDataFromFile(configFilePath)

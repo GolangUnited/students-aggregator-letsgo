@@ -6,7 +6,7 @@ aggregator:
 
 database:
   name: stub
-  url: stub://localhost:22222/
+  url: stub://localhost:error/
 
 webservice:
   port: 8080

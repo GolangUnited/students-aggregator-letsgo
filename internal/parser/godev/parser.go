@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gocolly/colly"
+	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 )
@@ -28,11 +29,12 @@ const (
 
 type articlesparser struct {
 	url       string
+	log       log.Log
 	collector *colly.Collector
 }
 
 // create an instance of articles parser
-func NewParser(cfg parser.Config) parser.ArticlesParser {
+func NewParser(cfg parser.Config, l log.Log) parser.ArticlesParser {
 
 	collector := colly.NewCollector()
 
@@ -44,6 +46,7 @@ func NewParser(cfg parser.Config) parser.ArticlesParser {
 
 	return &articlesparser{
 		url:       cfg.URL,
+		log:       l,
 		collector: collector,
 	}
 }

@@ -3,6 +3,7 @@ package aggregator
 import (
 	"fmt"
 
+	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 
 	_ "github.com/indikator/aggregator_lets_go/internal/parser/autoregister"
@@ -20,7 +21,7 @@ func (e *UnsupportedParserNameError) Error() string {
 	return e.Text
 }
 
-func GetParsers(pc []parser.Config) (parsers []parser.ArticlesParser, err error) {
+func GetParsers(pc []parser.Config, l log.Log) (parsers []parser.ArticlesParser, err error) {
 	for _, v := range pc {
 		newParserFunc := parser.ParserDefinitions[v.Name]
 		if newParserFunc == nil {
@@ -30,7 +31,7 @@ func GetParsers(pc []parser.Config) (parsers []parser.ArticlesParser, err error)
 		}
 
 		cfg := parser.Config{URL: v.URL}
-		parsers = append(parsers, newParserFunc(cfg))
+		parsers = append(parsers, newParserFunc(cfg, l))
 	}
 	return parsers, nil
 }

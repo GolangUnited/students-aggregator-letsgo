@@ -1,23 +1,23 @@
 # Project Aggregator YAML
 aggregator:
-  logLevel: errors
+  log:
+    type: std
+    level: errors
 
 database:
   name: stub
   url: stub://localhost:22222/
-  logLevel: errors
 
 webservice:
   port: 8080
-  logLevel: info
+  log:
+    type: std
+    level: info
 
 parsers:
 - github:
     url: https://github.com/golang/go/tags
-    logLevel: errors
 - go.dev:
     url: https://go.dev/blog
-    logLevel: errors
 - medium.com:
     url: https://medium.com/_/graphql
-    logLevel: errors

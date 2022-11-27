@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
 )
@@ -60,16 +60,18 @@ type ArticlesParser struct {
 	Url           string
 	Host          string
 	QueryFileName string
+	log           log.Log
 }
 
 // create an instance of articles parser
-func NewParser(cfg parser.Config) parser.ArticlesParser {
+func NewParser(cfg parser.Config, l log.Log) parser.ArticlesParser {
 
 	return &ArticlesParser{
 		Client:        &http.Client{},
 		Url:           cfg.URL,
 		Host:          hostService,
 		QueryFileName: queryFileName,
+		log:           l,
 	}
 
 }
@@ -96,7 +98,7 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 		}
 
 		if len(states[0].Data.TagFeed.Items) == 0 && !initialRequest {
-			log.Printf("Problems in site - %s", p.Host)
+			fmt.Printf("Problems in site - %s", p.Host)
 			return articles, nil
 		}
 

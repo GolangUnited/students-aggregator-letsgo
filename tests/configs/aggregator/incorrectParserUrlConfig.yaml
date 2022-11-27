@@ -16,4 +16,4 @@ webservice:
 
 parsers:
 - stub:
-    url: https://stub.com
+    url: https://error.stub.com

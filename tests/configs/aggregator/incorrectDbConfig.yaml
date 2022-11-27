@@ -4,16 +4,6 @@ aggregator:
     type: std
     level: errors
 
-database:
-  name: stub
-  url: stub://localhost:22222/
-
-webservice:
-  port: 8080
-  log:
-    type: std
-    level: errors
-
 parsers:
 - stub:
     url: https://stub.com

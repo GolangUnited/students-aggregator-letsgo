@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/indikator/aggregator_lets_go/internal/db"
+	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,13 +21,15 @@ var collection *mongo.Collection
 type database struct {
 	name string
 	url  string
+	log  log.Log
 }
 
 // NewDb create an instance of database
-func NewDb(c db.Config) db.Db {
+func NewDb(c db.Config, l log.Log) db.Db {
 	return &database{
 		name: c.Name,
 		url:  c.Url,
+		log:  l,
 	}
 }
 

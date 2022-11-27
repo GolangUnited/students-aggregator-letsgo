@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
+	log "github.com/indikator/aggregator_lets_go/internal/log/stub"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/parser/godev"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -19,7 +21,10 @@ const (
 func TestParseAfter(t *testing.T) {
 
 	cfg := parser.Config{URL: URL, IsLocal: true}
-	parser := godev.NewParser(cfg)
+
+	l := log.NewLog(logLevel.Errors)
+
+	parser := godev.NewParser(cfg, l)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {

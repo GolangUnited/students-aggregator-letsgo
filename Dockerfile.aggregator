@@ -18,7 +18,7 @@ COPY ./etc /root/etc
 COPY launchAggregator.sh /root/launch
 
 RUN echo "*/60 * * * * /bin/app " > /etc/crontabs/root
- 
+RUN dos2unix /root/launch
 RUN chmod -R a+x /root/launch
 
 CMD [ "/bin/sh", "-c", "/root/launch"]
