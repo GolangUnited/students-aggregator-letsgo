@@ -1,7 +1,6 @@
 package godev
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -158,35 +157,26 @@ func (p *articlesparser) getNewArticle(h *colly.HTMLElement) (article model.Arti
 
 	title, err := p.getTitle(h)
 	if err != nil {
-		p.log.WriteError("parsing error: an article title not found on the web page.", err)
 		return
 	}
 
 	URL, err := p.getAbsoluteURL(h)
 	if err != nil {
-		p.log.WriteError("parsing error: an article URL not found on the web page.", err)
 		return
 	}
 
 	createdAt, err := p.getDatetime(h)
 	if err != nil {
-		if errors.Is(err, parser.ErrorArticleDatetimeNotFound) {
-			p.log.WriteError("parsing error: an article datetime created not found on the web page.", err)
-		} else {
-			p.log.WriteError("parsing error: an article datetime", err)
-		}
 		return
 	}
 
 	author, err := p.getAuthor(h)
 	if err != nil {
-		p.log.WriteError("parsing error: an article author not found on the web page.", err)
 		return
 	}
 
 	description, err := p.getDescription(h)
 	if err != nil {
-		p.log.WriteError("parsing error: an article description not found on the web page.", err)
 		return
 	}
 
