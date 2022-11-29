@@ -4,7 +4,8 @@ database:
   logLevel: errors
 
 webservice:
-  port: 8080
-  handle: /last_news
-  logLevel: errors
+  - last_news:
+      handle: /last_news
+      port: 8080
+      logLevel: errors
 
