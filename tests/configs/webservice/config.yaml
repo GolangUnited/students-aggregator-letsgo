@@ -3,9 +3,10 @@ database:
   url: mongodb://mongodb:27017
 
 webservice:
-  port: 8080
-  handle: /last_news
-  log:
-    type: std
-    level: errors
+  - last_news:
+      handle: /last_news
+      port: 8080
+      log:
+        type: std
+        level: errors
 

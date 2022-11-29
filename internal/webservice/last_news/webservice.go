@@ -16,13 +16,7 @@ import (
 )
 
 type webService struct {
-	config wsconfig.Config
-	log    log.Log
-	db     db.Db
-}
-
-func NewWebservice() webservice.Webservice {
-	return &webService{}
+	handles map[string]webservice.Config
 }
 
 func (ws *webService) InitAllByConfig(config *config.Config) error {
@@ -49,6 +43,9 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 		return err
 	}
 
+func NewWebservice(config map[string]webservice.Config) webservice.Webservice {
+	return &webService{
+		handles: config,
 	err = ws.Init(&config.WebService, l, db)
 
 	if err != nil {
@@ -69,11 +66,18 @@ func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
 	return nil
 }
 
-func (ws *webService) MessageHandler() http.Handler {
+// GetLastNews godoc
+// @Summary Retrieves last news from last 7 days
+// @Description Get array of Articles for the last 7 days
+// @Tags news
+// @Produce json
+// @Success 200 {object} []model.DBArticle
+// @Router /last_news [get]
+func (ws *webService) GetLastNews(db db.Db, nDays int) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ws.log.WriteInfo("WebService.MessageHandler.Begin")
-		news, err := ws.db.ReadArticles(7) // hardcode 1 week
+		news, err := db.ReadArticles(nDays)
 		if err != nil {
 			ws.log.WriteError("WebService.MessageHandler.Error", err)
 			os.Exit(1)
@@ -89,13 +93,4 @@ func (ws *webService) MessageHandler() http.Handler {
 		w.Write(newsJson)
 		ws.log.WriteInfo("WebService.MessageHandler.End")
 	})
-}
-
-func (ws *webService) RunServer() {
-	ws.log.WriteInfo("WebService.RunServer.Begin")
-	mux := http.NewServeMux()
-	mux.Handle(ws.config.Handle, ws.MessageHandler())
-	ws.log.WriteInfo("WebService.RunServer.Listening...")
-	http.ListenAndServe(":"+strconv.Itoa(int(ws.config.Port)), mux)
-	ws.log.WriteInfo("WebService.RunServer.End")
 }

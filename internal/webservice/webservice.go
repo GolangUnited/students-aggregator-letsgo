@@ -10,8 +10,7 @@ import (
 )
 
 type Webservice interface {
+	GetLastNews(db db.Db, nDays int) http.Handler
 	InitAllByConfig(config *config.Config) error
 	Init(config *wsconfig.Config, l log.Log, db db.Db) error
-	MessageHandler() http.Handler
-	RunServer()
 }
