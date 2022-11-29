@@ -1,10 +1,10 @@
 package webservice
 
 import (
-	"github.com/gorilla/mux"
+	"github.com/indikator/aggregator_lets_go/internal/db"
 	"net/http"
 )
 
 type Webservice interface {
-	RunServer(mux *mux.Router, handlers map[string]*http.Handler)
+	GetLastNews(db db.Db, nDays int) http.Handler
 }
