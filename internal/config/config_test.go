@@ -38,12 +38,12 @@ func TestRead(t *testing.T) {
 		t.Errorf("incorrect database log level \"%v\", expected \"%s\"", c.Database.LogLevel, logLevel.Errors)
 	}
 
-	if c.WebService.Port != 8080 {
-		t.Errorf("incorrect webservice port %d, expected %d", c.WebService.Port, 8080)
+	if c.WebService["last_news"].Port != 8080 {
+		t.Errorf("incorrect webservice port %d, expected %d", c.WebService["last_news"].Port, 8080)
 	}
 
-	if c.WebService.LogLevel != logLevel.Info {
-		t.Errorf("incorrect webservice log level \"%v\", expected \"%s\"", c.WebService.LogLevel, logLevel.Info)
+	if c.WebService["last_news"].LogLevel != logLevel.Info {
+		t.Errorf("incorrect webservice log level \"%v\", expected \"%s\"", c.WebService["last_news"].LogLevel, logLevel.Info)
 	}
 
 	if len(c.Parsers) != 3 {
