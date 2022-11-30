@@ -1,6 +1,7 @@
 package godev_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -13,6 +14,12 @@ import (
 
 const (
 	URL                  = "file://./page.html"
+	noHref               = "file://./page-article-without-url.html"
+	noTitle              = "file://./page-article-without-title.html"
+	noDescription        = "file://./page-article-without-description.html"
+	noDatetime           = "file://./page-article-without-datetime.html"
+	noAuthor             = "file://./page-article-without-author.html"
+	webPageNotFound      = "file://./page-not-found.html"
 	dateFormat           = "2 January 2006"
 	stringDate           = "2 August 2022"
 	targetArticlesAmount = 3
@@ -20,18 +27,16 @@ const (
 
 func TestParseAfter(t *testing.T) {
 
-	cfg := parser.Config{URL: URL, IsLocal: true}
+	cfg, lg := parser.Config{URL: URL, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	l := log.NewLog(logLevel.Errors)
-
-	parser := godev.NewParser(cfg, l)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
 
-	articles, err := parser.ParseAfter(date)
+	articles, err := articlesParser.ParseAfter(date)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
@@ -64,6 +69,132 @@ func TestParseAfter(t *testing.T) {
 		if article.Author != testesArticles[index].Author {
 			t.Errorf("error: an parsed article Author: %s is not equal to the expected article Author: %s\n", article.Author, testesArticles[index].Author)
 		}
+	}
+}
+
+func TestWithoutTitleParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: noTitle, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleTitleNotFound) {
+			t.Errorf("error: %s", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutAuthorParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: noAuthor, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleAuthorNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutDescriptionParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: noDescription, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleDescriptionNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutHrefParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: noHref, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !(errors.Is(err, parser.ErrorArticleURLNotFound) || errors.Is(err, parser.ErrorArticleTitleNotFound)) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutDatetimeParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: noDatetime, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleDatetimeNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWebPageNotFoundParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: webPageNotFound, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorWebPageCannotBeDelivered{URL: webPageNotFound, StatusCode: 404}) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
