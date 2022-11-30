@@ -16,7 +16,7 @@ type Config struct {
 	data       []byte
 	Aggregator aggregator.Config
 	Database   db.Config
-	WebService map[string]webservice.Config
+	WebService webservice.Config
 	Parsers    []parser.Config
 }
 
@@ -29,17 +29,11 @@ type parserYamlConfig struct {
 	LogLevel logLevel.LogLevel `yaml:"logLevel"`
 }
 
-type webserviceYamlConfig struct {
-	Handle   string            `yaml:"handle"`
-	Port     uint16            `yaml:"port"`
-	LogLevel logLevel.LogLevel `yaml:"logLevel"`
-}
-
 type yamlConfig struct {
 	Aggregator aggregator.Config             `yaml:"aggregator"`
 	Database   db.Config                     `yaml:"database"`
+	Webservice webservice.Config             `yaml:"webservice"`
 	Parsers    []map[string]parserYamlConfig `yaml:"parsers"`
-	Handles  []map[string]webserviceYamlConfig `yaml:"webservice"`
 }
 
 func (c *Config) SetDataFromFile(fileName string) error {
@@ -72,14 +66,8 @@ func (c *Config) Read() (err error) {
 
 	c.Aggregator = yc.Aggregator
 	c.Database = yc.Database
-	c.WebService = make(map[string]webservice.Config)
+	c.WebService = yc.Webservice
 	c.Parsers = make([]parser.Config, len(yc.Parsers))
-
-	for _, v := range yc.Handles {
-		for name, h := range v {
-			c.WebService[name] = webservice.Config{Handle: h.Handle, Port: h.Port, LogLevel: h.LogLevel}
-		}
-	}
 
 	for i, v := range yc.Parsers {
 		for name, p := range v {

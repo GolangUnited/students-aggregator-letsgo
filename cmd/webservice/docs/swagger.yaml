@@ -14,7 +14,6 @@ definitions:
       url:
         type: string
     type: object
-host: https://letsgo.iost.at:8080
 info:
   contact:
     email: aggregator_lets_go@gmail.com
@@ -36,7 +35,7 @@ paths:
             items:
               $ref: '#/definitions/model.DBArticle'
             type: array
-      summary: Retrieves last news from last 7 days
+      summary: Retrieves news from last 7 days
       tags:
         - news
 swagger: "2.0"

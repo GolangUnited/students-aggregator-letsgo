@@ -22,8 +22,6 @@ import (
 // @contact.name Web-Service Support
 // @contact.email aggregator_lets_go@gmail.com
 
-//@host https://letsgo.iost.at:8080
-
 const (
 	configFilePath = "./configs/config.yaml"
 )
@@ -38,17 +36,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// set port from config
-	port := int(cfg.WebService["last_news"].Port)
-
-	// init db
-	db := mongo.NewDb(cfg.Database)
-	if err := db.DBInit(); err != nil {
+	// init webservice
+	ws := last_news.NewWebservice()
+	if err := ws.InitAllByConfig(cfg); err != nil {
 		log.Fatal(err)
 	}
 
-	// init webservice
-	ws := last_news.NewWebservice(cfg.WebService)
+	// set port from config
+	port := int(ws.Port())
 
 	// add swagger route to multiplexer
 	r := mux.NewRouter()
@@ -59,17 +54,8 @@ func main() {
 	)).Methods(http.MethodGet)
 
 	// init last news handle
-	lastNewsHandler := ws.GetLastNews(db, 7) // hardcode 1 week
-
-	// create map for handles
-	handlers := map[string]*http.Handler{
-		"last_news": &lastNewsHandler, // add new handles if needed
-	}
-
-	// add handles to multiplexer
-	for name, handle := range cfg.WebService {
-		r.Handle(handle.Handle, *handlers[name])
-	}
+	lastNewsHandler := ws.GetLastNews(7) // hardcode 1 week
+	r.Handle(cfg.WebService.Handle, lastNewsHandler)
 
 	// init and run server on given port
 	server := &http.Server{

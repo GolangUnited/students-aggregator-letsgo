@@ -2,10 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"net/http"
-	"os"
-	"strconv"
-
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
@@ -13,10 +9,34 @@ import (
 	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	wsconfig "github.com/indikator/aggregator_lets_go/internal/webservice/config"
+	"net/http"
+	"os"
 )
 
 type webService struct {
-	handles map[string]webservice.Config
+	config  wsconfig.Config
+	log     log.Log
+	db      db.Db
+	handles map[string]http.Handler
+}
+
+func NewWebservice() webservice.Webservice {
+	return &webService{}
+}
+
+func (ws *webService) Port() uint16 {
+	return ws.config.Port
+}
+
+func (ws *webService) Db() db.Db {
+	return ws.db
+}
+
+func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
+	ws.config = *config
+	ws.db = db
+	ws.log = l
+	return nil
 }
 
 func (ws *webService) InitAllByConfig(config *config.Config) error {
@@ -43,9 +63,6 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 		return err
 	}
 
-func NewWebservice(config map[string]webservice.Config) webservice.Webservice {
-	return &webService{
-		handles: config,
 	err = ws.Init(&config.WebService, l, db)
 
 	if err != nil {
@@ -58,26 +75,18 @@ func NewWebservice(config map[string]webservice.Config) webservice.Webservice {
 	return nil
 }
 
-func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
-	ws.config = *config
-	ws.log = l
-	ws.db = db
-
-	return nil
-}
-
 // GetLastNews godoc
-// @Summary Retrieves last news from last 7 days
+// @Summary Retrieves news from last 7 days
 // @Description Get array of Articles for the last 7 days
 // @Tags news
 // @Produce json
 // @Success 200 {object} []model.DBArticle
 // @Router /last_news [get]
-func (ws *webService) GetLastNews(db db.Db, nDays int) http.Handler {
+func (ws *webService) GetLastNews(nDays int) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ws.log.WriteInfo("WebService.MessageHandler.Begin")
-		news, err := db.ReadArticles(nDays)
+		news, err := ws.db.ReadArticles(nDays)
 		if err != nil {
 			ws.log.WriteError("WebService.MessageHandler.Error", err)
 			os.Exit(1)

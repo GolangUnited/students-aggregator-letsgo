@@ -29,7 +29,7 @@ const docTemplate = `{
                 "tags": [
                     "news"
                 ],
-                "summary": "Retrieves last news from last 7 days",
+                "summary": "Retrieves news from last 7 days",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -74,7 +74,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.1",
-	Host:             "https://letsgo.iost.at:8080",
+	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Web-Service Swagger",

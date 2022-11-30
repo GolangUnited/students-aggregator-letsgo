@@ -2,7 +2,6 @@ package stub
 
 import (
 	"fmt"
-
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -31,7 +30,7 @@ func (d *database) Url() string {
 	return d.config.Url
 }
 
-func (d *database) DBInit() error {
+func (d *database) InitDb() error {
 	return nil
 }
 

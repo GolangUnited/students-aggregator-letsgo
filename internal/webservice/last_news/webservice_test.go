@@ -2,8 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"github.com/indikator/aggregator_lets_go/internal/db/stub"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -54,16 +52,16 @@ func TestGetLastNews(t *testing.T) {
 			URL:         "test_article1.com",
 		},
 	}
+	newDb := ws.Db()
 	for _, article := range expected {
 		newDb.WriteArticle(&article)
 	}
 
-	handler := ws.GetLastNews(newDb, 7)
+	handler := ws.GetLastNews(7)
 
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
-	log.Println(c.WebService["last_news"].Handle)
-	req, err := http.NewRequest("GET", c.WebService["last_news"].Handle, nil)
+	req, err := http.NewRequest("GET", c.WebService.Handle, nil)
 	if err != nil {
 		t.Errorf("expected nil got %v", err)
 	}

@@ -10,7 +10,6 @@
     },
     "version": "1.0.1"
   },
-  "host": "https://letsgo.iost.at:8080",
   "paths": {
     "/last_news": {
       "get": {
@@ -21,7 +20,7 @@
         "tags": [
           "news"
         ],
-        "summary": "Retrieves last news from last 7 days",
+        "summary": "Retrieves news from last 7 days",
         "responses": {
           "200": {
             "description": "OK",

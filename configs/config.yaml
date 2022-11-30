@@ -9,12 +9,11 @@ database:
   url: mongodb://mongodb:27017
 
 webservice:
-  - last_news:
-      handle: /last_news
-      port: 8080
-      log:
-        type: std
-        level: errors
+  handle: /last_news
+  port: 8080
+  log:
+    type: std
+    level: errors
 
 parsers:
 - github:

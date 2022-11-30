@@ -5,7 +5,7 @@ import (
 )
 
 type Config struct {
-	Port   uint16     `yaml:"port"`
 	Handle string     `yaml:"handle"`
+	Port   uint16     `yaml:"port"`
 	Log    log.Config `yaml:"log"`
 }

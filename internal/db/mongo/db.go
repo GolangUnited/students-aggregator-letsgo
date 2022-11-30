@@ -3,12 +3,12 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"github.com/indikator/aggregator_lets_go/internal/log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/indikator/aggregator_lets_go/internal/db"
-	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -79,8 +79,8 @@ func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	return articles, nil
 }
 
-// DBInit creates a new MongoDB client and connect to your running MongoDB server
-func (db *database) DBInit() error {
+// InitDb creates a new MongoDB client and connect to your running MongoDB server
+func (db *database) InitDb() error {
 	clientOptions := options.Client().ApplyURI(db.url)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
