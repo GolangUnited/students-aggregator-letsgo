@@ -25,6 +25,7 @@ const (
 	articleDescriptionTag = "p.blogsummary"
 	a                     = "a"
 	href                  = "href"
+	allArticlesHref       = "file://./blog/all"
 )
 
 type articlesparser struct {
@@ -52,17 +53,18 @@ func NewParser(cfg parser.Config, lg log.Log) parser.ArticlesParser {
 }
 
 // ParseAfter parses all articles that were created earler than the target date
-func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article, err error) {
+func (p *articlesparser) ParseAfter(date time.Time) (articles []model.Article, err error) {
 
 	articleContainerRef := p.getArticleContainerRef()
 
 	p.collector.OnHTML(articleContainerRef, func(h *colly.HTMLElement) {
-		article, err := p.getNewArticle(h)
-		if err != nil {
+		article, er := p.getNewArticle(h)
+		if er != nil {
+			err = er
 			p.log.WriteError(err.Error(), err)
 			return
 		}
-		if !article.Created.After(maxDate) {
+		if !article.Created.After(date) {
 			return
 		}
 		articles = append(articles, article)
@@ -71,11 +73,10 @@ func (p *articlesparser) ParseAfter(maxDate time.Time) (articles []model.Article
 	p.collector.OnError(func(r *colly.Response, er error) {
 		if strings.TrimSpace(er.Error()) == parser.ErrorMessage {
 			err = parser.ErrorWebPageCannotBeDelivered{URL: r.Request.URL.String(), StatusCode: r.StatusCode}
-			p.log.WriteError(err.Error(), err)
 		} else {
 			err = parser.ErrorUnknown{OriginError: er}
-			p.log.WriteError(err.Error(), err)
 		}
+		p.log.WriteError(err.Error(), err)
 	})
 
 	p.collector.Visit(p.url)
@@ -161,16 +162,16 @@ func (p *articlesparser) getNewArticle(h *colly.HTMLElement) (article model.Arti
 	}
 
 	URL, err := p.getAbsoluteURL(h)
+	if err != nil || URL == allArticlesHref {
+		return
+	}
+
+	author, err := p.getAuthor(h)
 	if err != nil {
 		return
 	}
 
 	createdAt, err := p.getDatetime(h)
-	if err != nil {
-		return
-	}
-
-	author, err := p.getAuthor(h)
 	if err != nil {
 		return
 	}

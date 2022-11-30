@@ -29,14 +29,14 @@ func TestParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: URL, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
 
-	articles, err := articleParser.ParseAfter(date)
+	articles, err := articlesParser.ParseAfter(date)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
@@ -76,18 +76,20 @@ func TestWithoutTitleParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: noTitle, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
 
-	_, err = articleParser.ParseAfter(date)
+	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorArticleTitleNotFound) {
-			t.Errorf("error: %s\n", err)
+			t.Errorf("error: %s", err)
 		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
@@ -95,18 +97,20 @@ func TestWithoutAuthorParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: noAuthor, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
 
-	_, err = articleParser.ParseAfter(date)
+	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorArticleAuthorNotFound) {
 			t.Errorf("error: %s\n", err)
 		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
@@ -114,18 +118,20 @@ func TestWithoutDescriptionParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: noDescription, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
 
-	_, err = articleParser.ParseAfter(date)
+	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorArticleDescriptionNotFound) {
 			t.Errorf("error: %s\n", err)
 		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
@@ -133,18 +139,20 @@ func TestWithoutHrefParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: noHref, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
 
-	_, err = articleParser.ParseAfter(date)
+	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
-		if !errors.Is(err, parser.ErrorArticleURLNotFound) {
+		if !(errors.Is(err, parser.ErrorArticleURLNotFound) || errors.Is(err, parser.ErrorArticleTitleNotFound)) {
 			t.Errorf("error: %s\n", err)
 		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
@@ -152,18 +160,20 @@ func TestWithoutDatetimeParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: noDatetime, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
 
-	_, err = articleParser.ParseAfter(date)
+	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorArticleDatetimeNotFound) {
 			t.Errorf("error: %s\n", err)
 		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
@@ -171,18 +181,20 @@ func TestWebPageNotFoundParseAfter(t *testing.T) {
 
 	cfg, lg := parser.Config{URL: webPageNotFound, IsLocal: true}, log.NewLog(logLevel.Errors)
 
-	articleParser := godev.NewParser(cfg, lg)
+	articlesParser := godev.NewParser(cfg, lg)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err)
 	}
 
-	_, err = articleParser.ParseAfter(date)
+	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorWebPageCannotBeDelivered{URL: webPageNotFound, StatusCode: 404}) {
 			t.Errorf("error: %s\n", err)
 		}
+	} else {
+		t.Error("error cannot equals to nil")
 	}
 }
 
