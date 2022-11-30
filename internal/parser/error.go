@@ -33,11 +33,11 @@ func (e ErrorUnknown) Error() string {
 }
 
 var (
-	ErrorArticleTitleNotFound       = errors.New("an article title not found on the web page")
-	ErrorArticleAuthorNotFound      = errors.New("an article author html element not found")
-	ErrorArticleDescriptionNotFound = errors.New("an article description html element not found")
-	ErrorArticleDatetimeNotFound    = errors.New("an article datetime html element not found")
-	ErrorArticleURLNotFound         = errors.New("an article URL not found on the web page")
+	ErrorArticleTitleNotFound       = errors.New("an article title html element not found on a web page")
+	ErrorArticleAuthorNotFound      = errors.New("an article author html element not found on a web page")
+	ErrorArticleDescriptionNotFound = errors.New("an article description html element not found on a web page")
+	ErrorArticleDatetimeNotFound    = errors.New("an article datetime html element not found on a web page")
+	ErrorArticleURLNotFound         = errors.New("an article URL html element not found on a web page")
 )
 
 const (
