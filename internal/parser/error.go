@@ -29,7 +29,7 @@ func (e ErrorCannotParseArticleDatetime) Error() string {
 }
 
 func (e ErrorUnknown) Error() string {
-	return fmt.Errorf("error1: %w", e.OriginError).Error()
+	return fmt.Errorf("uknown error: %w", e.OriginError).Error()
 }
 
 var (
