@@ -1,10 +1,10 @@
 database:
-  name: mongo
+  name: stub
   url: mongodb://mongodb:27017
 
 webservice:
-  port: 8080
   handle: /last_news
+  port: 8080
   log:
     type: std
     level: errors

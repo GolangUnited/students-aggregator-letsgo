@@ -32,7 +32,7 @@ type parserYamlConfig struct {
 type yamlConfig struct {
 	Aggregator aggregator.Config             `yaml:"aggregator"`
 	Database   db.Config                     `yaml:"database"`
-	WebService webservice.Config             `yaml:"webservice"`
+	Webservice webservice.Config             `yaml:"webservice"`
 	Parsers    []map[string]parserYamlConfig `yaml:"parsers"`
 }
 
@@ -66,7 +66,7 @@ func (c *Config) Read() (err error) {
 
 	c.Aggregator = yc.Aggregator
 	c.Database = yc.Database
-	c.WebService = yc.WebService
+	c.WebService = yc.Webservice
 	c.Parsers = make([]parser.Config, len(yc.Parsers))
 
 	for i, v := range yc.Parsers {

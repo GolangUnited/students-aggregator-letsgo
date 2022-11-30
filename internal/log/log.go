@@ -2,9 +2,8 @@ package log
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
+	"time"
 )
 
 // Log interface to write messages to log

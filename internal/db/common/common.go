@@ -35,7 +35,7 @@ func GetDb(config db.Config, l log.Log) (db.Db, error) {
 		}
 	}
 
-	err := d.DBInit()
+	err := d.InitDb()
 
 	if err != nil {
 		return nil, err

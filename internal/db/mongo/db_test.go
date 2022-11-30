@@ -18,13 +18,14 @@ import (
 func TestWriteArticle(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	c := config.NewConfig()
-	err := c.SetDataFromFile("../../configs/config.yaml")
+	err := c.SetDataFromFile("../../../tests/configs/mongo/config.yaml")
 	if err != nil {
-		return
+		t.Errorf("expected nil, got %v", err)
 	}
 	err = c.Read()
 	if err != nil {
-		return
+		t.Errorf("expected nil, got %v", err)
+
 	}
 	l := log.NewLog(logLevel.Errors)
 	mongoDb := NewDb(c.Database, l)
@@ -83,7 +84,7 @@ func TestWriteArticle(t *testing.T) {
 func TestReadArticles(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	c := config.NewConfig()
-	err := c.SetDataFromFile("../../tests/configs/mongo/config.yaml")
+	err := c.SetDataFromFile("../../../tests/configs/mongo/config.yaml")
 	if err != nil {
 		return
 	}
@@ -96,7 +97,7 @@ func TestReadArticles(t *testing.T) {
 		expectedArticle := model.DBArticle{
 			ID:          primitive.NewObjectID(),
 			Title:       "test_title",
-			Created:     time.Now().AddDate(0, -1, 0),
+			Created:     time.Date(2022, 1, 1, 1, 1, 1, 0, time.UTC),
 			Author:      "mikhailov.mk",
 			Description: "test article for db",
 			URL:         "test_article.com",
@@ -111,7 +112,7 @@ func TestReadArticles(t *testing.T) {
 			{Key: "url", Value: expectedArticle.URL},
 		}), killCursors)
 
-		articleResponse, err := mongoDb.ReadArticles(2)
+		articleResponse, err := mongoDb.ReadArticles(7)
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedArticle, articleResponse[0])

@@ -11,7 +11,7 @@ type Db interface {
 	Url() string
 	WriteArticle(article *model.DBArticle) (*model.DBArticle, error)
 	ReadArticles(nDays int) ([]model.DBArticle, error)
-	DBInit() error
+	InitDb() error
 }
 
 func ConvertArticle(article model.Article) *model.DBArticle {

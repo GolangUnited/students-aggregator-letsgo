@@ -1,0 +1,63 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Swagger Web-Service for Let's Go Aggregator",
+    "title": "Web-Service Swagger",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "Web-Service Support",
+      "email": "aggregator_lets_go@gmail.com"
+    },
+    "version": "1.0.1"
+  },
+  "paths": {
+    "/last_news": {
+      "get": {
+        "description": "Get array of Articles for the last 7 days",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "news"
+        ],
+        "summary": "Retrieves news from last 7 days",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/model.DBArticle"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "model.DBArticle": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

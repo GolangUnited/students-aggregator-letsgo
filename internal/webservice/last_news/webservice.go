@@ -2,10 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"net/http"
-	"os"
-	"strconv"
-
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
@@ -13,16 +9,34 @@ import (
 	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	wsconfig "github.com/indikator/aggregator_lets_go/internal/webservice/config"
+	"net/http"
+	"os"
 )
 
 type webService struct {
-	config wsconfig.Config
-	log    log.Log
-	db     db.Db
+	config  wsconfig.Config
+	log     log.Log
+	db      db.Db
+	handles map[string]http.Handler
 }
 
 func NewWebservice() webservice.Webservice {
 	return &webService{}
+}
+
+func (ws *webService) Port() uint16 {
+	return ws.config.Port
+}
+
+func (ws *webService) Db() db.Db {
+	return ws.db
+}
+
+func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
+	ws.config = *config
+	ws.db = db
+	ws.log = l
+	return nil
 }
 
 func (ws *webService) InitAllByConfig(config *config.Config) error {
@@ -61,19 +75,18 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 	return nil
 }
 
-func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
-	ws.config = *config
-	ws.log = l
-	ws.db = db
-
-	return nil
-}
-
-func (ws *webService) MessageHandler() http.Handler {
+// GetLastNews godoc
+// @Summary Retrieves news from last 7 days
+// @Description Get array of Articles for the last 7 days
+// @Tags news
+// @Produce json
+// @Success 200 {object} []model.DBArticle
+// @Router /last_news [get]
+func (ws *webService) GetLastNews(nDays int) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ws.log.WriteInfo("WebService.MessageHandler.Begin")
-		news, err := ws.db.ReadArticles(7) // hardcode 1 week
+		news, err := ws.db.ReadArticles(nDays)
 		if err != nil {
 			ws.log.WriteError("WebService.MessageHandler.Error", err)
 			os.Exit(1)
@@ -89,13 +102,4 @@ func (ws *webService) MessageHandler() http.Handler {
 		w.Write(newsJson)
 		ws.log.WriteInfo("WebService.MessageHandler.End")
 	})
-}
-
-func (ws *webService) RunServer() {
-	ws.log.WriteInfo("WebService.RunServer.Begin")
-	mux := http.NewServeMux()
-	mux.Handle(ws.config.Handle, ws.MessageHandler())
-	ws.log.WriteInfo("WebService.RunServer.Listening...")
-	http.ListenAndServe(":"+strconv.Itoa(int(ws.config.Port)), mux)
-	ws.log.WriteInfo("WebService.RunServer.End")
 }

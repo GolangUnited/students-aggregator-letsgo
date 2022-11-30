@@ -17,42 +17,20 @@ import (
 var id1 = primitive.NewObjectID()
 var id2 = primitive.NewObjectID()
 
-func TestMessageHandler(t *testing.T) {
+func TestGetLastNews(t *testing.T) {
 	c := config.NewConfig()
-	err := c.SetDataFromFile("../../tests/configs/webservice/config.yaml")
+	err := c.SetDataFromFile("../../../tests/configs/webservice/config.yaml")
 	if err != nil {
-		return
+		t.Errorf("expected nil got %v", err)
 	}
 	err = c.Read()
 	if err != nil {
-		return
+		t.Errorf("expected nil got %v", err)
 	}
 	ws := NewWebservice()
 	err = ws.InitAllByConfig(c)
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
-	}
-
-	handler := ws.MessageHandler()
-
-	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
-	// pass 'nil' as the third parameter.
-	req, err := http.NewRequest("GET", c.WebService.Handle, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
-	rr := httptest.NewRecorder()
-
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
-	handler.ServeHTTP(rr, req)
-
-	// Check the status code is what we expect.
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
 	}
 
 	// Check the response body is what we expect.
@@ -74,14 +52,40 @@ func TestMessageHandler(t *testing.T) {
 			URL:         "test_article1.com",
 		},
 	}
+	newDb := ws.Db()
+	for _, article := range expected {
+		newDb.WriteArticle(&article)
+	}
+
+	handler := ws.GetLastNews(7)
+
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, err := http.NewRequest("GET", c.WebService.Handle, nil)
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+
+	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
 
 	resp := &[]model.DBArticle{}
 	err = json.Unmarshal([]byte(rr.Body.String()), resp)
 	if err != nil {
-		return
+		t.Errorf("expected nil got %v", err)
 	}
 
-	if !reflect.DeepEqual(resp, expected) {
+	if !reflect.DeepEqual(*resp, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			resp, expected)
 	}
