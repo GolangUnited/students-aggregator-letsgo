@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 	"github.com/indikator/aggregator_lets_go/internal/log"
 	"time"
 
@@ -93,7 +92,7 @@ func (db *database) InitDb() error {
 		return err
 	}
 
-	fmt.Println("Connected to mongo")
+	db.log.WriteInfo("Connected to mongo")
 
 	// create a database
 	collection = client.Database("news").Collection("articles")
