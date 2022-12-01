@@ -62,6 +62,6 @@ func main() {
 		Addr:    ":" + strconv.Itoa(port),
 		Handler: r,
 	}
-	(*logger).WriteInfo("Listening...")
+	logger.WriteInfo("Listening...")
 	server.ListenAndServe()
 }

@@ -29,12 +29,12 @@ func (ws *webService) Port() uint16 {
 	return ws.config.Port
 }
 
-func (ws *webService) Db() *db.Db {
-	return &ws.db
+func (ws *webService) Db() db.Db {
+	return ws.db
 }
 
-func (ws *webService) Logger() *log.Log {
-	return &ws.log
+func (ws *webService) Logger() log.Log {
+	return ws.log
 }
 
 func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
@@ -80,10 +80,9 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 	return nil
 }
 
-func LoggingHandler(next http.Handler, l *log.Log) http.Handler {
+func LoggingHandler(next http.Handler, l log.Log) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(fmt.Sprintf("User %v using app", r.RemoteAddr))
-		(*l).WriteInfo(fmt.Sprintf("User %v using app", r.RemoteAddr))
+		l.WriteInfo(fmt.Sprintf("User %v got last news", r.RemoteAddr))
 		next.ServeHTTP(w, r)
 	})
 }
