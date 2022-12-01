@@ -2,6 +2,7 @@ package last_news
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
@@ -32,6 +33,10 @@ func (ws *webService) Db() db.Db {
 	return ws.db
 }
 
+func (ws *webService) Logger() log.Log {
+	return ws.log
+}
+
 func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
 	ws.config = *config
 	ws.db = db
@@ -42,15 +47,15 @@ func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
 func (ws *webService) InitAllByConfig(config *config.Config) error {
 	err := config.Read()
 
-	if err != nil {
-		log.WriteError("WebService.InitAllByConfig.Error", err)
-		return err
-	}
-
 	l, err := clog.GetLog(config.WebService.Log)
 
 	if err != nil {
-		log.WriteError("WebService.InitAllByConfig.Error", err)
+		l.WriteError("WebService.InitAllByConfig.Error", err)
+		return err
+	}
+
+	if err != nil {
+		l.WriteError("WebService.InitAllByConfig.Error", err)
 		return err
 	}
 
@@ -75,6 +80,13 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 	return nil
 }
 
+func LoggingHandler(next http.Handler, l log.Log) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		l.WriteInfo(fmt.Sprintf("User %v got last news", r.RemoteAddr))
+		next.ServeHTTP(w, r)
+	})
+}
+
 // GetLastNews godoc
 // @Summary Retrieves news from last 7 days
 // @Description Get array of Articles for the last 7 days
@@ -85,10 +97,10 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 func (ws *webService) GetLastNews(nDays int) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ws.log.WriteInfo("WebService.MessageHandler.Begin")
+		ws.log.WriteInfo("WebService.GetLastNews.Begin")
 		news, err := ws.db.ReadArticles(nDays)
 		if err != nil {
-			ws.log.WriteError("WebService.MessageHandler.Error", err)
+			ws.log.WriteError("WebService.GetLastNews.Error", err)
 			os.Exit(1)
 		}
 
@@ -100,6 +112,6 @@ func (ws *webService) GetLastNews(nDays int) http.Handler {
 			return
 		}
 		w.Write(newsJson)
-		ws.log.WriteInfo("WebService.MessageHandler.End")
+		ws.log.WriteInfo("WebService.GetLastNews.End")
 	})
 }

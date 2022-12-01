@@ -11,7 +11,6 @@ import (
 	_ "github.com/indikator/aggregator_lets_go/cmd/webservice/docs"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/webservice/last_news"
-	_ "github.com/indikator/aggregator_lets_go/model"
 )
 
 // @title Web-Service Swagger
@@ -42,8 +41,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// set port from config
+	// set port and logger
 	port := int(ws.Port())
+	logger := ws.Logger()
 
 	// add swagger route to multiplexer
 	r := mux.NewRouter()
@@ -55,13 +55,13 @@ func main() {
 
 	// init last news handle
 	lastNewsHandler := ws.GetLastNews(7) // hardcode 1 week
-	r.Handle(cfg.WebService.Handle, lastNewsHandler)
+	r.Handle(cfg.WebService.Handle, last_news.LoggingHandler(lastNewsHandler, logger))
 
 	// init and run server on given port
 	server := &http.Server{
 		Addr:    ":" + strconv.Itoa(port),
 		Handler: r,
 	}
-	log.Println("Listening...")
+	logger.WriteInfo("Listening...")
 	server.ListenAndServe()
 }

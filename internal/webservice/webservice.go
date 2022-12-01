@@ -14,4 +14,5 @@ type Webservice interface {
 	Init(config *wsconfig.Config, l log.Log, db db.Db) error
 	Port() uint16
 	Db() db.Db
+	Logger() log.Log
 }
