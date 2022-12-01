@@ -20,6 +20,8 @@ const (
 	noDatetime           = "file://./page-article-without-datetime.html"
 	noAuthor             = "file://./page-article-without-author.html"
 	webPageNotFound      = "file://./page-not-found.html"
+	datetimeParseError   = "file://./page-article-datetime-parse-error.html"
+	unknownError         = "fi://./page-article-datetime-parse-error.html"
 	dateFormat           = "2 January 2006"
 	stringDate           = "2 August 2022"
 	targetArticlesAmount = 3
@@ -148,7 +150,7 @@ func TestWithoutHrefParseAfter(t *testing.T) {
 
 	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
-		if !(errors.Is(err, parser.ErrorArticleURLNotFound) || errors.Is(err, parser.ErrorArticleTitleNotFound)) {
+		if !errors.Is(err, parser.ErrorArticleURLNotFound) {
 			t.Errorf("error: %s\n", err)
 		}
 	} else {
@@ -170,6 +172,48 @@ func TestWithoutDatetimeParseAfter(t *testing.T) {
 	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorArticleDatetimeNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestParseDatetimeErrorParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: datetimeParseError, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.As(err, &parser.ErrorCannotParseArticleDatetime{}) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestUnknownErrorParseAfter(t *testing.T) {
+
+	cfg, lg := parser.Config{URL: unknownError, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := godev.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.As(err, &parser.ErrorUnknown{}) {
 			t.Errorf("error: %s\n", err)
 		}
 	} else {

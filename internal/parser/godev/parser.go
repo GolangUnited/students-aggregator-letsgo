@@ -19,7 +19,7 @@ const (
 	parserName = "go.dev"
 
 	articleContainerTag   = "p.blogtitle"
-	articleTitleTag       = "a[href]"
+	articleTitleTag       = "a"
 	articleDatetimeTag    = "span.date"
 	articleAuthorTag      = "span.author"
 	articleDescriptionTag = "p.blogsummary"
@@ -92,10 +92,10 @@ func (p *articlesparser) getArticleContainerRef() string {
 // getTitle gets an article title from html element
 func (p *articlesparser) getTitle(h *colly.HTMLElement) (title string, err error) {
 
-	if quantity := h.DOM.Find(articleTitleTag).Length(); quantity == 0 {
+	title = strings.TrimSpace(h.DOM.Find(articleTitleTag).Text())
+
+	if len(title) == 0 {
 		err = parser.ErrorArticleTitleNotFound
-	} else {
-		title = h.DOM.Find(articleTitleTag).Text()
 	}
 
 	return
