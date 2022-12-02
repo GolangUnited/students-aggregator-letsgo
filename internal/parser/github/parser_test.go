@@ -21,6 +21,7 @@ const (
 	noDatetime           = "file://./page_github_without_datetime.html"
 	incorrectDatetime    = "file://./page_github_incorrect_datetime.html"
 	webPageNotFound      = "file://./page-not-found.html"
+	unknownError         = "fi://./page_github_tags.html"
 	dateFormat           = "2006-01-02T15:04:05Z"
 	stringDate           = "2022-10-04T00:00:00Z"
 	targetArticlesAmount = 4
@@ -204,6 +205,26 @@ func TestWebPageNotFoundParseAfter(t *testing.T) {
 	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorWebPageCannotBeDelivered{URL: webPageNotFound, StatusCode: 404}) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestUnknownErrorParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: unknownError, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.As(err, &parser.ErrorUnknown{}) {
 			t.Errorf("error: %s\n", err)
 		}
 	} else {
