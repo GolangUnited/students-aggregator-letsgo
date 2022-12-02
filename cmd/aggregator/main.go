@@ -12,7 +12,6 @@ import (
 
 const (
 	configFilePath = "./configs/config.yaml"
-	//configFilePath = "../../configs/config.yaml"
 )
 
 func main() {

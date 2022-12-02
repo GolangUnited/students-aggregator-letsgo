@@ -2,8 +2,9 @@ package log
 
 import (
 	"fmt"
-	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
 	"time"
+
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
 )
 
 // Log interface to write messages to log
@@ -17,7 +18,11 @@ const (
 	timeFormat = "02-01-2006 15:04:05.000000"
 )
 
+var (
+	printf = fmt.Printf
+)
+
 func WriteError(message string, err error) error {
-	_, e := fmt.Printf("%s %s: %v\n", time.Now().Format(timeFormat), message, err)
+	_, e := printf("%s %s: %v\n", time.Now().Format(timeFormat), message, err)
 	return e
 }
