@@ -99,7 +99,7 @@ func (p *articlesparser) getNewArticle(h *colly.HTMLElement) (article model.Arti
 		return
 	}
 
-	author, err := p.getAuthor(h)
+	author, err := p.getAuthor(description)
 	if err != nil {
 		return
 	}
@@ -153,13 +153,7 @@ func (p *articlesparser) getDatetime(h *colly.HTMLElement) (datetime time.Time, 
 }
 
 // get article author
-func (p *articlesparser) getAuthor(h *colly.HTMLElement) (author string, err error) {
-	descriptionText, err := p.getDescription(h)
-	if err != nil {
-		err = parser.ErrorCannotParseArticleAuthor{OriginError: err}
-		return
-	}
-
+func (p *articlesparser) getAuthor(descriptionText string) (author string, err error) {
 	descriptionParts := strings.Split(descriptionText, "\n")
 	for i := 0; i < len(descriptionParts); i++ {
 		if strings.Contains(descriptionParts[i], perserAuthorText) {

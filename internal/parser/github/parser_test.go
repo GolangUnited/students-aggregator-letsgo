@@ -19,6 +19,7 @@ const (
 	noAuthor             = "file://./page_github_without_author.html"
 	noHref               = "file://./page_github_without_url.html"
 	noDatetime           = "file://./page_github_without_datetime.html"
+	incorrectDatetime    = "file://./page_github_incorrect_datetime.html"
 	webPageNotFound      = "file://./page-not-found.html"
 	dateFormat           = "2006-01-02T15:04:05Z"
 	stringDate           = "2022-10-04T00:00:00Z"
@@ -163,6 +164,26 @@ func TestWithoutDatetimeParseAfter(t *testing.T) {
 	_, err = articlesParser.ParseAfter(date)
 	if err != nil {
 		if !errors.Is(err, parser.ErrorArticleDatetimeNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestIncorrectDatetimeParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: incorrectDatetime, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.As(err, &parser.ErrorCannotParseArticleDatetime{}) {
 			t.Errorf("error: %s\n", err)
 		}
 	} else {
