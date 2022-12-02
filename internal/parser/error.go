@@ -15,6 +15,10 @@ type (
 		OriginError error
 	}
 
+	ErrorCannotParseArticleAuthor struct {
+		OriginError error
+	}
+
 	ErrorUnknown struct {
 		OriginError error
 	}
@@ -26,6 +30,10 @@ func (e ErrorWebPageCannotBeDelivered) Error() string {
 
 func (e ErrorCannotParseArticleDatetime) Error() string {
 	return fmt.Errorf("datatime parsing error: %w", e.OriginError).Error()
+}
+
+func (e ErrorCannotParseArticleAuthor) Error() string {
+	return fmt.Errorf("%s error: %w", ErrorArticleAuthorNotFound, e.OriginError).Error()
 }
 
 func (e ErrorUnknown) Error() string {

@@ -1,6 +1,7 @@
 package github_test
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -13,23 +14,27 @@ import (
 
 const (
 	URL                  = "file://./page_github_tags.html"
+	noTitle              = "file://./page_github_without_title.html"
+	noDescription        = "file://./page_github_without_description.html"
+	noAuthor             = "file://./page_github_without_author.html"
+	noHref               = "file://./page_github_without_url.html"
+	noDatetime           = "file://./page_github_without_datetime.html"
+	webPageNotFound      = "file://./page-not-found.html"
 	dateFormat           = "2006-01-02T15:04:05Z"
 	stringDate           = "2022-10-04T00:00:00Z"
 	targetArticlesAmount = 4
 )
 
 func TestParseAfter(t *testing.T) {
-	cfg := parser.Config{URL: URL, IsLocal: true}
+	cfg, lg := parser.Config{URL: URL, IsLocal: true}, log.NewLog(logLevel.Errors)
 
 	date, err := time.Parse(dateFormat, stringDate)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
 
-	l := log.NewLog(logLevel.Errors)
-
-	parser := github.NewParser(cfg, l)
-	articles, err := parser.ParseAfter(date)
+	articlesParser := github.NewParser(cfg, lg)
+	articles, err := articlesParser.ParseAfter(date)
 	if err != nil {
 		t.Errorf("error: %s\n", err.Error())
 	}
@@ -65,8 +70,127 @@ func TestParseAfter(t *testing.T) {
 	}
 }
 
-func getArticles() (articles []model.Article, err error) {
+func TestWithoutTitleParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: noTitle, IsLocal: true}, log.NewLog(logLevel.Errors)
 
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleTitleNotFound) {
+			t.Errorf("error: %s", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutAuthorParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: noAuthor, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleAuthorNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutDescriptionParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: noDescription, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleDescriptionNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutHrefParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: noHref, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !(errors.Is(err, parser.ErrorArticleURLNotFound) || errors.Is(err, parser.ErrorArticleTitleNotFound)) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWithoutDatetimeParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: noDatetime, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorArticleDatetimeNotFound) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func TestWebPageNotFoundParseAfter(t *testing.T) {
+	cfg, lg := parser.Config{URL: webPageNotFound, IsLocal: true}, log.NewLog(logLevel.Errors)
+
+	articlesParser := github.NewParser(cfg, lg)
+
+	date, err := time.Parse(dateFormat, stringDate)
+	if err != nil {
+		t.Errorf("error: %s\n", err)
+	}
+
+	_, err = articlesParser.ParseAfter(date)
+	if err != nil {
+		if !errors.Is(err, parser.ErrorWebPageCannotBeDelivered{URL: webPageNotFound, StatusCode: 404}) {
+			t.Errorf("error: %s\n", err)
+		}
+	} else {
+		t.Error("error cannot equals to nil")
+	}
+}
+
+func getArticles() (articles []model.Article, err error) {
 	datestrings := []string{"2022-11-01T16:45:23Z", "2022-11-01T16:45:18Z", "2022-10-04T17:43:19Z", "2022-10-04T17:43:09Z"}
 	dates := make([]time.Time, 0)
 	for _, datestring := range datestrings {
