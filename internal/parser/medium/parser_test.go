@@ -3,16 +3,16 @@ package medium_test
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
-	"reflect"
-	"runtime"
 	"testing"
 	"time"
 
+	"github.com/indikator/aggregator_lets_go/internal/log"
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
+	"github.com/indikator/aggregator_lets_go/internal/log/stub"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/internal/parser/medium"
 	"github.com/indikator/aggregator_lets_go/model"
@@ -20,14 +20,11 @@ import (
 
 const (
 	// The file contains a request to the service database
-	url                  = "http://localhost/testMediumservice"
-	responceFile         = "../../../tests/data/parser/medium/response.json"
-	testsArticlesFile    = "../../../tests/data/parser/medium/testArticles.json"
-	queryFileName        = "../../../etc/queryInMedium"
-	dateFormat           = "2006-01-02T15:04:05Z"
-	stringDate           = "2022-11-10T00:00:00Z"
-	hostService          = "localhost"
-	targetArticlesAmount = 5
+	url           = "http://localhost/testMediumservice"
+	queryFileName = "../../../etc/queryInMedium"
+	dateFormat    = "2006-01-02T15:04:05Z"
+	stringDate    = "2022-11-10T00:00:00Z"
+	hostService   = "localhost"
 )
 
 // RoundTripFunc .
@@ -48,16 +45,50 @@ func NewTestClient(fn RoundTripFunc) *http.Client {
 func TestParseAfter(t *testing.T) {
 
 	tests := []struct {
-		name              string
-		url               string
-		responceFile      string
-		testsArticlesFile string
-		queryFileName     string
-		hostService       string
-		wantErr           bool
+		name                 string
+		url                  string
+		responceFile         string
+		testsArticlesFile    string
+		queryFileName        string
+		hostService          string
+		targetArticlesAmount int
+		iterationCount       int
+		statusCode           int
+		wantErr              error
 	}{
-		{name: "Default case", url: url, responceFile: responceFile, testsArticlesFile: testsArticlesFile,
-			queryFileName: queryFileName, hostService: hostService, wantErr: false},
+		{name: "Default case", url: url, responceFile: "../../../tests/data/parser/medium/response.json",
+			testsArticlesFile: "../../../tests/data/parser/medium/testArticles.json", queryFileName: queryFileName,
+			iterationCount: 1, hostService: hostService, targetArticlesAmount: 5, statusCode: 200, wantErr: nil},
+		{name: "Empty title", url: url, responceFile: "../../../tests/data/parser/medium/response-without-title.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: parser.ErrorArticleTitleNotFound},
+		{name: "Empty url", url: url, responceFile: "../../../tests/data/parser/medium/response-without-url.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: parser.ErrorArticleURLNotFound},
+		{name: "Empty author", url: url, responceFile: "../../../tests/data/parser/medium/response-without-author.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: parser.ErrorArticleAuthorNotFound},
+		{name: "Empty datetime", url: url, responceFile: "../../../tests/data/parser/medium/response-without-datetime.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: parser.ErrorArticleDatetimeNotFound},
+		{name: "Empty description", url: url, responceFile: "../../../tests/data/parser/medium/response-without-description.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: parser.ErrorArticleDescriptionNotFound},
+		{name: "Web page not found", url: url, responceFile: "../../../tests/data/parser/medium/response-page-not-found.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 404, wantErr: parser.ErrorWebPageCannotBeDelivered{URL: url, StatusCode: 404}},
+		{name: "Unknown error (status code 500)", url: url, responceFile: "../../../tests/data/parser/medium/response-without-description.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 500, wantErr: &parser.ErrorUnknown{}},
+		{name: "Unknown error (empty query file)", url: url, responceFile: "../../../tests/data/parser/medium/response.json",
+			testsArticlesFile: "", queryFileName: "", hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: &parser.ErrorUnknown{}},
+		{name: "Unknown error (wrong json unmarshall)", url: url, responceFile: "../../../tests/data/parser/medium/response-empty.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: &parser.ErrorUnknown{}},
+		{name: "Unknown error (empty item)", url: url, responceFile: "../../../tests/data/parser/medium/response-empty-item.json",
+			testsArticlesFile: "", queryFileName: queryFileName, hostService: hostService, targetArticlesAmount: 0,
+			iterationCount: 1, statusCode: 200, wantErr: &parser.ErrorUnknown{}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -73,38 +104,42 @@ func TestParseAfter(t *testing.T) {
 			}
 
 			client := NewTestClient(func(req *http.Request) *http.Response {
-				// Test request parameters
-				equals(t, req.URL.String(), tt.url)
+
 				responceBody, _ := os.ReadFile(tt.responceFile)
 				return &http.Response{
-					StatusCode: 200,
+					StatusCode: tt.statusCode,
 					// Send response to be tested
 					Body: ioutil.NopCloser(bytes.NewBuffer(responceBody)),
 					// Must be set to non-nil value or it panics
 					Header: make(http.Header),
 				}
 			})
-			cfg := parser.Config{URL: tt.url, IsLocal: true}
+			cfg, lg := parser.Config{URL: tt.url, IsLocal: true}, stub.NewLog(logLevel.Errors)
 
-			parser := func(cfg parser.Config) parser.ArticlesParser {
+			newParser := func(cfg parser.Config, lg log.Log) parser.ArticlesParser {
 
 				return &medium.ArticlesParser{
-					Client:        client,
-					Url:           cfg.URL,
-					Host:          tt.hostService,
-					QueryFileName: tt.queryFileName,
+					Client:         client,
+					Url:            cfg.URL,
+					Host:           tt.hostService,
+					QueryFileName:  tt.queryFileName,
+					IterationCount: tt.iterationCount,
+					LocalLaunch:    true,
+					Log:            lg,
 				}
-			}(cfg)
+			}(cfg, lg)
 
-			gotArticles, err := parser.ParseAfter(date)
+			gotArticles, err := newParser.ParseAfter(date)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("articlesparser.ParseAfter() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if !errors.Is(err, tt.wantErr) {
+				if !errors.As(err, &parser.ErrorUnknown{}) {
+					t.Errorf("articlesparser.ParseAfter() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
 			}
 
-			if len(gotArticles) != targetArticlesAmount {
-				t.Errorf("error: wromg amount of articles (%d != %d) after %v", targetArticlesAmount, len(gotArticles), date)
+			if len(gotArticles) != tt.targetArticlesAmount {
+				t.Errorf("error: wromg amount of articles (%d != %d) after %v", tt.targetArticlesAmount, len(gotArticles), date)
 			}
 
 			for index, article := range gotArticles {
@@ -138,27 +173,22 @@ func TestParseAfter(t *testing.T) {
 	}
 }
 
-// equals fails the test if exp is not equal to act.
-func equals(tb testing.TB, exp, act interface{}) {
-	if !reflect.DeepEqual(exp, act) {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
-		tb.FailNow()
-	}
-}
-
 func getArticles(filename string) (articles []model.Article, err error) {
+
+	if len(filename) == 0 {
+		return
+	}
 
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	err = json.Unmarshal(content, &articles)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return articles, nil
+	return
 
 }

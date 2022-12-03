@@ -12,6 +12,7 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -19,6 +20,9 @@ const (
 	// The file contains a request to the service database
 	queryFileName = "./etc/queryInMedium"
 	hostService   = "medium.com"
+	// The request returns a maximum of 25 articles at a time
+	// and we do not need more than a hundred articles in one call to the parser
+	iterationCount = 4
 )
 
 type StatesMedium struct {
@@ -56,22 +60,26 @@ type ExtendedPreviewContent struct {
 }
 
 type ArticlesParser struct {
-	Client        *http.Client
-	Url           string
-	Host          string
-	QueryFileName string
-	log           log.Log
+	Client         *http.Client
+	Url            string
+	Host           string
+	QueryFileName  string
+	IterationCount int
+	Log            log.Log
+	LocalLaunch    bool
 }
 
 // create an instance of articles parser
 func NewParser(cfg parser.Config, l log.Log) parser.ArticlesParser {
 
 	return &ArticlesParser{
-		Client:        &http.Client{},
-		Url:           cfg.URL,
-		Host:          hostService,
-		QueryFileName: queryFileName,
-		log:           l,
+		Client:         &http.Client{},
+		Url:            cfg.URL,
+		Host:           hostService,
+		QueryFileName:  queryFileName,
+		IterationCount: iterationCount,
+		Log:            l,
+		LocalLaunch:    false,
 	}
 
 }
@@ -84,48 +92,48 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 
 	var (
 		initNumberState int
-		firstCreated    time.Time
-		created         time.Time
+		states          []StatesMedium
+		article         model.Article
 	)
 
 	initialRequest := true
 
-	for true {
+	for i := 0; i < p.IterationCount; i++ {
 
-		states, err := p.getStates(initialRequest, initNumberState)
+		states, err = p.getStates(initialRequest, initNumberState)
 		if err != nil {
 			return nil, err
 		}
 
-		if len(states[0].Data.TagFeed.Items) == 0 && !initialRequest {
-			fmt.Printf("Problems in site - %s", p.Host)
-			return articles, nil
+		if len(states[0].Data.TagFeed.Items) == 0 {
+			err = errors.Errorf("Problems in site - %s", p.Host)
+			err = parser.ErrorUnknown{OriginError: err}
+			p.Log.WriteError(err.Error(), err)
+			if !p.LocalLaunch {
+				err = nil
+			}
+			return articles, err
 		}
 
 		for _, state := range states {
 			for _, itemState := range state.Data.TagFeed.Items {
 
-				created = time.Unix(itemState.Post.FirstPublishedAt/1000, 0)
-				if firstCreated.IsZero() {
-					firstCreated = created
-				}
-				if !created.After(maxDate) || !allFieldsFilled(itemState) {
+				article, err = p.getNewArticle(&itemState)
+				if err != nil {
+					p.Log.WriteError(err.Error(), err)
+					if !p.LocalLaunch {
+						err = nil
+					}
 					continue
 				}
-				article := model.Article{
-					Title:       itemState.Post.Title,
-					URL:         itemState.Post.MediumUrl,
-					Created:     created,
-					Author:      itemState.Post.Creator.Name,
-					Description: itemState.Post.ExtendedPreviewContent.Subtitle,
+
+				if !article.Created.After(maxDate) {
+					continue
 				}
 				articles = append(articles, article)
 
 			}
 
-			if (firstCreated.Sub(created).Hours()/24 >= 7) || len(articles) >= 100 {
-				return articles, nil
-			}
 		}
 
 		if initialRequest {
@@ -144,18 +152,30 @@ func (p *ArticlesParser) getStates(initialRequest bool, initNumberState int) (st
 
 	requestBody, err := p.getBodyRequest(initialRequest, initNumberState)
 	if err != nil {
+		err = parser.ErrorUnknown{OriginError: err}
 		return nil, err
 	}
 
 	request, err := http.NewRequest(http.MethodPost, p.Url, requestBody)
 	if err != nil {
+		err = parser.ErrorUnknown{OriginError: err}
 		return nil, err
 	}
 	request.Header.Set("Host", p.Host)
 	request.Header.Set("Content-Type", "application/json")
 
 	response, err := p.Client.Do(request)
-	if err != nil || response.StatusCode != http.StatusOK {
+	if err != nil {
+		err = parser.ErrorUnknown{OriginError: err}
+		return nil, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		if response.StatusCode == http.StatusNotFound {
+			err = parser.ErrorWebPageCannotBeDelivered{URL: request.URL.String(), StatusCode: response.StatusCode}
+		} else {
+			err = parser.ErrorUnknown{OriginError: err}
+		}
 		return nil, err
 	}
 
@@ -163,11 +183,13 @@ func (p *ArticlesParser) getStates(initialRequest bool, initNumberState int) (st
 
 	resBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		err = parser.ErrorUnknown{OriginError: err}
 		return nil, err
 	}
 
 	err = json.Unmarshal(resBody, &states)
 	if err != nil {
+		err = parser.ErrorUnknown{OriginError: err}
 		return nil, err
 	}
 
@@ -196,11 +218,46 @@ func (p *ArticlesParser) getBodyRequest(initialRequest bool, initNumberState int
 
 }
 
-func allFieldsFilled(itemState Item) bool {
+// getNewArticle gets a new article
+func (p *ArticlesParser) getNewArticle(itemState *Item) (article model.Article, err error) {
 
-	return len(itemState.Post.Title) > 0 &&
-		len(itemState.Post.MediumUrl) > 0 &&
-		len(itemState.Post.Creator.Name) > 0 &&
-		len(itemState.Post.ExtendedPreviewContent.Subtitle) > 0 &&
-		itemState.Post.FirstPublishedAt > 0
+	title := itemState.Post.Title
+	if len(title) == 0 {
+		err = parser.ErrorArticleTitleNotFound
+		return
+	}
+
+	url := itemState.Post.MediumUrl
+	if len(url) == 0 {
+		err = parser.ErrorArticleURLNotFound
+		return
+	}
+
+	author := itemState.Post.Creator.Name
+	if len(author) == 0 {
+		err = parser.ErrorArticleAuthorNotFound
+		return
+	}
+
+	createdAt := time.Unix(itemState.Post.FirstPublishedAt/1000, 0)
+	if itemState.Post.FirstPublishedAt == 0 {
+		err = parser.ErrorArticleDatetimeNotFound
+		return
+	}
+
+	description := itemState.Post.ExtendedPreviewContent.Subtitle
+	if len(description) == 0 {
+		err = parser.ErrorArticleDescriptionNotFound
+		return
+	}
+
+	article = model.Article{
+		Title:       title,
+		URL:         url,
+		Created:     createdAt,
+		Author:      author,
+		Description: description,
+	}
+
+	return
 }
