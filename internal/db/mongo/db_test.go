@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -116,6 +117,20 @@ func TestReadArticles(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, expectedArticle, articleResponse[0])
+	})
+
+	mt.Run("invalid number of days", func(mt *mtest.T) {
+		collection = mt.Coll
+		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "invalid number of days -1",
+		}))
+
+		articleResponse, err := mongoDb.ReadArticles(-1)
+
+		assert.Nil(t, articleResponse)
+		assert.Equal(t, err, fmt.Errorf("invalid number of days -1"))
 	})
 
 }

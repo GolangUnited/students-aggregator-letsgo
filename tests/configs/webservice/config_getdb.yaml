@@ -1,5 +1,5 @@
 database:
-  name: stub
+  name: undefined
   url: mongodb://mongodb:27017
 
 webservice:
@@ -8,4 +8,3 @@ webservice:
   log:
     type: stub
     level: errors
-
