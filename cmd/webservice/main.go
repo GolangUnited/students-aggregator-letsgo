@@ -49,10 +49,11 @@ func main() {
 
 	// add swagger route to multiplexer
 	swaggerUrl := "./swagger/doc.json"
-	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL(swaggerUrl),
-		httpSwagger.DeepLinking(true),
-	)).Methods(http.MethodGet)
+	r.PathPrefix("/swagger/").Handler(
+		httpSwagger.Handler(
+			httpSwagger.URL(swaggerUrl),
+			httpSwagger.DeepLinking(true),
+		)).Methods(http.MethodGet)
 
 	// init last news handle
 	lastNewsHandler, err := ws.GetLastNews(7) // hardcode 1 week
