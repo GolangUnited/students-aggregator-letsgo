@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/indikator/aggregator_lets_go/internal/webservice/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -49,7 +48,7 @@ func main() {
 	r := mux.NewRouter()
 
 	// add swagger route to multiplexer
-	swaggerUrl := fmt.Sprintf("./swagger/doc.json")
+	swaggerUrl := "./swagger/doc.json"
 	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL(swaggerUrl),
 		httpSwagger.DeepLinking(true),
