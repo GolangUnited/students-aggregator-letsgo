@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 	"github.com/indikator/aggregator_lets_go/internal/log"
 	"time"
 
@@ -52,6 +53,10 @@ func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, er
 
 func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	//passing bson.D{{}} matches all documents in the collection
+	if nDays < 1 {
+		return nil, fmt.Errorf("invalid number of days %d", nDays)
+	}
+
 	filter := bson.M{"created": bson.M{
 		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -nDays)), //last 7 days
 	}}

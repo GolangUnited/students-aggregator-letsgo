@@ -2,7 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
@@ -11,7 +10,6 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	wsconfig "github.com/indikator/aggregator_lets_go/internal/webservice/config"
 	"net/http"
-	"os"
 )
 
 type webService struct {
@@ -37,54 +35,33 @@ func (ws *webService) Logger() log.Log {
 	return ws.log
 }
 
-func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) error {
+func (ws *webService) Init(config *wsconfig.Config, l log.Log, db db.Db) {
 	ws.config = *config
 	ws.db = db
 	ws.log = l
-	return nil
 }
 
 func (ws *webService) InitAllByConfig(config *config.Config) error {
-	err := config.Read()
-
+	config.Read()
 	l, err := clog.GetLog(config.WebService.Log)
-
 	if err != nil {
-		l.WriteError("WebService.InitAllByConfig.Error", err)
-		return err
-	}
-
-	if err != nil {
-		l.WriteError("WebService.InitAllByConfig.Error", err)
+		log.WriteError("WebService.InitAllByConfig.Error", err)
 		return err
 	}
 
 	l.WriteInfo("WebService.InitAllByConfig.Begin")
 
 	db, err := cdb.GetDb(config.Database, l)
-
 	if err != nil {
 		l.WriteError("WebService.InitAllByConfig.Error", err)
 		return err
 	}
 
-	err = ws.Init(&config.WebService, l, db)
-
-	if err != nil {
-		l.WriteError("WebService.InitAllByConfig.Error", err)
-		return err
-	}
+	ws.Init(&config.WebService, l, db)
 
 	l.WriteInfo("WebService.InitAllByConfig.End")
 
 	return nil
-}
-
-func LoggingHandler(next http.Handler, l log.Log) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		l.WriteInfo(fmt.Sprintf("User %v got last news", r.RemoteAddr))
-		next.ServeHTTP(w, r)
-	})
 }
 
 // GetLastNews godoc
@@ -94,24 +71,19 @@ func LoggingHandler(next http.Handler, l log.Log) http.Handler {
 // @Produce json
 // @Success 200 {object} []model.DBArticle
 // @Router /last_news [get]
-func (ws *webService) GetLastNews(nDays int) http.Handler {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ws.log.WriteInfo("WebService.GetLastNews.Begin")
-		news, err := ws.db.ReadArticles(nDays)
-		if err != nil {
-			ws.log.WriteError("WebService.GetLastNews.Error", err)
-			os.Exit(1)
-		}
-
+func (ws *webService) GetLastNews(nDays int) (http.Handler, error) {
+	ws.log.WriteInfo("WebService.GetLastNews.Begin")
+	news, err := ws.db.ReadArticles(nDays)
+	if err != nil {
+		ws.log.WriteError("WebService.GetLastNews.Error", err)
+		return nil, err
+	}
+	newsJson, _ := json.Marshal(news)
+	hFunc := func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-		newsJson, err := json.Marshal(news)
-		if err != nil {
-			w.Write([]byte(err.Error()))
-			return
-		}
 		w.Write(newsJson)
-		ws.log.WriteInfo("WebService.GetLastNews.End")
-	})
+	}
+	ws.log.WriteInfo("WebService.GetLastNews.End")
+	return http.HandlerFunc(hFunc), err
 }

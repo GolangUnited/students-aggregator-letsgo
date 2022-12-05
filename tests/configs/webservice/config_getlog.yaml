@@ -6,6 +6,6 @@ webservice:
   handle: /last_news
   port: 8080
   log:
-    type: stub
+    type: undefined
     level: errors
 

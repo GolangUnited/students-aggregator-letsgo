@@ -1,6 +1,7 @@
 package mongo
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -118,4 +119,50 @@ func TestReadArticles(t *testing.T) {
 		assert.Equal(t, expectedArticle, articleResponse[0])
 	})
 
+	mt.Run("invalid number of days", func(mt *mtest.T) {
+		collection = mt.Coll
+		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
+			Index:   1,
+			Code:    11000,
+			Message: "invalid number of days -1",
+		}))
+
+		articleResponse, err := mongoDb.ReadArticles(-1)
+
+		assert.Nil(t, articleResponse)
+		assert.Equal(t, err, fmt.Errorf("invalid number of days -1"))
+	})
+
+}
+
+func TestName(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/mongo/config.yaml")
+	if err != nil {
+		return
+	}
+	c.Read()
+	l := log.NewLog(logLevel.Errors)
+	mongoDb := NewDb(c.Database, l)
+	defer mt.Close()
+
+	name := mongoDb.Name()
+	assert.Equal(t, "mongo", name)
+}
+
+func TestUrl(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/mongo/config.yaml")
+	if err != nil {
+		return
+	}
+	c.Read()
+	l := log.NewLog(logLevel.Errors)
+	mongoDb := NewDb(c.Database, l)
+	defer mt.Close()
+
+	url := mongoDb.Url()
+	assert.Equal(t, "mongodb://mongodb:27017", url)
 }

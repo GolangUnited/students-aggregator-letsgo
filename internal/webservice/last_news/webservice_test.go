@@ -2,6 +2,8 @@ package last_news
 
 import (
 	"encoding/json"
+	"fmt"
+	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -57,7 +59,10 @@ func TestGetLastNews(t *testing.T) {
 		newDb.WriteArticle(&article)
 	}
 
-	handler := ws.GetLastNews(7)
+	handler, err := ws.GetLastNews(7)
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
 
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
@@ -89,4 +94,88 @@ func TestGetLastNews(t *testing.T) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			resp, expected)
 	}
+
+	_, err = ws.GetLastNews(-1)
+	if !reflect.DeepEqual(err, fmt.Errorf("invalid number of days %d", -1)) {
+		t.Errorf("expected %v got %v", fmt.Errorf("invalid number of days %d", -1), err)
+	}
+
+}
+
+func TestPort(t *testing.T) {
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/webservice/config.yaml")
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	err = c.Read()
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	ws := NewWebservice()
+	err = ws.InitAllByConfig(c)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	port := ws.Port()
+	if port != 8080 {
+		t.Errorf("unexpected port")
+	}
+}
+
+func TestLogger(t *testing.T) {
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/webservice/config.yaml")
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	err = c.Read()
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	ws := NewWebservice()
+	err = ws.InitAllByConfig(c)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	logger := ws.Logger()
+	l, err := clog.GetLog(c.WebService.Log)
+	if !reflect.DeepEqual(logger, l) {
+		t.Errorf("unexpected logger")
+	}
+}
+
+func TestInitAllByConfig(t *testing.T) {
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/webservice/config_getlog.yaml")
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	err = c.Read()
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	ws := NewWebservice()
+	err = ws.InitAllByConfig(c)
+	if err.Error() != "unknown log type undefined" {
+		t.Errorf("expected %v got %v", "unknown log type undefined", err.Error())
+	}
+
+	c = config.NewConfig()
+	err = c.SetDataFromFile("../../../tests/configs/webservice/config_getdb.yaml")
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	err = c.Read()
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+
+	err = ws.InitAllByConfig(c)
+	if err.Error() != "unknown dbms undefined" {
+		t.Errorf("expected %v got %v", "unknown dbms undefined", err.Error())
+	}
+
 }

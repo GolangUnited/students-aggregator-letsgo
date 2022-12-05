@@ -45,5 +45,8 @@ func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, err
 }
 
 func (d *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
+	if nDays < 1 {
+		return nil, fmt.Errorf("invalid number of days %d", nDays)
+	}
 	return d.Articles, nil
 }

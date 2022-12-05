@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/indikator/aggregator_lets_go/internal/webservice/middleware"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
@@ -45,17 +46,21 @@ func main() {
 	port := int(ws.Port())
 	logger := ws.Logger()
 
-	// add swagger route to multiplexer
 	r := mux.NewRouter()
-	swaggerUrl := fmt.Sprintf("http://localhost:%d/swagger/doc.json", port)
+
+	// add swagger route to multiplexer
+	swaggerUrl := fmt.Sprintf("./swagger/doc.json")
 	r.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL(swaggerUrl),
 		httpSwagger.DeepLinking(true),
 	)).Methods(http.MethodGet)
 
 	// init last news handle
-	lastNewsHandler := ws.GetLastNews(7) // hardcode 1 week
-	r.Handle(cfg.WebService.Handle, last_news.LoggingHandler(lastNewsHandler, logger))
+	lastNewsHandler, err := ws.GetLastNews(7) // hardcode 1 week
+	if err != nil {
+		log.Fatal(err)
+	}
+	r.Handle(cfg.WebService.Handle, middleware.LoggingHandler(lastNewsHandler, logger))
 
 	// init and run server on given port
 	server := &http.Server{
