@@ -2,7 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	cdb "github.com/indikator/aggregator_lets_go/internal/db/common"
@@ -63,13 +62,6 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 	l.WriteInfo("WebService.InitAllByConfig.End")
 
 	return nil
-}
-
-func LoggingHandler(next http.Handler, l log.Log) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		l.WriteInfo(fmt.Sprintf("User %v got last news", r.RemoteAddr))
-		next.ServeHTTP(w, r)
-	})
 }
 
 // GetLastNews godoc
