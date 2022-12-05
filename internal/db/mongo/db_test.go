@@ -134,3 +134,35 @@ func TestReadArticles(t *testing.T) {
 	})
 
 }
+
+func TestName(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/mongo/config.yaml")
+	if err != nil {
+		return
+	}
+	c.Read()
+	l := log.NewLog(logLevel.Errors)
+	mongoDb := NewDb(c.Database, l)
+	defer mt.Close()
+
+	name := mongoDb.Name()
+	assert.Equal(t, "mongo", name)
+}
+
+func TestUrl(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	c := config.NewConfig()
+	err := c.SetDataFromFile("../../../tests/configs/mongo/config.yaml")
+	if err != nil {
+		return
+	}
+	c.Read()
+	l := log.NewLog(logLevel.Errors)
+	mongoDb := NewDb(c.Database, l)
+	defer mt.Close()
+
+	url := mongoDb.Url()
+	assert.Equal(t, "mongodb://mongodb:27017", url)
+}
