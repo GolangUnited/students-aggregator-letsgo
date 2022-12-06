@@ -2,13 +2,15 @@ package stub
 
 import (
 	"fmt"
+
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/log"
 	"github.com/indikator/aggregator_lets_go/model"
 )
 
 const (
-	ErrorUrl = "stub://localhost:error/"
+	WriteArticleErrorUrl = "stub://localhost:error/"
+	InitDbErrorUrl       = ""
 )
 
 type database struct {
@@ -31,11 +33,15 @@ func (d *database) Url() string {
 }
 
 func (d *database) InitDb() error {
+	if d.config.Url == InitDbErrorUrl {
+		return fmt.Errorf("incorrect db url")
+	}
+
 	return nil
 }
 
 func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
-	if d.config.Url == ErrorUrl {
+	if d.config.Url == WriteArticleErrorUrl {
 		return nil, fmt.Errorf("incorrect db url")
 	}
 

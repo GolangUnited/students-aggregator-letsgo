@@ -21,6 +21,10 @@ func (e *UnknownDbmsError) Error() string {
 	return e.Text
 }
 
+var (
+	mongoNewDb = mongo.NewDb
+)
+
 func GetDb(config db.Config, l log.Log) (db.Db, error) {
 	var d db.Db
 
@@ -28,7 +32,7 @@ func GetDb(config db.Config, l log.Log) (db.Db, error) {
 	case "stub":
 		d = stub.NewDb(config, l)
 	case "mongo":
-		d = mongo.NewDb(config, l)
+		d = mongoNewDb(config, l)
 	default:
 		return nil, &UnknownDbmsError{
 			Text: fmt.Sprintf(unknownDbmsErrorTemplate, config.Name),
