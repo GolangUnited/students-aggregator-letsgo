@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
 	"testing"
+
+	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
 )
 
 const (
@@ -13,7 +14,34 @@ func TestRead(t *testing.T) {
 
 	c := NewConfig()
 
-	err := c.SetDataFromFile(configFilePath)
+	err := c.SetDataFromFile("")
+
+	// error "open : The system cannot find the file specified."
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+
+	err = c.Read()
+
+	// error "data to read not found"
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+
+	err = c.SetData([]byte{0})
+
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	err = c.Read()
+
+	// error "yaml: control characters are not allowed"
+	if err == nil {
+		t.Error("no error, but it was expected")
+	}
+
+	err = c.SetDataFromFile(configFilePath)
 
 	if err != nil {
 		t.Errorf("unexpected error %v", err)
