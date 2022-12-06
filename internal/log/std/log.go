@@ -21,6 +21,14 @@ func NewLog(level logLevel.LogLevel) ilog.Log {
 	return &log{level: level}
 }
 
+func (l *log) Type() string {
+	return "std"
+}
+
+func (l *log) Level() logLevel.LogLevel {
+	return l.level
+}
+
 func (l *log) Write(level logLevel.LogLevel, message string, err error) error {
 	if l.level == level || l.level == logLevel.Info && level == logLevel.Errors {
 		if err != nil {

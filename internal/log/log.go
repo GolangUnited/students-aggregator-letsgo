@@ -9,6 +9,8 @@ import (
 
 // Log interface to write messages to log
 type Log interface {
+	Type() string
+	Level() logLevel.LogLevel
 	Write(level logLevel.LogLevel, message string, err error) error
 	WriteInfo(message string) error
 	WriteError(message string, err error) error

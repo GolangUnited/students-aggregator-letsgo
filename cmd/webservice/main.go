@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/indikator/aggregator_lets_go/internal/webservice/middleware"
-	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/indikator/aggregator_lets_go/internal/webservice/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "github.com/indikator/aggregator_lets_go/cmd/webservice/docs"
 	"github.com/indikator/aggregator_lets_go/internal/config"
