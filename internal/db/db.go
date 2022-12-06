@@ -14,17 +14,6 @@ type Db interface {
 	InitDb() error
 }
 
-func ConvertArticle(article model.Article) *model.DBArticle {
-	return &model.DBArticle{
-		ID:          primitive.NewObjectID(),
-		Title:       article.Title,
-		Created:     article.Created,
-		Author:      article.Author,
-		Description: article.Description,
-		URL:         article.URL,
-	}
-}
-
 func ConvertToDbArticle(article model.Article) *model.DBArticle {
 	return &model.DBArticle{
 		ID:          primitive.NewObjectID(),
