@@ -56,7 +56,7 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 		l.WriteError("WebService.InitAllByConfig.Error", err)
 		return err
 	}
-
+	db.InitDb()
 	ws.Init(&config.WebService, l, db)
 
 	l.WriteInfo("WebService.InitAllByConfig.End")
@@ -71,19 +71,14 @@ func (ws *webService) InitAllByConfig(config *config.Config) error {
 // @Produce json
 // @Success 200 {object} []model.DBArticle
 // @Router /last_news [get]
-func (ws *webService) GetLastNews(nDays int) (http.Handler, error) {
+func (ws *webService) GetLastNews(nDays int) http.Handler {
 	ws.log.WriteInfo("WebService.GetLastNews.Begin")
-	news, err := ws.db.ReadArticles(nDays)
-	if err != nil {
-		ws.log.WriteError("WebService.GetLastNews.Error", err)
-		return nil, err
-	}
-	newsJson, _ := json.Marshal(news)
-	hFunc := func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		news, _ := ws.db.ReadArticles(nDays)
+		newsJson, _ := json.Marshal(news)
+		ws.log.WriteInfo("WebService.GetLastNews.End")
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(newsJson)
-	}
-	ws.log.WriteInfo("WebService.GetLastNews.End")
-	return http.HandlerFunc(hFunc), err
+	})
 }

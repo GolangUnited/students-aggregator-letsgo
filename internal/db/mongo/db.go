@@ -58,9 +58,9 @@ func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	}
 
 	filter := bson.M{"created": bson.M{
-		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -nDays)), //last 7 days
+		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -1*nDays)), //last 7 days
 	}}
-	articles := make([]model.DBArticle, 0)
+	articles := []model.DBArticle{}
 	cur, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	
 	return articles, nil
 }
 

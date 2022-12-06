@@ -9,7 +9,7 @@ import (
 )
 
 type Webservice interface {
-	GetLastNews(nDays int) (http.Handler, error)
+	GetLastNews(nDays int) http.Handler
 	InitAllByConfig(config *config.Config) error
 	Init(config *wsconfig.Config, l log.Log, db db.Db)
 	Port() uint16

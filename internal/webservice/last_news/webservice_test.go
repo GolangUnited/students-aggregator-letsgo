@@ -2,7 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	"fmt"
 	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"net/http"
 	"net/http/httptest"
@@ -59,10 +58,7 @@ func TestGetLastNews(t *testing.T) {
 		newDb.WriteArticle(&article)
 	}
 
-	handler, err := ws.GetLastNews(7)
-	if err != nil {
-		t.Errorf("expected nil got %v", err)
-	}
+	handler := ws.GetLastNews(7)
 
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
 	// pass 'nil' as the third parameter.
@@ -93,11 +89,6 @@ func TestGetLastNews(t *testing.T) {
 	if !reflect.DeepEqual(*resp, expected) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			resp, expected)
-	}
-
-	_, err = ws.GetLastNews(-1)
-	if !reflect.DeepEqual(err, fmt.Errorf("invalid number of days %d", -1)) {
-		t.Errorf("expected %v got %v", fmt.Errorf("invalid number of days %d", -1), err)
 	}
 
 }

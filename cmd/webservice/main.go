@@ -56,10 +56,8 @@ func main() {
 		)).Methods(http.MethodGet)
 
 	// init last news handle
-	lastNewsHandler, err := ws.GetLastNews(7) // hardcode 1 week
-	if err != nil {
-		log.Fatal(err)
-	}
+	lastNewsHandler := ws.GetLastNews(7) // hardcode 1 week
+
 	r.Handle(cfg.WebService.Handle, middleware.LoggingHandler(lastNewsHandler, logger))
 
 	// init and run server on given port
