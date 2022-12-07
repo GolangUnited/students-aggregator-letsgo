@@ -48,3 +48,9 @@ run: clear
 cover:
 	go test -v -coverprofile cover.out ./...
 	go tool cover -html cover.out -o cover.html
+
+swagger_install:
+	go install github.com/swaggo/swag/cmd/swag@latest
+
+swagger_init:
+	swag init --generalInfo main.go --dir ./cmd/webservice,./internal/webservice,./model --output ./cmd/webservice/docs
