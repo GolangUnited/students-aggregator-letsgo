@@ -79,7 +79,7 @@ func NewParser(cfg parser.Config, l log.Log) parser.ArticlesParser {
 		QueryFileName:  queryFileName,
 		IterationCount: iterationCount,
 		Log:            l,
-		LocalLaunch:    false,
+		LocalLaunch:    cfg.IsLocal,
 	}
 
 }
@@ -93,7 +93,6 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 	var (
 		initNumberState int
 		states          []StatesMedium
-		article         model.Article
 	)
 
 	initialRequest := true
@@ -106,11 +105,11 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 		}
 
 		if len(states[0].Data.TagFeed.Items) == 0 {
-			err = errors.Errorf("Problems in site - %s", p.Host)
-			err = parser.ErrorUnknown{OriginError: err}
-			p.Log.WriteError(err.Error(), err)
-			if !p.LocalLaunch {
-				err = nil
+			errEmptyItems := errors.Errorf("Problems in site - %s", p.Host)
+			errEmptyItems = parser.ErrorUnknown{OriginError: errEmptyItems}
+			p.Log.WriteError(errEmptyItems.Error(), errEmptyItems)
+			if p.LocalLaunch {
+				err = errEmptyItems
 			}
 			return articles, err
 		}
@@ -118,11 +117,11 @@ func (p *ArticlesParser) ParseAfter(maxDate time.Time) (articles []model.Article
 		for _, state := range states {
 			for _, itemState := range state.Data.TagFeed.Items {
 
-				article, err = p.getNewArticle(&itemState)
-				if err != nil {
-					p.Log.WriteError(err.Error(), err)
-					if !p.LocalLaunch {
-						err = nil
+				article, errGetArticle := p.getNewArticle(&itemState)
+				if errGetArticle != nil {
+					p.Log.WriteError(errGetArticle.Error(), errGetArticle)
+					if p.LocalLaunch {
+						err = errGetArticle
 					}
 					continue
 				}

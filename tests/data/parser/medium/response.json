@@ -1369,6 +1369,189 @@
                             ]
                         },
                         "__typename": "TagFeedItem"
+                    },
+                    {
+                        "feedId": "5f8b3656-4fa9-4d23-ae1e-34df6db1f138",
+                        "reason": 89,
+                        "moduleSourceEncoding": 17,
+                        "postProviderExplanation": {
+                            "reason": null,
+                            "topic": null,
+                            "__typename": "PostProviderExplanation"
+                        },
+                        "post": {
+                            "id": "1dc79425e714",
+                            "creator": {
+                                "__typename": "User",
+                                "name": "Adnan Muhammad Lazuardi",
+                                "username": "adnanm.lazuardi",
+                                "id": "2dd7890f210c",
+                                "mediumMemberAt": 0,
+                                "socialStats": {
+                                    "followerCount": 1,
+                                    "__typename": "SocialStats"
+                                },
+                                "customDomainState": null,
+                                "hasSubdomain": false,
+                                "bio": "",
+                                "imageId": "0*JdCCCifFFJXFoCds",
+                                "isAuroraVisible": true,
+                                "newsletterV3": null
+                            },
+                            "collection": null,
+                            "extendedPreviewContent": {
+                                "bodyModel": {
+                                    "sections": [
+                                        {
+                                            "name": "9828",
+                                            "startIndex": 0,
+                                            "textLayout": null,
+                                            "imageLayout": null,
+                                            "backgroundImage": null,
+                                            "videoLayout": null,
+                                            "backgroundVideo": null,
+                                            "__typename": "Section"
+                                        }
+                                    ],
+                                    "paragraphs": [
+                                        {
+                                            "id": "614bdfaba607_preview_0",
+                                            "name": "e0cc",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "eFishery Academy: Aqua-Developer Batch 2.2 Day 6",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "614bdfaba607_preview_1",
+                                            "name": "7e90",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Bersama Mas Albi, kita belajar materi Golang yang lebih lanjut lagi. Materinya cukup banyak sehingga pembahasannya tidak terlalu detil tapi kurang lebih bisa kami tangkap gambaran besar dari konsepnya seperti apa. Berikut sedikit catatanku.",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "614bdfaba607_preview_2",
+                                            "name": "e4cf",
+                                            "type": "H3",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "RESTful API Concept",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        },
+                                        {
+                                            "id": "614bdfaba607_preview_3",
+                                            "name": "c0d2",
+                                            "type": "P",
+                                            "href": null,
+                                            "layout": null,
+                                            "metadata": null,
+                                            "text": "Mengutip dari AWS, RESTful API merupakan antarmuka yang digunakan dua sistem komputer untuk saling bertukar informasi…",
+                                            "hasDropCap": null,
+                                            "dropCapImage": null,
+                                            "markups": [],
+                                            "__typename": "Paragraph",
+                                            "iframe": null,
+                                            "mixtapeMetadata": null,
+                                            "codeBlockMetadata": null
+                                        }
+                                    ],
+                                    "__typename": "RichText"
+                                },
+                                "isFullContent": false,
+                                "__typename": "PreviewContent",
+                                "subtitle": "Bersama Mas Albi, kita belajar materi Golang yang lebih lanjut lagi. Materinya cukup banyak sehingga pembahasannya tidak terlalu detil tapi…"
+                            },
+                            "__typename": "Post",
+                            "firstPublishedAt": 1668006000000,
+                            "isLocked": false,
+                            "isSeries": false,
+                            "isShortform": false,
+                            "latestPublishedAt": 1668074091569,
+                            "inResponseToCatalogResult": null,
+                            "previewImage": {
+                                "id": "",
+                                "focusPercentX": null,
+                                "focusPercentY": null,
+                                "__typename": "ImageMetadata"
+                            },
+                            "readingTime": 3.0150943396226415,
+                            "sequence": null,
+                            "title": "eFishery Academy: Aqua-Developer Batch 2.2 Day 6",
+                            "uniqueSlug": "efishery-aqua-developer-batch-2-2-day-6-1dc79425e714",
+                            "visibility": "PUBLIC",
+                            "pendingCollection": null,
+                            "statusForCollection": null,
+                            "isPublished": true,
+                            "allowResponses": true,
+                            "postResponses": {
+                                "count": 0,
+                                "__typename": "PostResponses"
+                            },
+                            "isLimitedState": false,
+                            "mediumUrl": "https://medium.com/@adnanm.lazuardi/efishery-aqua-developer-batch-2-2-day-6-1dc79425e714",
+                            "voterCount": 0,
+                            "recommenders": [],
+                            "clapCount": 0,
+                            "pinnedAt": 0,
+                            "pinnedByCreatorAt": 0,
+                            "curationEligibleAt": 0,
+                            "responseDistribution": "NOT_DISTRIBUTED",
+                            "inResponseToPostResult": null,
+                            "isNewsletter": false,
+                            "isAuthorNewsletter": false,
+                            "inResponseToEntityType": null,
+                            "tags": [
+                                {
+                                    "__typename": "Tag",
+                                    "id": "rest-api",
+                                    "displayTitle": "Rest Api",
+                                    "normalizedTagSlug": "rest-api"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "golang",
+                                    "displayTitle": "Golang",
+                                    "normalizedTagSlug": "golang"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "echo-framework",
+                                    "displayTitle": "Echo Framework",
+                                    "normalizedTagSlug": "echo-framework"
+                                },
+                                {
+                                    "__typename": "Tag",
+                                    "id": "notes",
+                                    "displayTitle": "Notes",
+                                    "normalizedTagSlug": "notes"
+                                }
+                            ]
+                        },
+                        "__typename": "TagFeedItem"
                     }
                 ],
                 "pagingInfo": {
