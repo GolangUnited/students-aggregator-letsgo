@@ -12,7 +12,6 @@ import (
 	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"github.com/indikator/aggregator_lets_go/internal/parser"
 	"github.com/indikator/aggregator_lets_go/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Aggregator struct {
@@ -121,10 +120,8 @@ func (a *Aggregator) Execute() error {
 		}
 
 		for _, article := range articles {
-			id := primitive.NewObjectID()
 
 			_, err = a.db.WriteArticle(&model.DBArticle{
-				ID:          id,
 				Title:       article.Title,
 				Created:     article.Created,
 				Author:      article.Author,

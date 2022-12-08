@@ -16,12 +16,13 @@ const (
 type database struct {
 	config   db.Config
 	log      log.Log
+	nextId   int
 	Articles []model.DBArticle
 }
 
 // NewDb create an instance of database
 func NewDb(config db.Config, l log.Log) db.Db {
-	return &database{config: config, log: l}
+	return &database{config: config, log: l, nextId: 1}
 }
 
 func (d *database) Name() string {
@@ -45,6 +46,10 @@ func (d *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, err
 		return nil, fmt.Errorf("incorrect db url")
 	}
 
+	if article.ID == nil {
+		article.ID = d.nextId
+		d.nextId++
+	}
 	d.Articles = append(d.Articles, *article)
 
 	return article, nil

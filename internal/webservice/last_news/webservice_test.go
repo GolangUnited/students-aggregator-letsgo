@@ -2,7 +2,6 @@ package last_news
 
 import (
 	"encoding/json"
-	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -10,13 +9,14 @@ import (
 	"time"
 
 	"github.com/indikator/aggregator_lets_go/internal/config"
+	"github.com/indikator/aggregator_lets_go/internal/db"
+	clog "github.com/indikator/aggregator_lets_go/internal/log/common"
 
 	"github.com/indikator/aggregator_lets_go/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var id1 = primitive.NewObjectID()
-var id2 = primitive.NewObjectID()
+var id1 = 1
+var id2 = 2
 
 func TestGetLastNews(t *testing.T) {
 	c := config.NewConfig()
@@ -81,16 +81,18 @@ func TestGetLastNews(t *testing.T) {
 	}
 
 	resp := &[]model.DBArticle{}
-	err = json.Unmarshal([]byte(rr.Body.String()), resp)
+	err = json.Unmarshal(rr.Body.Bytes(), resp)
 	if err != nil {
 		t.Errorf("expected nil got %v", err)
 	}
 
-	if !reflect.DeepEqual(*resp, expected) {
-		t.Errorf("handler returned unexpected body: got %v want %v",
-			resp, expected)
-	}
+	aGot := db.ConvertFromDbArticles(*resp)
+	aExpected := db.ConvertFromDbArticles(expected)
 
+	if !reflect.DeepEqual(aGot, aExpected) {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			*resp, expected)
+	}
 }
 
 func TestPort(t *testing.T) {
