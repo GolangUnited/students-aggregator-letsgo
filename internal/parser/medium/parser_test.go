@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
@@ -200,38 +201,34 @@ func TestQueryFileNameNotFoundParseAfter(t *testing.T) {
 	}
 }
 
-func TestErrorRequestParseAfter(t *testing.T) {
+func TestErrorRequestAndReadBodyParseAfter(t *testing.T) {
 
-	cfg, lg := parser.Config{URL: url, IsLocal: true}, stub.NewLog(logLevel.Errors)
-
-	newParser := func(cfg parser.Config, lg log.Log) parser.ArticlesParser {
-
-		return &medium.ArticlesParser{
-			Client:         &http.Client{},
-			Url:            cfg.URL,
-			Host:           hostService,
-			QueryFileName:  queryFileName,
-			IterationCount: 1,
-			LocalLaunch:    cfg.IsLocal,
-			Log:            lg,
-		}
-	}(cfg, lg)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/testMediumservice", func(w http.ResponseWriter, r *http.Request) {
+	serverMock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Length", "1")
-	})
+	}))
+	defer serverMock.Close()
 
-	ports := [2]string{":80", ":8000"}
+	urls := [2]string{
+		serverMock.URL,
+		url,
+	}
 
-	for _, value := range ports {
+	for _, value := range urls {
 
-		server := &http.Server{
-			Addr:    value,
-			Handler: mux,
-		}
+		cfg, lg := parser.Config{URL: value, IsLocal: true}, stub.NewLog(logLevel.Errors)
 
-		go server.ListenAndServe()
+		newParser := func(cfg parser.Config, lg log.Log) parser.ArticlesParser {
+
+			return &medium.ArticlesParser{
+				Client:         &http.Client{},
+				Url:            cfg.URL,
+				Host:           hostService,
+				QueryFileName:  queryFileName,
+				IterationCount: 1,
+				LocalLaunch:    cfg.IsLocal,
+				Log:            lg,
+			}
+		}(cfg, lg)
 
 		date, err := time.Parse(dateFormat, stringDate)
 		if err != nil {
@@ -246,9 +243,6 @@ func TestErrorRequestParseAfter(t *testing.T) {
 		} else {
 			t.Error("error cannot equals to nil")
 		}
-
-		server.Close()
-
 	}
 
 }
