@@ -18,6 +18,16 @@ import (
 // instantiate new collection
 var collection *mongo.Collection
 
+// init functions
+var (
+	DecodeResults_  func(curr *mongo.Cursor, articles *[]model.DBArticle, ctx context.Context) error
+	CloseCursor_    func(curr *mongo.Cursor, ctx context.Context) error
+	CreateClient_   func(url string, ctx context.Context) (*mongo.Client, error)
+	PingClient_     func(client *mongo.Client, ctx context.Context) error
+	CreateDatabase_ func(client *mongo.Client, dbName, collName string)
+	CreateIndex_    func(ctx context.Context) error
+)
+
 type database struct {
 	name string
 	url  string
@@ -42,13 +52,11 @@ func (db *database) Url() string {
 }
 
 func (db *database) WriteArticle(article *model.DBArticle) (*model.DBArticle, error) {
-
 	_, err := collection.InsertOne(context.Background(), article)
 	if err != nil {
 		return nil, err
 	}
 	return article, nil
-
 }
 
 func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
@@ -60,39 +68,40 @@ func (db *database) ReadArticles(nDays int) ([]model.DBArticle, error) {
 	filter := bson.M{"created": bson.M{
 		"$gte": primitive.NewDateTimeFromTime(time.Now().AddDate(0, 0, -1*nDays)), //last 7 days
 	}}
-	articles := []model.DBArticle{}
-	cur, err := collection.Find(context.Background(), filter)
+
+	ctx := context.Background()
+	curr, err := Find(filter, collection, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = cur.All(context.Background(), &articles); err != nil {
+	var articles []model.DBArticle
+
+	err = DecodeResults_(curr, &articles, ctx)
+	if err != nil {
+		CloseCursor_(curr, ctx)
 		return nil, err
 	}
 
-	if err = cur.Err(); err != nil {
-		return nil, err
-	}
-
-	//once exhausted, close the cursor
-	err = cur.Close(context.Background())
+	err = CloseCursor_(curr, ctx)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return articles, nil
 }
 
-// InitDb creates a new MongoDB client and connect to your running MongoDB server
+//InitDb creates a new MongoDB client and connect to your running MongoDB server
 func (db *database) InitDb() error {
-	clientOptions := options.Client().ApplyURI(db.url)
-	client, err := mongo.Connect(context.Background(), clientOptions)
+
+	ctx := context.Background()
+	client, err := CreateClient_(db.url, ctx)
 	if err != nil {
 		return err
 	}
 
 	// Next, let’s ensure that your MongoDB server was found and connected to successfully using the Ping method.
-	err = client.Ping(context.Background(), nil)
+	err = PingClient_(client, ctx)
 	if err != nil {
 		return err
 	}
@@ -100,11 +109,54 @@ func (db *database) InitDb() error {
 	db.log.WriteInfo("Connected to mongo")
 
 	// create a database
-	collection = client.Database("news").Collection("articles")
+	CreateDatabase_(client, "news", "articles")
 
 	// Declare model for the indexes
-	_, err = collection.Indexes().CreateOne(
-		context.Background(),
+	err = CreateIndex_(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Find(filter bson.M, collection *mongo.Collection, ctx context.Context) (*mongo.Cursor, error) {
+	curr, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	return curr, nil
+}
+
+func DecodeResults(curr *mongo.Cursor, articles *[]model.DBArticle, ctx context.Context) error {
+	fmt.Println("I am true")
+	err := curr.All(ctx, articles)
+	return err
+}
+
+func CloseCursor(curr *mongo.Cursor, ctx context.Context) error {
+	err := curr.Close(ctx)
+	return err
+}
+
+func CreateClient(url string, ctx context.Context) (*mongo.Client, error) {
+	clientOptions := options.Client().ApplyURI(url)
+	client, err := mongo.Connect(ctx, clientOptions)
+	return client, err
+}
+
+func PingClient(client *mongo.Client, ctx context.Context) error {
+	err := client.Ping(ctx, nil)
+	return err
+}
+
+func CreateDatabase(client *mongo.Client, dbName, collName string) {
+	collection = client.Database(dbName).Collection(collName)
+}
+
+func CreateIndex(ctx context.Context) error {
+	_, err := collection.Indexes().CreateOne(
+		ctx,
 		mongo.IndexModel{
 			Keys: bson.D{
 				{Key: "author", Value: 1},
@@ -115,6 +167,5 @@ func (db *database) InitDb() error {
 			Options: options.Index().SetUnique(true),
 		},
 	)
-
-	return nil
+	return err
 }

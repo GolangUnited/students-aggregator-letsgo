@@ -2,7 +2,6 @@ package common
 
 import (
 	"fmt"
-
 	"github.com/indikator/aggregator_lets_go/internal/db"
 	"github.com/indikator/aggregator_lets_go/internal/db/mongo"
 	"github.com/indikator/aggregator_lets_go/internal/db/stub"
@@ -32,6 +31,12 @@ func GetDb(config db.Config, l log.Log) (db.Db, error) {
 	case "stub":
 		d = stub.NewDb(config, l)
 	case "mongo":
+		mongo.DecodeResults_ = mongo.DecodeResults
+		mongo.CloseCursor_ = mongo.CloseCursor
+		mongo.CreateClient_ = mongo.CreateClient
+		mongo.PingClient_ = mongo.PingClient
+		mongo.CreateDatabase_ = mongo.CreateDatabase
+		mongo.CreateIndex_ = mongo.CreateIndex
 		d = mongoNewDb(config, l)
 	default:
 		return nil, &UnknownDbmsError{
