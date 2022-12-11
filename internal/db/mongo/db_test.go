@@ -2,6 +2,9 @@ package mongo
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/indikator/aggregator_lets_go/internal/config"
 	"github.com/indikator/aggregator_lets_go/internal/log/logLevel"
 	log "github.com/indikator/aggregator_lets_go/internal/log/stub"
@@ -12,8 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 	"golang.org/x/net/context"
-	"testing"
-	"time"
 )
 
 func mockDecodeResults(curr *mongo.Cursor, articles *[]model.DBArticle, ctx context.Context) error {
@@ -54,6 +55,28 @@ func mockCreateIndexPass(ctx context.Context) error {
 
 func mockCreateIndexFail(ctx context.Context) error {
 	return fmt.Errorf("error creating index")
+}
+
+func TestPing(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	defer mt.Close()
+
+	mt.Run("write article", func(mt *mtest.T) {
+		ctx := context.Background()
+		mt.AddMockResponses(mtest.CreateSuccessResponse())
+		err := PingClient(mt.Client, ctx)
+		assert.Nil(t, err)
+	})
+}
+
+func TestCreateDatabase(t *testing.T) {
+	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+	defer mt.Close()
+
+	mt.Run("write article", func(mt *mtest.T) {
+		mt.AddMockResponses(mtest.CreateSuccessResponse())
+		CreateDatabase(mt.Client, "testDatabase", "testCollection")
+	})
 }
 
 func TestWriteArticle(t *testing.T) {
