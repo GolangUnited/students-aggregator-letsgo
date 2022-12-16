@@ -87,7 +87,6 @@ jobs:
           context: .
           build-args: |
             "BUILD_VERSION=${{github.ref_name}}"
-
           file: ./Dockerfile.webservice
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest,
