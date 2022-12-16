@@ -110,7 +110,6 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOST: ${{secrets.SSH_KNOWN_HOST}}
-          TAG: ${{github.ref_name}}
       - name: Copy files
         run: |
           scp -P $SSH_REMOTE_HOST_PORT Makefile $SSH_REMOTE_HOST:~/deploy/Makefile
@@ -126,3 +125,4 @@ jobs:
         env:
           SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
           SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
+          TAG: ${{github.ref_name}}
