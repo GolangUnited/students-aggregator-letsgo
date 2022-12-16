@@ -1,0 +1,9 @@
+# Project Aggregator YAML
+aggregator:
+  log:
+    type: std
+    level: errors
+
+parsers:
+- stub:
+    url: https://stub.com

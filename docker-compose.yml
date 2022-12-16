@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+
+  webservice:
+    image: lets_go_webservice
+    container_name: lets_go_webservice
+    build:
+      context: .
+      dockerfile: ./Dockerfile.webservice
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      - aggregatorNet
+
+  aggregator:
+    image: lets_go_aggregator
+    container_name: lets_go_aggregator
+    build:
+      context: .
+      dockerfile: ./Dockerfile.aggregator
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      - aggregatorNet
+
+  mongodb:
+    image: mvertes/alpine-mongo:4.0.6-1
+    container_name: mongodb
+    networks:
+      - aggregatorNet
+
+networks:
+  aggregatorNet:
+    driver: bridge

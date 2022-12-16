@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+
+  webservice:
+    image: sherbinin5/lets_go_webservice:${GITHUB_REF:10}
+    container_name: lets_go_webservice
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      aggregatorNet:
+        ipv4_address: 172.19.0.4
+
+  aggregator:
+    image: sherbinin5/lets_go_aggregator:${GITHUB_REF:10}
+    container_name: lets_go_aggregator
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      - aggregatorNet
+
+  mongodb:
+    image: mvertes/alpine-mongo:4.0.6-1
+    container_name: mongodb
+    networks:
+      - aggregatorNet
+
+networks:
+  aggregatorNet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1

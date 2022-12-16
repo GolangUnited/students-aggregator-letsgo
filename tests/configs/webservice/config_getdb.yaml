@@ -1,0 +1,10 @@
+database:
+  name: undefined
+  url: mongodb://mongodb:27017
+
+webservice:
+  handle: /last_news
+  port: 8080
+  log:
+    type: stub
+    level: errors

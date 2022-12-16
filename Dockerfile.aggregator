@@ -1,0 +1,25 @@
+FROM golang:1.18.7-alpine3.16 AS aggregator
+
+RUN go version
+
+COPY ./ /github.com/indikator/aggregator_lets_go
+WORKDIR /github.com/indikator/aggregator_lets_go
+
+RUN go mod download && go mod tidy
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./.bin/app ./cmd/aggregator/main.go
+
+FROM alpine:latest
+
+WORKDIR /root
+
+COPY --from=aggregator /github.com/indikator/aggregator_lets_go/.bin/app /bin
+COPY ./configs /root/configs
+COPY ./etc /root/etc
+COPY launchAggregator.sh /root/launch
+
+RUN echo "*/60 * * * * /bin/app " > /etc/crontabs/root
+RUN dos2unix /root/launch
+RUN chmod -R a+x /root/launch
+
+CMD [ "/bin/sh", "-c", "/root/launch"]
+

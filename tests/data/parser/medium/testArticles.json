@@ -1,0 +1,37 @@
+[
+    {
+        "title": "Don’t Let time.Now() Breaks Your Unit Test",
+        "created": "2022-11-18T03:00:00+03:00",
+        "author": "Ray Lin",
+        "summary": "A tip about control the time value in the unit test.",
+        "url": "https://raaaaaaaay86.medium.com/dont-let-time-now-breaks-your-unit-test-f7fd81dc2cfb"
+    },
+    {
+        "title": "Don’t Let time.Now() Breaks Your Unit Test",
+        "created": "2022-11-13T09:46:50+03:00",
+        "author": "Ray Lin",
+        "summary": "A tip about control the time value in the unit test.",
+        "url": "https://raaaaaaaay86.medium.com/dont-let-time-now-breaks-your-unit-test-f7fd81dc2cfb"
+    },
+    {
+        "title": "Golang os WriteString 與ioutil WriteFile的發現與疑惑",
+        "created": "2022-11-12T21:46:07+03:00",
+        "author": "Huang Zi-Yang",
+        "summary": "遇到了一個自己目前也不了解的file.writeString的問題",
+        "url": "https://medium.com/@lkk223303/golang-os-writestring-%E8%88%87ioutil-writefile%E7%9A%84%E7%99%BC%E7%8F%BE%E8%88%87%E7%96%91%E6%83%91-92b6163ee077"
+    },
+    {
+        "title": "Collecting Form 4 Submission Data From Edgar Using Golang crawler",
+        "created": "2022-11-12T14:25:05+03:00",
+        "author": "Itay",
+        "summary": "Technical Guide On Collecting Form 4 SEC filings",
+        "url": "https://medium.com/@itay1542/collecting-form-4-submission-data-from-edgar-using-golang-crawler-8b0c8180258b"
+    },
+    {
+        "title": "eFishery Academy: Aqua-Developer Batch 2.2 Day 6",
+        "created": "2022-11-10T12:52:54+03:00",
+        "author": "Adnan Muhammad Lazuardi",
+        "summary": "Bersama Mas Albi, kita belajar materi Golang yang lebih lanjut lagi. Materinya cukup banyak sehingga pembahasannya tidak terlalu detil tapi…",
+        "url": "https://medium.com/@adnanm.lazuardi/efishery-aqua-developer-batch-2-2-day-6-1dc79425e714"
+    }
+]
