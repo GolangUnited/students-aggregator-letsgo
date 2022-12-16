@@ -121,9 +121,10 @@ jobs:
           SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
       - name: Connect SSH
         run: |
-          export TAG=${{github.ref_name}}
           ssh $SSH_REMOTE_HOST -p $SSH_REMOTE_HOST_PORT -tt
+          echo "$TAG"
         shell: bash
         env:
+          TAG: ${{github.ref_name}}
           SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
           SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
