@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   webservice:
-    image: sherbinin5/lets_go_webservice:${GITHUB_REF:10}
+    image: sherbinin5/lets_go_webservice:@${GITHUB_REF:10}
     container_name: lets_go_webservice
     depends_on:
       - mongodb
@@ -14,7 +14,7 @@ services:
         ipv4_address: 172.19.0.4
 
   aggregator:
-    image: sherbinin5/lets_go_aggregator:${GITHUB_REF:10}
+    image: sherbinin5/lets_go_aggregator:@${GITHUB_REF:10}
     container_name: lets_go_aggregator
     depends_on:
       - mongodb
