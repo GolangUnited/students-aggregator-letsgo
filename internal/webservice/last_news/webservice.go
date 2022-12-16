@@ -77,8 +77,10 @@ func (ws *webService) GetLastNews(nDays int) http.Handler {
 		news, _ := ws.db.ReadArticles(nDays)
 		newsJson, _ := json.Marshal(news)
 		ws.log.WriteInfo("WebService.GetLastNews.End")
-		w.WriteHeader(http.StatusOK)
+
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
 		w.Write(newsJson)
 	})
 }
