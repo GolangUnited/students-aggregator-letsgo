@@ -9,6 +9,8 @@ services:
       - mongodb
     links:
       - mongodb
+    env_file:
+      - webservice.env
     networks:
       aggregatorNet:
         ipv4_address: 172.19.0.4
@@ -20,6 +22,8 @@ services:
       - mongodb
     links:
       - mongodb
+    env_file:
+      - webservice.env
     networks:
       - aggregatorNet
 
