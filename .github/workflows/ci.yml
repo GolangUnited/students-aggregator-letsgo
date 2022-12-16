@@ -112,10 +112,10 @@ jobs:
           SSH_KNOWN_HOST: ${{secrets.SSH_KNOWN_HOST}}
       - name: Copy files
         run: |
-          touch .env.ci
+          touch ./.env.ci
           export TAG=${{github.ref_name}}
-          echo "TAG=$TAG" > .env.ci
-          scp -P $SSH_REMOTE_HOST_PORT webservice.env $SSH_REMOTE_HOST:~/deploy/.env.ci
+          echo "TAG=$TAG" > ./.env.ci
+          scp -P $SSH_REMOTE_HOST_PORT ./.env.ci $SSH_REMOTE_HOST:~/deploy/.env.ci
           scp -P $SSH_REMOTE_HOST_PORT Makefile $SSH_REMOTE_HOST:~/deploy/Makefile
           scp -P $SSH_REMOTE_HOST_PORT docker-compose-host.yml $SSH_REMOTE_HOST:~/deploy/docker-compose-host.yml
         shell: bash
@@ -125,7 +125,7 @@ jobs:
       - name: Connect SSH
         run: |
           ssh $SSH_REMOTE_HOST -p $SSH_REMOTE_HOST_PORT -tt
-          cat /.env.ci
+          cat ./.env.ci
         shell: bash
         env:
           SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
