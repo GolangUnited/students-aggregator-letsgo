@@ -43,7 +43,8 @@ ifneq ($(strip $(IS_LETS_GO_WEBSERVICE)),)
 endif
 
 run: clear
-	docker-compose -f ./docker-compose-host.yml up --detach
+	cat ./env.ci
+	docker-compose --env-file ./.env.ci -f ./docker-compose-host.yml up --detach
 
 cover:
 	go test -v -coverprofile cover.out ./...
