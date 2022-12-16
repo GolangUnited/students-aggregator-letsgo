@@ -78,7 +78,7 @@ jobs:
           file: ./Dockerfile.aggregator
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:latest,
-            ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:${{github.ref_name}}
+            ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:${{ github.ref_name }}
 
       - name: Build and push webservice
         id: docker_build_webservice
@@ -86,11 +86,11 @@ jobs:
         with:
           context: .
           build-args: |
-            "BUILD_VERSION=${{github.ref_name}}"
+            "BUILD_VERSION=${{ github.ref_name }}"
           file: ./Dockerfile.webservice
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest,
-            ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:${{github.ref_name}}
+            ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:${{ github.ref_name }}
   
   deploy:
     runs-on: ubuntu-latest
@@ -112,7 +112,7 @@ jobs:
           SSH_KNOWN_HOST: ${{secrets.SSH_KNOWN_HOST}}
       - name: Copy files
         run: |
-          export $TAG=${{github.ref_name}}
+          export TAG=${{github.ref_name}}
           scp -P $SSH_REMOTE_HOST_PORT Makefile $SSH_REMOTE_HOST:~/deploy/Makefile
           scp -P $SSH_REMOTE_HOST_PORT docker-compose-host.yml $SSH_REMOTE_HOST:~/deploy/docker-compose-host.yml
         shell: bash
