@@ -112,8 +112,9 @@ jobs:
           SSH_KNOWN_HOST: ${{secrets.SSH_KNOWN_HOST}}
       - name: Copy files
         run: |
+          touch webservice.env
           export TAG=${{github.ref_name}}
-          echo "$TAG" > webservice.env
+          echo "TAG=$TAG" > webservice.env
           scp -P $SSH_REMOTE_HOST_PORT webservice.env $SSH_REMOTE_HOST:~/deploy/webservice.env
           scp -P $SSH_REMOTE_HOST_PORT Makefile $SSH_REMOTE_HOST:~/deploy/Makefile
           scp -P $SSH_REMOTE_HOST_PORT docker-compose-host.yml $SSH_REMOTE_HOST:~/deploy/docker-compose-host.yml
@@ -124,8 +125,8 @@ jobs:
       - name: Connect SSH
         run: |
           ssh $SSH_REMOTE_HOST -p $SSH_REMOTE_HOST_PORT -tt
+          cat webservice.env
         shell: bash
         env:
-          TAG: ${{github.ref_name}}
           SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
           SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
