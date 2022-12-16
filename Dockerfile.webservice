@@ -16,4 +16,7 @@ WORKDIR /root
 COPY --from=builder /github.com/indikator/aggregator_lets_go/.bin/app .
 ADD configs ./configs
 
+ARG BUILD_VERSION
+ENV BUILD_VERSION ${BUILD_VERSION}
+
 CMD [ "./app"]
