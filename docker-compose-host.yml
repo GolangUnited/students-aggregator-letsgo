@@ -11,7 +11,7 @@ services:
       - mongodb
     networks:
       aggregatorNet:
-        ipv4_address: 172.19.0.4 
+        ipv4_address: 172.19.0.4
 
   aggregator:
     image: sherbinin5/lets_go_aggregator:${BUILD_VERSION}
