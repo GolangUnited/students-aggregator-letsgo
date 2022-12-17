@@ -14,6 +14,8 @@ services:
       - mongodb
     links:
       - mongodb
+    env_file:
+      - ./.env.ci
     networks:
       - aggregatorNet
 
