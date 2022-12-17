@@ -10,6 +10,7 @@ import (
 	"github.com/indikator/aggregator_lets_go/internal/webservice"
 	wsconfig "github.com/indikator/aggregator_lets_go/internal/webservice/config"
 	"net/http"
+	"os"
 )
 
 type webService struct {
@@ -82,5 +83,25 @@ func (ws *webService) GetLastNews(nDays int) http.Handler {
 		w.WriteHeader(http.StatusOK)
 
 		w.Write(newsJson)
+	})
+}
+
+// GetBuildVersion godoc
+// @Summary Retrieves build version
+// @Description Get the version of current build
+// @Tags Build Version
+// @Produce text/plain
+// @Success 200
+// @Router / [get]
+func (ws *webService) GetBuildVersion() http.Handler {
+	ws.log.WriteInfo("WebService.GetBuildVersion.Begin")
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		buildVersion := os.Getenv("TAG")
+		ws.log.WriteInfo("WebService.GetBuildVersion.End")
+
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusOK)
+
+		w.Write([]byte(buildVersion))
 	})
 }

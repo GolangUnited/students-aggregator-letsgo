@@ -2,8 +2,10 @@ package last_news
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -171,4 +173,55 @@ func TestInitAllByConfig(t *testing.T) {
 		t.Errorf("expected %v got %v", "unknown dbms undefined", err.Error())
 	}
 
+}
+
+func TestGetBuildVersion(t *testing.T) {
+	err := os.Setenv("TAG", "v0.0.27")
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	c := config.NewConfig()
+	err = c.SetDataFromFile("../../../tests/configs/webservice/config_buildVersion.yaml")
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	err = c.Read()
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+	ws := NewWebservice()
+	err = ws.InitAllByConfig(c)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	handler := ws.GetBuildVersion()
+
+	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
+	// pass 'nil' as the third parameter.
+	req, err := http.NewRequest("GET", c.WebService.Handle, nil)
+	if err != nil {
+		t.Errorf("expected nil got %v", err)
+	}
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr := httptest.NewRecorder()
+
+	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
+	// directly and pass in our Request and ResponseRecorder.
+	handler.ServeHTTP(rr, req)
+
+	// Check the status code is what we expect.
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responseData, err := ioutil.ReadAll(rr.Body)
+	expected := []byte("v0.0.27")
+
+	if !reflect.DeepEqual(responseData, expected) {
+		t.Errorf("handler returned unexpected body: got %v want %v",
+			responseData, expected)
+	}
 }

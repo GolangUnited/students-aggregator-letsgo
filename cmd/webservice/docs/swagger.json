@@ -11,16 +11,33 @@
         "version": "1.0.1"
     },
     "paths": {
-        "/last_news": {
-            "get": {
-                "description": "Get array of Articles for the last 7 days",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "news"
-                ],
-                "summary": "Retrieves news from last 7 days",
+      "/": {
+        "get": {
+          "description": "Get the version of current build",
+          "produces": [
+            "text/plain"
+          ],
+          "tags": [
+            "Build Version"
+          ],
+          "summary": "Retrieves build version",
+          "responses": {
+            "200": {
+              "description": "OK"
+            }
+          }
+        }
+      },
+      "/last_news": {
+        "get": {
+          "description": "Get array of Articles for the last 7 days",
+          "produces": [
+            "application/json"
+          ],
+          "tags": [
+            "news"
+          ],
+          "summary": "Retrieves news from last 7 days",
                 "responses": {
                     "200": {
                         "description": "OK",
