@@ -62,6 +62,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest,
                 ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:${{github.ref_name}}
+          build-args: TAG=${{github.ref_name}}
   
   deploy:
     runs-on: ubuntu-latest

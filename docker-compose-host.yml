@@ -9,8 +9,6 @@ services:
       - mongodb
     links:
       - mongodb
-    args:
-      TAG: ${TAG}
     networks:
       aggregatorNet:
         ipv4_address: 172.19.0.4
