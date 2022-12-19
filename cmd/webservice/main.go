@@ -59,7 +59,11 @@ func main() {
 	// init last news handle
 	lastNewsHandler := ws.GetLastNews(7) // hardcode 1 week
 
+	// init build version handle
+	buildVersionHandler := ws.GetBuildVersion()
+
 	r.Handle(cfg.WebService.Handle, middleware.LoggingHandler(lastNewsHandler, logger))
+	r.Handle("/", middleware.LoggingHandler(buildVersionHandler, logger))
 
 	// init and run server on given port
 	server := &http.Server{

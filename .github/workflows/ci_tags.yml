@@ -1,0 +1,102 @@
+name: Tags
+
+on:
+  push:
+    tags: ['v[0-9].[0-9]+.[0-9]+']
+
+jobs:
+  build-and-test:
+    uses: ./.github/workflows/ci_common.yml
+    
+  publish:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - uses: actions/checkout@v3
+        
+      - name: Extract Version
+        id: version_step
+        run: |
+          echo "version=${GITHUB_REF#$"refs/tags/v"}" >> $GITHUB_OUTPUT
+          echo "version_tag=$GITHUB_REPOSITORY:${GITHUB_REF#$"refs/tags/v"}" >> $GITHUB_OUTPUT
+          echo "latest_tag=$GITHUB_REPOSITORY:latest" >> $GITHUB_OUTPUT
+      - name: Print Version
+        run: |
+          echo ${{steps.version_step.outputs.version_tag}}
+          echo ${{steps.version_step.outputs.latest_tag}}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Prepare DockerHub names
+        id: prepare-docker-image-identifiers
+        run: |
+          echo VERSION_TAG=$(echo ${{ steps.version_step.outputs.version_tag }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+          echo LASTEST_TAG=$(echo ${{ steps.version_step.outputs.latest_tag  }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+
+      - name: Build and push aggregator
+        id: docker_build_aggregator
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile.aggregator
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:latest,
+                ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_aggregator:${{github.ref_name}}
+          
+      - name: Build and push webservice
+        id: docker_build_webservice
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile.webservice
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:latest,
+                ${{ secrets.DOCKERHUB_USERNAME }}/lets_go_webservice:${{github.ref_name}}
+          build-args: TAG=${{github.ref_name}}
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          sudo chmod 600 ~/.ssh/id_rsa
+          echo "$SSH_KNOWN_HOST" > ~/.ssh/known_hosts
+          cp ./configs/deploy_config ~/.ssh/config
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOST: ${{secrets.SSH_KNOWN_HOST}}
+      - name: Copy files
+        run: |
+          touch ./.env.ci
+          export TAG=${{github.ref_name}}
+          echo "TAG=$TAG" > ./.env.ci
+          scp -P $SSH_REMOTE_HOST_PORT ./.env.ci $SSH_REMOTE_HOST:~/deploy/.env.ci
+          scp -P $SSH_REMOTE_HOST_PORT Makefile $SSH_REMOTE_HOST:~/deploy/Makefile
+          scp -P $SSH_REMOTE_HOST_PORT docker-compose-host.yml $SSH_REMOTE_HOST:~/deploy/docker-compose-host.yml
+        shell: bash
+        env:
+          SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
+          SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}
+      - name: Connect SSH
+        run: |
+          ssh $SSH_REMOTE_HOST -p $SSH_REMOTE_HOST_PORT -tt
+        shell: bash
+        env:
+          SSH_REMOTE_HOST: ${{secrets.SSH_REMOTE_HOST}}
+          SSH_REMOTE_HOST_PORT: ${{secrets.SSH_REMOTE_HOST_PORT}}

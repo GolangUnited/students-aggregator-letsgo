@@ -20,6 +20,23 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/": {
+            "get": {
+                "description": "Get the version of current build",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "Build Version"
+                ],
+                "summary": "Retrieves build version",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/last_news": {
             "get": {
                 "description": "Get array of Articles for the last 7 days",

@@ -30,11 +30,22 @@ info:
   title: Web-Service Swagger
   version: 1.0.1
 paths:
+  /:
+    get:
+      description: Get the version of current build
+      produces:
+        - text/plain
+      responses:
+        "200":
+          description: OK
+      summary: Retrieves build version
+      tags:
+        - Build Version
   /last_news:
     get:
       description: Get array of Articles for the last 7 days
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
